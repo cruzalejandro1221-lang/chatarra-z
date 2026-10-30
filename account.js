@@ -26,7 +26,8 @@ const GGAccount = (() => {
     if (/token has expired|otp.*(expired|invalid)|invalid.*otp|token.*invalid/.test(m)) return 'Ese código no es válido o ya venció. Pide uno nuevo.';
     if (/rate limit|too many|security purposes|over_email_send_rate/.test(m)) return 'Demasiados intentos. Espera un minuto y vuelve a probar.';
     if (/weak|pwned|leaked|password should/.test(m)) return 'Esa contraseña es muy débil. Usa 10 o más caracteres con letras y números.';
-    if (/username taken|duplicate|already registered|23505/.test(m)) return 'Ese nombre de usuario ya está ocupado.';
+    if (/username reserved/.test(m)) return 'Ese nombre está reservado. Elige otro.';
+    if (/username taken|duplicate|already registered|23505/.test(m)) return 'Ese nombre ya existe o se parece mucho a otro. Prueba con otro.';
     if (/usuario no encontrado/.test(m)) return 'No existe ningún jugador con ese usuario.';
     if (/eres tú/.test(m)) return 'Ese eres tú 😄';
     if (/demasiadas solicitudes/.test(m)) return 'Tienes muchas solicitudes pendientes. Espera a que respondan.';
@@ -92,7 +93,7 @@ const GGAccount = (() => {
     if (!USER_RE.test(username)) throw new Error('Usuario: 3 a 16 letras minúsculas, números o _.');
     const st = strength(password, username, email);
     if (!st.ok) throw new Error('Contraseña: ' + st.probs.join(', ') + '.');
-    if (!(await usernameFree(username))) throw new Error('Ese nombre de usuario ya está ocupado.');
+    if (!(await usernameFree(username))) throw new Error('Ese nombre ya existe o se parece mucho a otro. Prueba con otro.');
     const { data, error } = await sb.auth.signUp({ email: String(email).trim(), password, options: { data: { username }, emailRedirectTo: here() } });
     if (error) fail(error);
     return { needsConfirm: !data.session };
@@ -193,7 +194,7 @@ const GGAccount = (() => {
   async function friendRemove(username) { const { error } = await sb.rpc('friend_remove', { p_username: username }); if (error) fail(error); }
   const level = xp => { const lv = Math.floor(Math.sqrt((xp || 0) / 50)) + 1; return { lv, from: 50 * (lv - 1) ** 2, to: 50 * lv ** 2 }; };
 
-  return { ready, providers, AVATARS, USER_RE, strength, level,
+  return { ready, providers, usernameFree, AVATARS, USER_RE, strength, level,
     get enabled() { return enabled; }, get user() { return user; }, get profile() { return profile; },
     on: f => { subs.add(f); return () => subs.delete(f); },
     signUp, verifyCode, resend, signIn, signInWith, signOut, resetPassword, updatePassword, setUsername, setAvatar, deleteAccount,

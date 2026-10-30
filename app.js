@@ -243,8 +243,9 @@ function check() {
   const uIn = $('#fUser'), pIn = $('#fPass'), eIn = $('#fEmail');
   if (uIn && $('#userHint')) {
     const u = uIn.value, okU = A.USER_RE.test(u), uh = $('#userHint');
-    uh.className = !u ? '' : okU ? 'ok' : 'bad';
+    uh.className = !u ? '' : okU ? '' : 'bad';
     uh.textContent = !u || okU ? '3 a 16: letras minúsculas, números o _' : 'Solo letras minúsculas, números o _ (3 a 16)';
+    if (okU) checkName(u);
   }
   if (pIn && $('#pwBar')) {
     const pw = pIn.value, st = A.strength(pw, uIn && uIn.value, eIn && eIn.value), bar = $('#pwBar'), h = $('#pwHint');
@@ -254,6 +255,22 @@ function check() {
     h.textContent = !pw ? 'Mínimo 10 caracteres, con letras y números.' : st.ok ? (st.score >= 3 ? 'Contraseña fuerte' : 'Aceptable: añade mayúsculas o símbolos para más seguridad') : 'Falta: ' + st.probs.join(', ');
   }
   const c = $('#fCode'); if (c) c.value = c.value.replace(/\D/g, '');
+}
+// ¿Nombre libre? Se consulta al servidor mientras escribes (ni igual, ni parecido a otro, ni reservado).
+let nameT = 0, nameSeq = 0;
+function checkName(u) {
+  clearTimeout(nameT);
+  const seq = ++nameSeq;
+  nameT = setTimeout(async () => {
+    const uh = $('#userHint'); if (!uh) return;
+    if (mode === 'pickname' && logged() && A.profile.username === u) { uh.className = 'ok'; uh.textContent = 'Es tu nombre actual'; return; }
+    try {
+      const free = await A.usernameFree(u);
+      if (seq !== nameSeq || !$('#userHint') || $('#fUser').value !== u) return;
+      uh.className = free ? 'ok' : 'bad';
+      uh.textContent = free ? '✓ Disponible' : 'Ya existe o se parece mucho a otro (o está reservado)';
+    } catch (x) { /* sin red: se valida al enviar */ }
+  }, 350);
 }
 async function submit(e) {
   e.preventDefault();
