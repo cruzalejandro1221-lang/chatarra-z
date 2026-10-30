@@ -13,6 +13,7 @@ Todo lo que entra en `main` queda en línea en 1-2 minutos: no subas nada roto n
 ```
 index.html, app.css, app.js   app móvil "Giorgio Games" (pestañas Juegos App, Clásicos, Trend, Perfil)
 manifest.webmanifest, sw.js   instalable como app (PWA) y funciona sin conexión
+clasicos/                     Ajedrez, Póker, Batalla Naval y Ludo (bot de 3 niveles y partida online por enlace)
 icons/, media/                iconos de la app; miniatura, clip y tráiler ligero (720p) sacados del render real
 game/                 el juego (lo que se publica)
   index.html          contenedor, HUD y pantallas (los scripts se cargan en orden, sin módulos)
@@ -48,6 +49,14 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 - **Clásicos** y parte de **Juegos App** son "Próximamente": para añadir un juego, crea su carpeta (como `game/`) y enlázalo desde una tarjeta con `data-play`.
 - Al cambiar archivos que la app guarda para uso sin conexión, sube la versión `CACHE` en `sw.js` (`gg-v1` → `gg-v2`).
 - En celulares el juego activa la clase `phone` (`game/js/main.js`) y `game/style.css` agranda la interfaz.
+
+## Clásicos (clasicos/)
+
+- `core.js`: lobby (bot o amigo), conexión online, sesión y revancha. Cada juego se registra con `CG.register(id, { start(ctx) })` y recibe `ctx` (`ctx.root`, `ctx.mode`, `ctx.level` 0-2, `ctx.isHost`, `ctx.send`, `ctx.onmsg`, `ctx.later`, `ctx.finish`). Para añadir un juego: crear `clasicos/<id>.js`, añadirlo a `INFO` en core.js, a `CORE` en sw.js y una tarjeta en index.html.
+- **Online** = WebRTC directo con PeerJS (copia local en `clasicos/vendor/`); solo se usa el servidor gratuito de PeerJS para que los dos se encuentren. Mensajes con número de secuencia y reenvío tras cortes cortos; reconexión automática. Enlace: `?juego=<id>&sala=<CÓDIGO>`. Todo lo que llega de la red se trata como no confiable (validar tipos y rangos; escapar nombres con `CG.esc`).
+- Lógica pura y testeable en `*-engine.js` (ajedrez, póker, batalla, ludo); la interfaz va en `<id>.js`.
+- Tests (Node, sin dependencias): `node tests/chess-perft.cjs`, `node tests/chess-bots.cjs`, `node tests/poker.cjs 150`, `node tests/batalla.cjs`, `node tests/ludo.cjs 200`. Los de bots comprueban que Difícil > Medio > Fácil: correrlos tras tocar un bot.
+- Perfil lee `gg_records` (ganadas/perdidas/empates por juego y modo) que escribe `CG.record`.
 
 ## Cómo trabajar
 

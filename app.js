@@ -25,6 +25,7 @@ function goTo(tab, push) {
 document.addEventListener('click', e => {
   const g = e.target.closest('[data-goto]'); if (g) { goTo(g.dataset.goto); return; }
   const p = e.target.closest('[data-play]'); if (p) openGame();
+  const c = e.target.closest('[data-classic]'); if (c) CG.open(c.dataset.classic);
 });
 $('#topAvatar').addEventListener('click', () => goTo('perfil'));
 
@@ -58,8 +59,19 @@ function renderProfile() {
     ];
     $('#stats').innerHTML = items.map(([v, l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
   }
+  renderRecords();
   $('#soundToggle').checked = s ? s.sound !== false : true;
   $('#musicToggle').checked = s ? s.music !== false : true;
+}
+const CLASSICS = [['ajedrez', 'Ajedrez'], ['poker', 'Póker'], ['batalla', 'Batalla Naval'], ['ludo', 'Ludo']];
+function renderRecords() {
+  const rec = readJSON('gg_records') || {};
+  const fmt = r => r ? `${r.w}G · ${r.l}P · ${r.d}E` : 'sin partidas';
+  const any = CLASSICS.some(([id]) => rec[id]);
+  $('#classicRec').hidden = !any;
+  if (!any) return;
+  $('#recs').innerHTML = CLASSICS.map(([id, name]) => `<div class="rec"><b>${name}</b><span>Bot <em>${fmt((rec[id] || {}).bot)}</em></span><span>Online <em>${fmt((rec[id] || {}).online)}</em></span></div>`).join('')
+    + '<p class="muted small" style="grid-column:1/-1;margin:2px 0 0">G ganadas · P perdidas · E empates</p>';
 }
 function renderHero() {
   const s = readJSON(SAVE_KEY);
@@ -123,5 +135,14 @@ $('#installBtn').addEventListener('click', async () => {
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 
 // ---------------------------------------------------------------- arranque
+window.CGhooks = { onclose: () => { renderProfile(); renderHero(); } };
 renderAvatar(); renderHero();
 goTo(location.hash.slice(1) || 'juegos', false);
+// Enlace de invitación: ?juego=ajedrez&sala=K7QM2
+(() => {
+  const q = new URLSearchParams(location.search), juego = q.get('juego'), sala = q.get('sala');
+  if (!juego || !sala) return;
+  goTo('clasicos', false);
+  history.replaceState(null, '', location.pathname + '#clasicos');
+  CG.join(juego, sala);
+})();
