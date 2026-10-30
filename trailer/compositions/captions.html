@@ -1,0 +1,61 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    .cap { position: absolute; left: 192px; bottom: 132px; }
+    .band { display: inline-block; background: #1a140e; padding: 20px 34px 24px; border-left: 14px solid #ffc229; transform-origin: 0 50%; }
+    .txt { font-family: 'Archivo Black', sans-serif; font-size: 66px; line-height: 1.05; color: #f4ead8; letter-spacing: -0.5px; white-space: nowrap; }
+    .w { display: inline-block; }
+    .w.a { color: #ffc229; }
+  </style>
+  <div id="root" data-composition-id="captions" data-width="1920" data-height="1080">
+    <div id="cap1" class="clip cap" data-start="2.2" data-duration="4.2" data-track-index="2"><div class="band" id="cap1-b"><span class="txt"><span class="w">Solo</span> <span class="w">tienes</span> <span class="w a">piedras</span></span></div></div>
+    <div id="cap2" class="clip cap" data-start="11.4" data-duration="5.2" data-track-index="3"><div class="band" id="cap2-b"><span class="txt"><span class="w">Y</span> <span class="w">ellos</span> <span class="w">nunca</span> <span class="w">dejan</span> <span class="w">de</span> <span class="w a">llegar</span></span></div></div>
+    <div id="cap3" class="clip cap" data-start="29.5" data-duration="3.5" data-track-index="2"><div class="band" id="cap3-b"><span class="txt"><span class="w a">Arrastra</span> <span class="w">hacia</span> <span class="w">atrás</span></span></div></div>
+    <div id="cap4" class="clip cap" data-start="33.0" data-duration="2.6" data-track-index="3"><div class="band" id="cap4-b"><span class="txt"><span class="w a">Suelta</span></span></div></div>
+    <div id="cap5" class="clip cap" data-start="35.6" data-duration="3.8" data-track-index="2"><div class="band" id="cap5-b"><span class="txt"><span class="w">Más</span> <span class="w">arrastre,</span> <span class="w">más</span> <span class="w a">fuerza</span></span></div></div>
+    <div id="cap6" class="clip cap" data-start="39.6" data-duration="4.8" data-track-index="3"><div class="band" id="cap6-b"><span class="txt"><span class="w">A</span> <span class="w">la</span> <span class="w">cabeza:</span> <span class="w a">doble</span> <span class="w">daño</span></span></div></div>
+    <div id="cap7" class="clip cap" data-start="44.6" data-duration="4.8" data-track-index="2"><div class="band" id="cap7-b"><span class="txt"><span class="w">Los</span> <span class="w">cascos</span> <span class="w">hacen</span> <span class="w a">rebotar</span> <span class="w">las</span> <span class="w">piedras</span></span></div></div>
+    <div id="cap8" class="clip cap" data-start="49.6" data-duration="4.1" data-track-index="3"><div class="band" id="cap8-b"><span class="txt"><span class="w">Apunta</span> <span class="w">al</span> <span class="w">cuerpo…</span> <span class="w">o</span> <span class="w">consigue</span> <span class="w">algo</span> <span class="w a">mejor</span></span></div></div>
+    <div id="cap9" class="clip cap" data-start="56.05" data-duration="4.85" data-track-index="2"><div class="band" id="cap9-b"><span class="txt"><span class="w">Frena</span> <span class="w">a</span> <span class="w">la</span> <span class="w">horda</span> <span class="w">mientras</span> <span class="w a">apuntas</span></span></div></div>
+    <div id="cap10" class="clip cap" data-start="63.3" data-duration="4.85" data-track-index="3"><div class="band" id="cap10-b"><span class="txt"><span class="w">Lentos,</span> <span class="w">pero</span> <span class="w a">empujan</span></span></div></div>
+    <div id="cap11" class="clip cap" data-start="70.55" data-duration="4.85" data-track-index="2"><div class="band" id="cap11-b"><span class="txt"><span class="w">Más</span> <span class="w">lejos,</span> <span class="w">más</span> <span class="w a">rápido</span></span></div></div>
+    <div id="cap12" class="clip cap" data-start="77.8" data-duration="4.85" data-track-index="3"><div class="band" id="cap12-b"><span class="txt"><span class="w">Hieren</span> <span class="w">a</span> <span class="w">todo</span> <span class="w">el</span> <span class="w">que</span> <span class="w">las</span> <span class="w a">pisa</span></span></div></div>
+    <div id="cap13" class="clip cap" data-start="85.05" data-duration="4.85" data-track-index="2"><div class="band" id="cap13-b"><span class="txt"><span class="w a">15</span> <span class="w">flechas</span> <span class="w">por</span> <span class="w">nivel.</span> <span class="w">Ni</span> <span class="w">una</span> <span class="w">más</span></span></div></div>
+    <div id="cap14" class="clip cap" data-start="92.3" data-duration="4.85" data-track-index="3"><div class="band" id="cap14-b"><span class="txt"><span class="w">Lanza</span> <span class="w">piedras</span> <span class="w">por</span> <span class="w">su</span> <span class="w a">cuenta</span></span></div></div>
+    <div id="cap15" class="clip cap" data-start="99.55" data-duration="4.85" data-track-index="2"><div class="band" id="cap15-b"><span class="txt"><span class="w">Solo</span> <span class="w a">3.</span> <span class="w">Úsalas</span> <span class="w">en</span> <span class="w">grupos</span></span></div></div>
+    <div id="cap16" class="clip cap" data-start="106.8" data-duration="4.85" data-track-index="3"><div class="band" id="cap16-b"><span class="txt"><span class="w">Solo</span> <span class="w a">2.</span> <span class="w">Que</span> <span class="w">crucen</span> <span class="w">el</span> <span class="w a">fuego</span></span></div></div>
+    <div id="cap17" class="clip cap" data-start="112.3" data-duration="4.4" data-track-index="2"><div class="band" id="cap17-b"><span class="txt"><span class="w">Los</span> <span class="w">zombis</span> <span class="w">sueltan</span> <span class="w a">materiales</span></span></div></div>
+    <div id="cap18" class="clip cap" data-start="126.3" data-duration="6.3" data-track-index="3"><div class="band" id="cap18-b"><span class="txt"><span class="w">Mejora</span> <span class="w">tu</span> <span class="w a">puntería</span> <span class="w">y</span> <span class="w">verás</span> <span class="w">más</span> <span class="w">tiro</span></span></div></div>
+    <div id="cap19" class="clip cap" data-start="137.2" data-duration="4.6" data-track-index="2"><div class="band" id="cap19-b"><span class="txt"><span class="w">Guarda</span> <span class="w">lo</span> <span class="w a">mejor</span> <span class="w">para</span> <span class="w">él</span></span></div></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    function capIn(sel, start, dur) {
+      const band = document.querySelector(sel + ' .band'), ws = document.querySelectorAll(sel + ' .w');
+      tl.fromTo(band, { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: 'expo.out' }, start);
+      tl.fromTo(ws, { opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.13, stagger: 0.08, ease: 'power2.out' }, start + 0.12);
+      tl.to(ws, { opacity: 0, filter: 'blur(6px)', duration: 0.16, stagger: 0.02, ease: 'power2.in' }, start + dur - 0.3);
+      tl.to(band, { scaleX: 0, duration: 0.16, ease: 'power3.in' }, start + dur - 0.18);
+    }
+    capIn("#cap1", 2.2, 4.2);
+    capIn("#cap2", 11.4, 5.2);
+    capIn("#cap3", 29.5, 3.5);
+    capIn("#cap4", 33.0, 2.6);
+    capIn("#cap5", 35.6, 3.8);
+    capIn("#cap6", 39.6, 4.8);
+    capIn("#cap7", 44.6, 4.8);
+    capIn("#cap8", 49.6, 4.1);
+    capIn("#cap9", 56.05, 4.85);
+    capIn("#cap10", 63.3, 4.85);
+    capIn("#cap11", 70.55, 4.85);
+    capIn("#cap12", 77.8, 4.85);
+    capIn("#cap13", 85.05, 4.85);
+    capIn("#cap14", 92.3, 4.85);
+    capIn("#cap15", 99.55, 4.85);
+    capIn("#cap16", 106.8, 4.85);
+    capIn("#cap17", 112.3, 4.4);
+    capIn("#cap18", 126.3, 6.3);
+    capIn("#cap19", 137.2, 4.6);
+    window.__timelines["captions"] = tl;
+  </script>
+</template>

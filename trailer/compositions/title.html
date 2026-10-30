@@ -1,0 +1,42 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    #ti-in { position: absolute; inset: 0; }
+    #ti-flood { position: absolute; inset: 0; background: #ffc229; transform-origin: 0 50%; }
+    .ti-stripe { position: absolute; left: 0; right: 0; height: 40px; background: repeating-linear-gradient(-45deg, #1a140e 0 24px, #ffc229 24px 48px); }
+    #ti-s1 { top: 0; } #ti-s2 { bottom: 0; }
+    #ti-logo { position: absolute; left: 0; right: 0; top: 270px; text-align: center; font-family: 'Archivo Black', sans-serif; font-size: 230px; line-height: 1; letter-spacing: 4px; color: #1a140e; white-space: nowrap; }
+    #ti-logo span { display: inline-block; }
+    #ti-z { color: #c8392b; margin-left: 40px; }
+    #ti-tag { position: absolute; left: 0; right: 0; top: 610px; text-align: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 64px; color: #1a140e; }
+    #ti-tag .w { display: inline-block; }
+    #ti-tag .a { color: #c8392b; }
+    #ti-facts { position: absolute; left: 0; right: 0; top: 610px; text-align: center; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 64px; color: #1a140e; }
+    #ti-facts .w { display: inline-block; }
+    #ti-facts b { font-family: 'Archivo Black', sans-serif; font-weight: 400; color: #c8392b; }
+  </style>
+  <div data-hf-id="hf-wt3v" id="root" data-composition-id="title" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-h0t8" id="ti-in">
+      <div data-hf-id="hf-skjb" id="ti-flood"></div>
+      <div data-hf-id="hf-r29j" id="ti-s1" class="ti-stripe"></div>
+      <div data-hf-id="hf-g6rw" id="ti-s2" class="ti-stripe"></div>
+      <div data-hf-id="hf-x8ds" id="ti-logo"><span data-hf-id="hf-lzk6">C</span><span data-hf-id="hf-j7ez">H</span><span data-hf-id="hf-ms68">A</span><span data-hf-id="hf-efqn">T</span><span data-hf-id="hf-r7dk">A</span><span data-hf-id="hf-f8cp">R</span><span data-hf-id="hf-i48t">R</span><span data-hf-id="hf-q0gh">A</span><span data-hf-id="hf-tsa4" id="ti-z">Z</span></div>
+      <div data-hf-id="hf-bc6n" id="ti-tag"><span data-hf-id="hf-8rku" class="w">Defiende</span> <span data-hf-id="hf-5tyf" class="w">la</span> <span data-hf-id="hf-44ks" class="w">muralla.</span> <span data-hf-id="hf-21e5" class="w">Gana</span> <span data-hf-id="hf-cjs0" class="w">armas.</span> <span data-hf-id="hf-rqaf" class="w a">Cuida</span> <span data-hf-id="hf-795i" class="w a">cada</span> <span data-hf-id="hf-0xn6" class="w a">flecha.</span></div>
+      <div data-hf-id="hf-9wi3" id="ti-facts" data-hold><span data-hf-id="hf-wvk0" class="w"><b data-hf-id="hf-jyhw">10</b> niveles</span> <span data-hf-id="hf-jh5p" class="w">·</span> <span data-hf-id="hf-5d7u" class="w"><b data-hf-id="hf-py6s">9</b> armas y defensas</span> <span data-hf-id="hf-zyk1" class="w">·</span> <span data-hf-id="hf-vjig" class="w"><b data-hf-id="hf-t4n0">1</b> jefe</span></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo('#ti-flood', { scaleX: 0 }, { scaleX: 1, duration: 0.42, ease: 'power2.inOut' }, 0);
+    tl.fromTo('#ti-s1', { xPercent: -100 }, { xPercent: 0, duration: 0.42, ease: 'power2.inOut' }, 0.05);
+    tl.fromTo('#ti-s2', { xPercent: 100 }, { xPercent: 0, duration: 0.42, ease: 'power2.inOut' }, 0.05);
+    tl.fromTo('#ti-logo span:not(#ti-z)', { opacity: 0, scale: 1.7 }, { opacity: 1, scale: 1, duration: 0.16, stagger: 0.07, ease: 'expo.out' }, 0.55);
+    tl.fromTo('#ti-z', { opacity: 0, scale: 2.6, rotation: -14 }, { opacity: 1, scale: 1, rotation: -4, duration: 0.26, ease: 'back.out(2)' }, 1.3);
+    tl.fromTo('#ti-logo', { x: 0 }, { keyframes: [{ x: -14, duration: 0.04 }, { x: 10, duration: 0.04 }, { x: -6, duration: 0.04 }, { x: 0, duration: 0.05 }] }, 1.5);
+    tl.fromTo('#ti-tag .w', { opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.13, stagger: 0.09, ease: 'power2.out' }, 2.3);
+    tl.to('#ti-tag .w', { opacity: 0, filter: 'blur(6px)', duration: 0.16, stagger: 0.03 }, 4.9);
+    tl.fromTo('#ti-facts .w', { opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.14, stagger: 0.12 }, 5.25);
+    tl.fromTo('#ti-in', { x: 0, filter: 'blur(0px)' }, { x: -1920, filter: 'blur(18px)', duration: 0.3, ease: 'power3.in' }, 8.65);
+    window.__timelines["title"] = tl;
+  </script>
+</template>

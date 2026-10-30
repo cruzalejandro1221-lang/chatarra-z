@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Chatarra Z</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv"></canvas>
+  <div id="ui">
+    <div id="hud" class="screen">
+      <div id="hud-res">
+        <div class="res-wall"><span class="ico" data-ico="wall"></span><div class="bar"><i id="h-wall"></i></div><span id="h-wallt"></span></div>
+        <div class="res-mats" id="h-mats"></div>
+      </div>
+      <div id="hud-wave">
+        <div id="h-level"></div>
+        <div class="wavebar"><i id="h-wavefill"></i><div id="h-flags"></div></div>
+      </div>
+      <div id="hud-btns">
+        <button id="b-speed" class="hbtn" title="Velocidad (F)">x1</button>
+        <button id="b-pause" class="hbtn" title="Pausa (Espacio)"><span class="ico" data-ico="pause"></span></button>
+      </div>
+      <button id="b-call" class="callbtn"></button>
+      <div id="cards"></div>
+            <div id="banner"></div>
+      <div id="toast"></div>
+    </div>
+    <div id="s-menu" class="screen"></div>
+    <div id="s-map" class="screen"></div>
+    <div id="s-shop" class="screen"></div>
+    <div id="s-stats" class="screen"></div>
+    <div id="modal"></div>
+  </div>
+</div>
+<script src="js/util.js"></script>
+<script src="js/data.js"></script>
+<script src="js/save.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/art.js"></script>
+<script src="js/art2.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

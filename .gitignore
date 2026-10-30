@@ -1,0 +1,11 @@
+# HyperFrames: artefactos, renders y cachés
+trailer/.hyperframes/
+trailer/renders/
+trailer/.media/
+trailer/.waveform-cache/
+trailer/node_modules/
+trailer/.check.json
+trailer/assets/audio/*.wav
+node_modules/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><title>render audio</title>
+<pre id="log">cargando…</pre>
+<script>window.SAVE = { sound: true, music: true }; window.__LEN = 160; window.__T = 0;</script>
+<script src="audio-offline.js"></script>
+<script>
+(async () => {
+  const log = m => { document.getElementById('log').textContent += '\n' + m; };
+  const events = await (await fetch('sfx-events.json')).json();
+  const mode = new URLSearchParams(location.search).get('mode') || 'all';
+  SFX.init();
+  const ac = SFX._ac();
+  // música del juego: 104 BPM, semicorcheas
+  if (mode !== 'sfx') {
+    const spb = 60 / 104 / 4;
+    for (let i = 0, t = 0.05; t < 158.5; i++, t += spb) {
+      SFX.setIntensity(t >= 20 && t < 145.6 ? 1 : 0);
+      SFX._playStep(i % 64, t);
+    }
+  }
+  if (mode !== 'music') for (const e of events) { window.__T = e.t; try { SFX[e.name](...(e.args || [])); } catch (err) {} }
+  log('renderizando ' + events.length + ' eventos…');
+  const buf = await ac.startRendering();
+  const n = buf.length, ch = [buf.getChannelData(0), buf.getChannelData(1)];
+  const out = new DataView(new ArrayBuffer(44 + n * 4));
+  const wr = (o, s) => { for (let i = 0; i < s.length; i++) out.setUint8(o + i, s.charCodeAt(i)); };
+  wr(0, 'RIFF'); out.setUint32(4, 36 + n * 4, true); wr(8, 'WAVE'); wr(12, 'fmt '); out.setUint32(16, 16, true); out.setUint16(20, 1, true); out.setUint16(22, 2, true);
+  out.setUint32(24, 44100, true); out.setUint32(28, 44100 * 4, true); out.setUint16(32, 4, true); out.setUint16(34, 16, true); wr(36, 'data'); out.setUint32(40, n * 4, true);
+  for (let i = 0, o = 44; i < n; i++) for (let c = 0; c < 2; c++, o += 2) out.setInt16(o, Math.max(-1, Math.min(1, ch[c][i])) * 32767, true);
+  const r = await fetch('/save?name=game-audio-' + mode + '.wav', { method: 'POST', body: out.buffer });
+  log('guardado: ' + r.status);
+  document.title = 'done';
+})();
+</script>

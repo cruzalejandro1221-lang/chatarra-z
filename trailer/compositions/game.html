@@ -1,0 +1,48 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: #1a140e; }
+    #g-canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+    #g-hand { position: absolute; left: 0; top: 0; width: 84px; height: 96px; opacity: 0; z-index: 5; }
+    #g-ammo { position: absolute; right: 120px; bottom: 96px; display: flex; align-items: center; gap: 22px; padding: 18px 30px 18px 26px;
+      background: #1a140e; border: 4px solid #ffc229; border-radius: 18px; opacity: 0; z-index: 4; }
+    #g-ammoN { font-family: 'Archivo Black', sans-serif; font-size: 96px; line-height: 1; color: #ffc229; min-width: 80px; text-align: center; }
+    #g-ammo.low #g-ammoN { color: #ff6a4f; }
+    #g-ammoL { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 34px; color: #f4ead8; max-width: 260px; line-height: 1.1; }
+    #g-mats { position: absolute; left: 110px; top: 96px; display: flex; gap: 16px; opacity: 0; z-index: 4; }
+    #g-mats div { display: flex; align-items: center; gap: 12px; padding: 10px 22px 10px 14px; background: #1a140e; border: 3px solid #3f352a; border-radius: 14px;
+      font-family: 'Archivo Black', sans-serif; font-size: 44px; color: #f4ead8; min-width: 150px; }
+    #g-mats i { width: 44px; height: 44px; border-radius: 6px; display: block; }
+    #g-banner { position: absolute; left: 0; right: 0; top: 300px; text-align: center; opacity: 0; z-index: 4; }
+    #g-bannerT { display: inline-block; font-family: 'Archivo Black', sans-serif; font-size: 120px; color: #fff; letter-spacing: 2px;
+      -webkit-text-stroke: 6px #1a140e; paint-order: stroke fill; }
+    #g-banner.red #g-bannerT { color: #ff6a4f; }
+    #g-banner.gold #g-bannerT { color: #ffc229; }
+    #g-bannerS { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 44px; color: #ffe0b0; -webkit-text-stroke: 3px #1a140e; paint-order: stroke fill; margin-top: 6px; }
+    #g-pips { position: absolute; right: 120px; top: 110px; padding: 22px 30px; background: #1a140e; border: 4px solid #ffc229; border-radius: 18px; opacity: 0; z-index: 4; }
+    #g-pips b { display: block; font-family: 'Archivo Black', sans-serif; font-size: 40px; color: #ffc229; }
+    #g-pips span { display: flex; gap: 10px; margin: 14px 0 10px; }
+    #g-pips i { width: 62px; height: 18px; border-radius: 5px; background: #4a3e31; display: block; }
+    #g-pips i.on { background: #ffc229; }
+    #g-pipsT { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 32px; color: #f4ead8; }
+  </style>
+  <div data-hf-id="hf-uhg9" id="root" data-composition-id="game" data-width="1920" data-height="1080" data-layout-allow-overlap>
+    <canvas data-hf-id="hf-g3n2" id="g-canvas" width="1920" height="1080"></canvas>
+    <svg data-hf-id="hf-cqcw" id="g-hand" viewBox="0 0 84 96" aria-hidden="true">
+      <path data-hf-id="hf-gjkg" d="M30 6c5 0 8 4 8 9v30l4-1V33c0-5 3-8 7-8s7 3 7 8v13l3-.5V38c0-4 3-7 7-7s7 3 7 7v10l2-.3c4-.3 6 2.5 6 6.3v14c0 15-11 26-26 26H45C34 94 27 89 22 81L7 57c-3-4-2-8 1-10s7-1 10 2l5 6V15c0-5 3-9 7-9z" fill="#f4ead8" stroke="#1a140e" stroke-width="5" stroke-linejoin="round"/>
+    </svg>
+    <div data-hf-id="hf-s4rc" id="g-mats">
+      <div data-hf-id="hf-yeow"><i data-hf-id="hf-rlm4" style="background:#b07a42"></i><span data-hf-id="hf-qws0" id="g-m-madera">0</span></div>
+      <div data-hf-id="hf-y7yw"><i data-hf-id="hf-qdr6" style="background:#e6dcc4;border-top:12px solid #e6dcc4;box-shadow:inset 0 -14px 0 #e6dcc4,inset 0 -24px 0 #c8392b"></i><span data-hf-id="hf-iko0" id="g-m-tela">0</span></div>
+      <div data-hf-id="hf-x11t"><i data-hf-id="hf-69cj" style="background:#9aa3ab;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%)"></i><span data-hf-id="hf-zgdc" id="g-m-chatarra">0</span></div>
+    </div>
+    <div data-hf-id="hf-euyf" id="g-ammo"><span data-hf-id="hf-kiiq" id="g-ammoN">0</span><span data-hf-id="hf-fh9a" id="g-ammoL">Flechas</span></div>
+    <div data-hf-id="hf-c8zz" id="g-pips"><b data-hf-id="hf-dnzd">Puntería</b><span data-hf-id="hf-uckh"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><i data-hf-id="hf-ylp6"></i><i data-hf-id="hf-0l8b"></i></span><div data-hf-id="hf-xoo1" id="g-pipsT"></div></div>
+    <div data-hf-id="hf-rfxn" id="g-banner"><div data-hf-id="hf-cfa5" id="g-bannerT"></div><div data-hf-id="hf-v6zu" id="g-bannerS"></div></div>
+  </div>
+  <script>
+    initPlayer(document.getElementById('g-canvas'));
+    const tl = gsap.timeline({ paused: true });
+    tl.to({ v: 0 }, { v: 1, duration: 158.5, ease: 'none' }, 0);
+    window.__timelines["game"] = tl;
+  </script>
+</template>

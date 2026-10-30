@@ -1,0 +1,45 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    #en-soot { position: absolute; inset: 0; background: #1a140e; transform-origin: 100% 50%; }
+    .en-line { position: absolute; left: 192px; font-family: 'Archivo Black', sans-serif; font-size: 128px; line-height: 1; color: #f4ead8; letter-spacing: -1px; }
+    .en-line .w { display: inline-block; }
+    #en-l1 { top: 330px; }
+    #en-l2 { top: 500px; }
+    #en-l2 .a { color: #ffc229; }
+    #en-card { position: absolute; inset: 0; background: #ffc229; transform-origin: 0 50%; }
+    .en-stripe { position: absolute; left: 0; right: 0; height: 40px; background: repeating-linear-gradient(-45deg, #1a140e 0 24px, #ffc229 24px 48px); }
+    #en-s1 { top: 0; } #en-s2 { bottom: 0; }
+    #en-logo { position: absolute; left: 0; right: 0; top: 300px; text-align: center; font-family: 'Archivo Black', sans-serif; font-size: 230px; line-height: 1; letter-spacing: 4px; color: #1a140e; white-space: nowrap; }
+    #en-logo span { display: inline-block; }
+    #en-z { color: #c8392b; margin-left: 40px; }
+    #en-cta { position: absolute; left: 0; right: 0; top: 640px; text-align: center; }
+    #en-cta span { display: inline-block; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 56px; color: #ffc229; background: #1a140e; padding: 18px 44px; border-radius: 18px; }
+  </style>
+  <div data-hf-id="hf-32ii" id="root" data-composition-id="endcard" data-width="1920" data-height="1080">
+    <div data-hf-id="hf-o3di" id="en-soot"></div>
+    <div data-hf-id="hf-1ajd" id="en-l1" class="en-line"><span data-hf-id="hf-s75y" class="w">Empiezas</span> <span data-hf-id="hf-i8r0" class="w">con</span> <span data-hf-id="hf-mb16" class="w">piedras.</span></div>
+    <div data-hf-id="hf-58ne" id="en-l2" class="en-line"><span data-hf-id="hf-p84t" class="w">Terminas</span> <span data-hf-id="hf-02jo" class="w">con</span> <span data-hf-id="hf-aogx" class="w a">fuego.</span></div>
+    <div data-hf-id="hf-yt1f" id="en-card">
+      <div data-hf-id="hf-dx6n" id="en-s1" class="en-stripe"></div>
+      <div data-hf-id="hf-59as" id="en-s2" class="en-stripe"></div>
+      <div data-hf-id="hf-8dbk" id="en-logo"><span data-hf-id="hf-lzk6">C</span><span data-hf-id="hf-j7ez">H</span><span data-hf-id="hf-ms68">A</span><span data-hf-id="hf-efqn">T</span><span data-hf-id="hf-r7dk">A</span><span data-hf-id="hf-f8cp">R</span><span data-hf-id="hf-i48t">R</span><span data-hf-id="hf-q0gh">A</span><span data-hf-id="hf-62ic" id="en-z">Z</span></div>
+      <div data-hf-id="hf-kj55" id="en-cta"><span data-hf-id="hf-h9hh">Mundo 1 · juega gratis en el navegador</span></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo('#en-soot', { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: 'power2.inOut' }, 0);
+    tl.fromTo('#en-l1 .w', { opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.13, stagger: 0.12 }, 0.45);
+    tl.fromTo('#en-l2 .w', { opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.13, stagger: 0.12 }, 1.7);
+    tl.to('#en-l1 .w, #en-l2 .w', { opacity: 0, filter: 'blur(6px)', duration: 0.16, stagger: 0.02 }, 3.45);
+    tl.fromTo('#en-card', { scaleX: 0 }, { scaleX: 1, duration: 0.42, ease: 'power2.inOut' }, 3.7);
+    tl.fromTo('#en-s1', { xPercent: -100 }, { xPercent: 0, duration: 0.42, ease: 'power2.inOut' }, 3.75);
+    tl.fromTo('#en-s2', { xPercent: 100 }, { xPercent: 0, duration: 0.42, ease: 'power2.inOut' }, 3.75);
+    tl.fromTo('#en-logo span:not(#en-z)', { opacity: 0, scale: 1.7 }, { opacity: 1, scale: 1, duration: 0.16, stagger: 0.07, ease: 'expo.out' }, 4.2);
+    tl.fromTo('#en-z', { opacity: 0, scale: 2.6, rotation: -14 }, { opacity: 1, scale: 1, rotation: -4, duration: 0.26, ease: 'back.out(2)' }, 4.95);
+    tl.fromTo('#en-logo', { x: 0 }, { keyframes: [{ x: -14, duration: 0.04 }, { x: 10, duration: 0.04 }, { x: -6, duration: 0.04 }, { x: 0, duration: 0.05 }] }, 5.15);
+    tl.fromTo('#en-cta span', { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'expo.out' }, 5.6);
+    window.__timelines["endcard"] = tl;
+  </script>
+</template>

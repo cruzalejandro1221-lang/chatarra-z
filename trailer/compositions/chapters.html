@@ -1,0 +1,116 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    .card { position: absolute; inset: 0; overflow: hidden; }
+    .inner { position: absolute; inset: 0; }
+    .flood { position: absolute; inset: 0; background: #1a140e; transform-origin: 100% 50%; }
+    .card.y .flood { background: #ffc229; }
+    .stripe { position: absolute; left: 0; right: 0; top: 0; height: 34px; background: repeating-linear-gradient(-45deg, #ffc229 0 24px, #1a140e 24px 48px); }
+    .card.y .stripe { background: repeating-linear-gradient(-45deg, #1a140e 0 24px, #ffc229 24px 48px); }
+    .lvl { position: absolute; left: 230px; top: 250px; }
+    .lvl b { display: block; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 54px; letter-spacing: 8px; color: #a7977f; }
+    .card.y .lvl b { color: #6b4a10; }
+    .roll { height: 400px; overflow: hidden; }
+    .reel span { display: block; height: 400px; font-family: 'Archivo Black', sans-serif; font-size: 400px; line-height: 400px; color: #ffc229; }
+    .card.y .reel span { color: #1a140e; }
+    .item { position: absolute; left: 900px; top: 300px; width: 820px; }
+    .ico { width: 432px; height: 360px; display: block; margin-left: -40px; }
+    .nm { font-family: 'Archivo Black', sans-serif; font-size: 108px; line-height: 1; color: #f4ead8; letter-spacing: -1px; }
+    .card.y .nm { color: #1a140e; }
+    .w { display: inline-block; }
+    .nuevo { position: absolute; left: 330px; top: 30px; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 34px; letter-spacing: 6px; color: #1a140e; background: #ffc229; padding: 6px 18px; border-radius: 6px; }
+    .card.y .nuevo { background: #c8392b; color: #fff; }
+  </style>
+  <div id="root" data-composition-id="chapters" data-width="1920" data-height="1080">
+    <div id="card2" class="clip card" data-start="0.0" data-duration="1.6500000000000001" data-track-index="1">
+      <div class="inner" id="card2-in">
+        <div class="flood"></div>
+        <div class="stripe"></div>
+        <div class="lvl"><b>NIVEL</b><div class="roll" data-layout-allow-overflow><div class="reel" id="card2-reel"><span>1</span><span>1</span><span>1</span><span>2</span></div></div></div>
+        <div class="item"><canvas class="ico" data-icon="tablas" width="288" height="240"></canvas><div class="nm"><span class="w">Barricada</span></div><div class="nuevo">NUEVO</div></div>
+      </div>
+    </div>
+    <div id="card3" class="clip card y" data-start="7.25" data-duration="1.6500000000000001" data-track-index="2">
+      <div class="inner" id="card3-in">
+        <div class="flood"></div>
+        <div class="stripe"></div>
+        <div class="lvl"><b>NIVEL</b><div class="roll" data-layout-allow-overflow><div class="reel" id="card3-reel"><span>1</span><span>1</span><span>2</span><span>3</span></div></div></div>
+        <div class="item"><canvas class="ico" data-icon="palo" width="288" height="240"></canvas><div class="nm"><span class="w">Palos</span></div><div class="nuevo">NUEVO</div></div>
+      </div>
+    </div>
+    <div id="card4" class="clip card" data-start="14.5" data-duration="1.6500000000000001" data-track-index="1">
+      <div class="inner" id="card4-in">
+        <div class="flood"></div>
+        <div class="stripe"></div>
+        <div class="lvl"><b>NIVEL</b><div class="roll" data-layout-allow-overflow><div class="reel" id="card4-reel"><span>1</span><span>2</span><span>3</span><span>4</span></div></div></div>
+        <div class="item"><canvas class="ico" data-icon="honda" width="288" height="240"></canvas><div class="nm"><span class="w">Honda</span></div><div class="nuevo">NUEVO</div></div>
+      </div>
+    </div>
+    <div id="card5" class="clip card y" data-start="21.75" data-duration="1.6500000000000001" data-track-index="2">
+      <div class="inner" id="card5-in">
+        <div class="flood"></div>
+        <div class="stripe"></div>
+        <div class="lvl"><b>NIVEL</b><div class="roll" data-layout-allow-overflow><div class="reel" id="card5-reel"><span>2</span><span>3</span><span>4</span><span>5</span></div></div></div>
+        <div class="item"><canvas class="ico" data-icon="puas" width="288" height="240"></canvas><div class="nm"><span class="w">Púas</span></div><div class="nuevo">NUEVO</div></div>
+      </div>
+    </div>
+    <div id="card6" class="clip card" data-start="29.0" data-duration="1.6500000000000001" data-track-index="1">
+      <div class="inner" id="card6-in">
+        <div class="flood"></div>
+        <div class="stripe"></div>
+        <div class="lvl"><b>NIVEL</b><div class="roll" data-layout-allow-overflow><div class="reel" id="card6-reel"><span>3</span><span>4</span><span>5</span><span>6</span></div></div></div>
+        <div class="item"><canvas class="ico" data-icon="arco" width="288" height="240"></canvas><div class="nm"><span class="w">Arco</span></div><div class="nuevo">NUEVO</div></div>
+      </div>
+    </div>
+    <div id="card7" class="clip card y" data-start="36.25" data-duration="1.6500000000000001" data-track-index="2">
+      <div class="inner" id="card7-in">
+        <div class="flood"></div>
+        <div class="stripe"></div>
+        <div class="lvl"><b>NIVEL</b><div class="roll" data-layout-allow-overflow><div class="reel" id="card7-reel"><span>4</span><span>5</span><span>6</span><span>7</span></div></div></div>
+        <div class="item"><canvas class="ico" data-icon="aliado" width="288" height="240"></canvas><div class="nm"><span class="w">Aliado</span></div><div class="nuevo">NUEVO</div></div>
+      </div>
+    </div>
+    <div id="card8" class="clip card" data-start="43.5" data-duration="1.6500000000000001" data-track-index="1">
+      <div class="inner" id="card8-in">
+        <div class="flood"></div>
+        <div class="stripe"></div>
+        <div class="lvl"><b>NIVEL</b><div class="roll" data-layout-allow-overflow><div class="reel" id="card8-reel"><span>5</span><span>6</span><span>7</span><span>8</span></div></div></div>
+        <div class="item"><canvas class="ico" data-icon="fuego" width="288" height="240"></canvas><div class="nm"><span class="w">Flechas</span> <span class="w">de</span> <span class="w">fuego</span></div><div class="nuevo">NUEVO</div></div>
+      </div>
+    </div>
+    <div id="card9" class="clip card y" data-start="50.75" data-duration="1.6500000000000001" data-track-index="2">
+      <div class="inner" id="card9-in">
+        <div class="flood"></div>
+        <div class="stripe"></div>
+        <div class="lvl"><b>NIVEL</b><div class="roll" data-layout-allow-overflow><div class="reel" id="card9-reel"><span>6</span><span>7</span><span>8</span><span>9</span></div></div></div>
+        <div class="item"><canvas class="ico" data-icon="molotov" width="288" height="240"></canvas><div class="nm"><span class="w">Molotov</span></div><div class="nuevo">NUEVO</div></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.querySelectorAll('#root .ico').forEach(cv => {
+      const g = cv.getContext('2d'), src = makeItemIcon(cv.dataset.icon);
+      g.drawImage(src, 0, 0, cv.width, cv.height);
+    });
+    const tl = gsap.timeline({ paused: true });
+    function cardIn(sel, s) {
+      tl.fromTo(sel + ' .flood', { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: 'power2.inOut' }, s);
+      tl.fromTo(sel + ' .stripe', { xPercent: 100 }, { xPercent: 0, duration: 0.3, ease: 'power2.inOut' }, s);
+      tl.fromTo(sel + ' .lvl', { opacity: 0 }, { opacity: 1, duration: 0.01 }, s + 0.22);
+      tl.fromTo(sel + ' .reel', { yPercent: 0 }, { yPercent: -75, duration: 0.36, ease: 'power3.out' }, s + 0.24);
+      tl.fromTo(sel + ' .ico', { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'back.out(1.6)' }, s + 0.4);
+      tl.fromTo(sel + ' .nm .w', { opacity: 0, filter: 'blur(6px)' }, { opacity: 1, filter: 'blur(0px)', duration: 0.13, stagger: 0.08 }, s + 0.5);
+      tl.fromTo(sel + ' .nuevo', { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.2, ease: 'expo.out' }, s + 0.7);
+      tl.fromTo(sel + ' .inner', { x: 0, filter: 'blur(0px)' }, { x: -1920, filter: 'blur(16px)', duration: 0.26, ease: 'power3.in' }, s + 1.36);
+    }
+    cardIn("#card2", 0.0);
+    cardIn("#card3", 7.25);
+    cardIn("#card4", 14.5);
+    cardIn("#card5", 21.75);
+    cardIn("#card6", 29.0);
+    cardIn("#card7", 36.25);
+    cardIn("#card8", 43.5);
+    cardIn("#card9", 50.75);
+    window.__timelines["chapters"] = tl;
+  </script>
+</template>
