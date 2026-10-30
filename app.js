@@ -181,11 +181,11 @@ const cat = (img, w) => '<img class="sheet-cat" src="media/giorgio/' + img + '.w
 const VIEWS = {
   welcome: () => cat('feliz', 104) + '<h3 id="sheetTitle">¡Bienvenido a Giorgio Games!</h3><p class="lead">Crea tu cuenta para tener perfil, amigos y puntos. Es gratis y toma segundos.</p>' +
     oauthButtons() + '<button type="button" class="btn primary wide0" data-go="signup">Crear cuenta con correo</button><button type="button" class="btn ghost wide0" data-go="login">Ya tengo cuenta</button>' +
-    '<button type="button" class="link center" data-go="guest">Jugar como invitado</button><p class="tiny">Como invitado juegas todo, también con amigos por enlace, pero no se guardan tu perfil ni tus puntos.</p>',
+    '<button type="button" class="link center" data-go="guest">Jugar como invitado</button><p class="tiny">Como invitado juegas todo, también con amigos por enlace, pero no se guardan tu perfil ni tus puntos.</p><p class="tiny"><a href="privacidad.html" target="_blank">Privacidad</a> · <a href="terminos.html" target="_blank">Condiciones</a></p>',
   signup: () => cat('guino') + '<h3 id="sheetTitle">Crear cuenta</h3>' + oauthButtons() + '<form id="authForm" novalidate>' +
     '<label class="fld"><span>Nombre de usuario</span><input id="fUser" autocomplete="username" maxlength="16" spellcheck="false" autocapitalize="none" placeholder="giorgio_fan"><small id="userHint">3 a 16: letras minúsculas, números o _</small></label>' +
     emailField() + pwField('Contraseña', 'new-password') +
-    '<label class="chk"><input type="checkbox" id="fTerms"><span>Tengo 13 años o más y acepto que se guarden mi usuario, correo e historial de partidas.</span></label>' + msgs +
+    '<label class="chk"><input type="checkbox" id="fTerms"><span>Tengo 13 años o más y acepto las <a href="terminos.html" target="_blank">condiciones</a> y la <a href="privacidad.html" target="_blank">privacidad</a>.</span></label>' + msgs +
     '<button class="btn primary wide" id="fSubmit" type="submit">Crear cuenta</button></form><button type="button" class="link center" data-go="login">Ya tengo cuenta</button>',
   login: () => cat('guino') + '<h3 id="sheetTitle">Entrar</h3>' + oauthButtons() + '<form id="authForm" novalidate>' + emailField() + pwField('Contraseña', 'current-password') + msgs +
     '<button class="btn primary wide" id="fSubmit" type="submit">Entrar</button></form><button type="button" class="link center" data-go="reset">¿Olvidaste tu contraseña?</button><button type="button" class="link center" data-go="signup">Crear cuenta nueva</button>',
