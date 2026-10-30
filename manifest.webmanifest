@@ -1,14 +1,14 @@
 {
   "name": "Giorgio Games",
   "short_name": "Giorgio Games",
-  "description": "Juegos para el celular, gratis y sin descargas.",
+  "description": "Los juegos de Giorgio: clásicos contra el bot o contra tus amigos, gratis y sin descargas.",
   "lang": "es",
   "start_url": "./#juegos",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#15101f",
-  "theme_color": "#15101f",
+  "background_color": "#fff6df",
+  "theme_color": "#ffc629",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

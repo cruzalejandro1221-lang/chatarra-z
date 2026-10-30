@@ -7,7 +7,7 @@
   const SUIT = ['♠', '♥', '♦', '♣'], RK = '23456789TJQKA';
   const fmt = n => Number(n).toLocaleString('es');
   const rankCh = c => { const r = RK[c >> 2]; return r === 'T' ? '10' : r; };
-  const card = (c, cls) => '<div class="pcard ' + ((c & 3) === 1 || (c & 3) === 2 ? 'red ' : '') + (cls || '') + '"><b>' + rankCh(c) + '</b><i>' + SUIT[c & 3] + '︎</i></div>';
+  const card = (c, cls) => '<div class="pcard ' + ((c & 3) === 1 || (c & 3) === 2 ? 'red ' : '') + (cls || '') + '"><span class="ci"><b>' + rankCh(c) + '</b><i>' + SUIT[c & 3] + '︎</i></span><i class="cs">' + SUIT[c & 3] + '︎</i></div>';
   const back = cls => '<div class="pcard back ' + (cls || '') + '"></div>';
   CG.ICONS.poker = '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="22" height="31" rx="3.5" fill="currentColor" transform="rotate(-12 17 23)"/><rect x="19" y="9" width="22" height="31" rx="3.5" fill="#f6eedf" stroke="currentColor" stroke-width="2.4" transform="rotate(9 30 24)"/><path d="M30 33.5c-4-3-6-5-6-7.5a3.2 3.2 0 0 1 6-1.4 3.2 3.2 0 0 1 6 1.4c0 2.500-2 4.500-6 7.500z" fill="#ff6a4f" transform="rotate(9 30 24)"/></svg>';
   const STREETS = ['Preflop', 'Flop', 'Turn', 'River', 'Showdown'];
@@ -17,6 +17,7 @@
       const root = ctx.root, online = ctx.online, seat = ctx.isHost ? 0 : 1;
       let eng = null, view = null, rdy = [false, false], pressed = -1, raising = false, raiseTo = 0, finished = false;
       const mem = {};
+      let seen = { hand: -1, board: 0, pot: 0, opp: false };       // para animar y sonar solo lo nuevo
       root.innerHTML = '<div class="pk"><div class="pk-info" id="pkInfo"></div><div class="cg-player" id="pkOpp"></div><div class="pk-cards opp" id="pkOppCards"></div>' +
         '<div class="pk-table"><div class="pk-bet" id="pkBetOpp"></div><div class="pk-board" id="pkBoard"></div><div class="pk-pot" id="pkPot"></div><div class="pk-bet me" id="pkBetMe"></div></div>' +
         '<div class="cg-msg" id="pkMsg"></div><div class="pk-cards me" id="pkMyCards"></div><div class="cg-player" id="pkMe"></div><div class="pk-act" id="pkAct"></div></div>';
@@ -42,12 +43,17 @@
         $('#pkOpp').innerHTML = bar(ctx.rivalName, v.stack[1], false, v.button === 'opp', oppTag);
         $('#pkMe').innerHTML = bar(ctx.name, v.stack[0], true, v.button === 'you', meTag);
         $('#pkOpp').classList.toggle('turn', v.cur === 'opp'); $('#pkMe').classList.toggle('turn', v.cur === 'you');
-        $('#pkOppCards').innerHTML = v.oppHole ? v.oppHole.map(c => card(c, 'show')).join('') : (v.folded[1] ? '' : back() + back());
-        $('#pkMyCards').innerHTML = v.folded[0] ? v.hole.map(c => card(c, 'dim')).join('') : v.hole.map(c => card(c)).join('');
-        let b = ''; for (let i = 0; i < 5; i++) b += v.board[i] !== undefined ? card(v.board[i], 'tab') : '<div class="pcard slot"></div>';
+        const fresh = seen.hand !== v.hand;
+        if (fresh) seen = { hand: v.hand, board: 0, pot: 0, opp: false };
+        const newBoard = v.board.length > seen.board, newOpp = !!v.oppHole && !seen.opp;
+        if (fresh || newBoard || newOpp) CG.fx('deal'); else if (v.pot > seen.pot) CG.fx('click');
+        $('#pkOppCards').innerHTML = v.oppHole ? v.oppHole.map(c => card(c, newOpp ? 'show' : '')).join('') : (v.folded[1] ? '' : back(fresh ? 'show' : '') + back(fresh ? 'show' : ''));
+        $('#pkMyCards').innerHTML = v.folded[0] ? v.hole.map(c => card(c, 'dim')).join('') : v.hole.map(c => card(c, fresh ? 'show' : '')).join('');
+        let b = ''; for (let i = 0; i < 5; i++) b += v.board[i] !== undefined ? card(v.board[i], i >= seen.board ? 'tab' : '') : '<div class="pcard slot"></div>';
+        seen.board = v.board.length; seen.pot = v.pot; seen.opp = !!v.oppHole;
         $('#pkBoard').innerHTML = b;
-        $('#pkPot').textContent = 'Bote ' + fmt(v.pot);
-        $('#pkBetOpp').innerHTML = v.bet[1] ? '<span>' + fmt(v.bet[1]) + '</span>' : ''; $('#pkBetMe').innerHTML = v.bet[0] ? '<span>' + fmt(v.bet[0]) + '</span>' : '';
+        $('#pkPot').innerHTML = '<span class="chips-ico"></span>Bote ' + fmt(v.pot);
+        $('#pkBetOpp').innerHTML = v.bet[1] ? '<span><i class="chips-ico"></i>' + fmt(v.bet[1]) + '</span>' : ''; $('#pkBetMe').innerHTML = v.bet[0] ? '<span><i class="chips-ico"></i>' + fmt(v.bet[0]) + '</span>' : '';
         let m = '';
         if (v.over) {
           const o = v.over;

@@ -31,7 +31,7 @@
       const g = new C.Game(), hist = [];
       let sel = null, targets = new Map(), legal = g.legalMoves(), last = null, over = false, thinking = false, reqId = 0, pending = null, worker = null;
 
-      root.innerHTML = '<div class="ch"><div class="cg-player" id="chTop"></div><div class="ch-board" id="chBoard" role="grid" aria-label="Tablero de ajedrez"></div><div class="cg-player" id="chMe"></div><div class="cg-msg" id="chMsg"></div>' +
+      root.innerHTML = '<div class="ch"><div class="cg-player" id="chTop"></div><div class="ch-wrap"><div class="ch-board" id="chBoard" role="grid" aria-label="Tablero de ajedrez"></div></div><div class="cg-player" id="chMe"></div><div class="cg-msg" id="chMsg"></div>' +
         '<div class="cg-actions"><button class="cg-btn ghost" id="chResign">Rendirme</button>' + (ctx.online ? '<button class="cg-btn ghost" id="chDraw">Proponer tablas</button>' : '') + '</div></div>';
       const $ = s => root.querySelector(s), board = $('#chBoard');
 
@@ -97,10 +97,19 @@
         else if (st.winner === me) { msg('¡Jaque mate!'); ctx.finish({ result: 'win', title: '¡Jaque mate!', sub: 'Ganaste la partida.' }); }
         else { msg('Jaque mate'); ctx.finish({ result: 'loss', title: 'Jaque mate', sub: ctx.rivalName + ' ganó esta vez.' }); }
       }
+      const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function slide(from, to) {
+        const a = board.querySelector('[data-s="' + from + '"]'), b = board.querySelector('[data-s="' + to + '"]'), pc = b && b.querySelector('.pc');
+        if (calm || !a || !pc || !pc.animate) return;
+        const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+        pc.style.zIndex = 5;
+        pc.animate([{ transform: 'translate(' + (ra.left - rb.left) + 'px,' + (ra.top - rb.top) + 'px)' }, { transform: 'none' }], { duration: 190, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => { pc.style.zIndex = ''; };
+      }
       function apply(m) {
-        const d = C.dec(m);
+        const d = C.dec(m), took = !!g.b[d.to] || (d.flags & 1);
         g.play(m); hist.push(C.uci(m)); last = { from: d.from, to: d.to }; sel = null; targets = new Map();
-        legal = g.legalMoves(); draw();
+        legal = g.legalMoves(); draw(); slide(d.from, d.to);
+        CG.fx(took ? 'capture' : 'move');
         const st = g.status();
         if (st.over) { finish(st); return; }
         status();

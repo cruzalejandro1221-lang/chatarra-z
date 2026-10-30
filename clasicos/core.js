@@ -203,7 +203,9 @@ const CG = (() => {
   }
   const body = () => $('#cgBody');
 
-  function record(id, mode, result) {
+  function record(id, mode, result, level) {
+    if (window.GGAccount) try { window.GGAccount.onMatch(id, mode, mode === 'bot' ? level : null, result); } catch (e) { /* la cuenta es opcional */ }
+    fx(result === 'win' ? 'win' : result === 'loss' ? 'lose' : 'notify');
     const all = rd('gg_records', {});
     const g = all[id] || (all[id] = {});
     const r = g[mode] || (g[mode] = { w: 0, l: 0, d: 0 });
@@ -215,7 +217,8 @@ const CG = (() => {
   function showLobby(id) {
     endSession();
     const lv = S.level;
-    body().innerHTML = '<div class="cg-lobby"><div class="cg-gameicon" id="cgIcon"></div><p class="cg-blurb">' + esc(GAME_BLURB[id]) + '</p>' +
+    const art = document.querySelector('[data-classic="' + id + '"] .cl-art');
+    body().innerHTML = '<div class="cg-lobby"><div class="cg-hero ' + TILE[id] + '"><span class="cg-heroart">' + (art ? art.innerHTML : '') + '</span><p>' + esc(GAME_BLURB[id]) + '</p></div>' +
       '<section class="cg-card"><h3>Contra el bot</h3><div class="cg-seg" id="cgSeg">' +
       LEVELS.map((l, i) => '<button data-l="' + i + '" class="' + (i === lv ? 'on' : '') + '"><b>' + l[0] + '</b><span>' + l[1] + '</span></button>').join('') +
       '</div><button class="cg-btn primary" id="cgBot">Jugar contra el bot</button></section>' +
@@ -223,8 +226,7 @@ const CG = (() => {
       '<button class="cg-btn primary" id="cgHost">Crear partida y compartir enlace</button>' +
       '<div class="cg-or"><span>o entra con un código</span></div>' +
       '<div class="cg-join"><input id="cgCode" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CÓDIGO" aria-label="Código de la partida"><button class="cg-btn ghost" id="cgJoin">Unirme</button></div></section></div>';
-    const paintIcon = () => { const ic = document.getElementById('cgIcon'); if (ic && S.id === id && ICONS[id]) ic.innerHTML = ICONS[id]; };
-    paintIcon(); loadGame(id).then(paintIcon).catch(() => { /* el error se muestra al jugar */ });
+    loadGame(id).catch(() => { /* el error se muestra al jugar */ });
     $('#cgSeg').onclick = e => {
       const b = e.target.closest('button'); if (!b) return;
       S.level = +b.dataset.l; wr('gg_level', S.level);
@@ -291,7 +293,7 @@ const CG = (() => {
       finish({ result, title, sub, delay }) {
         if (ctx.finished || ctx.dead) return;
         ctx.finished = true;
-        record(id, ctx.mode, result);
+        record(id, ctx.mode, result, ctx.level);
         ctx.later(() => showResult(ctx, result, title, sub), delay === undefined ? 900 : delay);
       },
     };
@@ -324,7 +326,7 @@ const CG = (() => {
         const c = S.ctx; if (!c || c.dead) return;
         const wasOver = c.finished;
         c.finished = true; closeModal();
-        if (!wasOver) record(id, 'online', 'win');
+        if (!wasOver) record(id, 'online', 'win', null);
         modal({ title: wasOver ? 'Tu amigo se fue' : '¡Ganas!', text: wasOver ? 'Salió de la partida.' : c.rivalName + ' abandonó la partida.', buttons: [{ label: 'Salir', cls: 'primary', fn: () => showLobby(id) }] });
       },
       ongone: () => { const c = S.ctx; if (!c || c.dead) return; c.finished = true; modal({ title: 'Se perdió la conexión', text: 'No logramos reconectar con tu amigo.', buttons: [{ label: 'Salir', cls: 'primary', fn: () => showLobby(id) }] }); },
@@ -377,6 +379,7 @@ const CG = (() => {
     const rematchTxt = ctx.online ? 'Pedir revancha' : 'Revancha';
     const m = modal({
       title: title || (result === 'win' ? '¡Ganaste!' : result === 'loss' ? 'Perdiste' : 'Empate'), text: sub || '',
+      html: '<img class="cg-cat" src="media/giorgio/' + (result === 'win' ? 'feliz' : result === 'loss' ? 'triste' : 'pensando') + '.webp" alt="" width="110" height="140">',
       buttons: [{ label: rematchTxt, cls: 'primary', keep: ctx.online, fn: () => requestRematch() }, { label: 'Salir', cls: 'ghost', fn: () => showLobby(ctx.id) }],
     });
     m.classList.add(result);
@@ -453,6 +456,35 @@ const CG = (() => {
     ludo: 'Saca un 6, recorre el tablero y lleva tus cuatro fichas a casa.',
   };
   const ICONS = {};
+  const TILE = { ajedrez: 't-chess', poker: 't-poker', batalla: 't-sea', ludo: 't-ludo' };
 
-  return { _S: S, register, open, join, load: loadScript, INFO, LEVELS, ICONS, esc, rd, wr, rnd, record, toast, modal, closeModal, linkFor };
+  // Sonidos cortos sintetizados (sin archivos) y vibración leve. Se apagan desde Perfil > Sonidos.
+  let actx = null;
+  const FX = {
+    move: [[520, 0, .05, 'triangle', .18]], click: [[700, 0, .03, 'square', .06]],
+    capture: [[300, 0, .06, 'square', .12], [180, .04, .08, 'triangle', .16]],
+    notify: [[660, 0, .08, 'sine', .14], [880, .09, .1, 'sine', .14]],
+    win: [[523, 0, .1, 'triangle', .16], [659, .1, .1, 'triangle', .16], [784, .2, .1, 'triangle', .16], [1047, .3, .22, 'triangle', .18]],
+    lose: [[392, 0, .14, 'triangle', .14], [330, .15, .14, 'triangle', .14], [262, .3, .3, 'triangle', .14]],
+    deal: [[1200, 0, .025, 'square', .05]], splash: [[240, 0, .16, 'sine', .14]], boom: [[110, 0, .25, 'sawtooth', .16], [70, .05, .3, 'square', .1]],
+    dice: [[900, 0, .02, 'square', .05], [700, .05, .02, 'square', .05], [1000, .1, .02, 'square', .05]],
+  };
+  function fx(name) {
+    if (rd('gg_sound', true) === false) return;
+    const seq = FX[name]; if (!seq) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === 'suspended') actx.resume();
+      const t0 = actx.currentTime + .01;
+      for (const [f, at, dur, type, vol] of seq) {
+        const o = actx.createOscillator(), g = actx.createGain();
+        o.type = type; o.frequency.setValueAtTime(f, t0 + at);
+        g.gain.setValueAtTime(vol, t0 + at); g.gain.exponentialRampToValueAtTime(.0001, t0 + at + dur);
+        o.connect(g).connect(actx.destination); o.start(t0 + at); o.stop(t0 + at + dur + .02);
+      }
+    } catch (e) { /* sin audio */ }
+    if (navigator.vibrate && (name === 'capture' || name === 'boom' || name === 'win')) try { navigator.vibrate(name === 'win' ? [20, 40, 20] : 15); } catch (e) { /* nada */ }
+  }
+
+  return { _S: S, fx, register, open, join, load: loadScript, INFO, LEVELS, ICONS, esc, rd, wr, rnd, record, toast, modal, closeModal, linkFor };
 })();

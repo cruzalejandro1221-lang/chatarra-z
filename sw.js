@@ -1,15 +1,17 @@
 // Service worker de Giorgio Games: funciona sin conexión y se actualiza solo.
 // Código (páginas, scripts, estilos): primero la red, así siempre ves la última versión; si no hay red, la copia guardada.
 // Imágenes y video: primero la copia guardada y se refresca en segundo plano.
-const CACHE = 'gg-v2';
-const CORE = ['./', 'index.html', 'app.css', 'app.js', 'manifest.webmanifest', 'icons/icon-192.png',
+// Las llamadas a Supabase (otro dominio) nunca pasan por aquí: los datos de la cuenta no se guardan en caché.
+const CACHE = 'gg-v3';
+const CORE = ['./', 'index.html', 'app.css', 'app.js', 'config.js', 'account.js', 'vendor/supabase.min.js', 'manifest.webmanifest', 'icons/icon-192.png',
+  'media/giorgio/cara.webp', 'media/giorgio/principal.webp', 'media/giorgio/feliz.webp', 'media/giorgio/triste.webp', 'media/giorgio/pensando.webp', 'media/giorgio/guino.webp', 'media/giorgio/asoma.webp',
   'game/index.html', 'game/style.css', 'game/js/util.js', 'game/js/data.js', 'game/js/save.js', 'game/js/audio.js',
   'game/js/art.js', 'game/js/art2.js', 'game/js/game.js', 'game/js/ui.js', 'game/js/main.js',
   'clasicos/clasicos.css', 'clasicos/core.js', 'clasicos/vendor/peerjs.min.js',
   'clasicos/chess-engine.js', 'clasicos/chess-worker.js', 'clasicos/ajedrez.js',
   'clasicos/poker-engine.js', 'clasicos/poker.js', 'clasicos/batalla-engine.js', 'clasicos/batalla.js',
   'clasicos/ludo-engine.js', 'clasicos/ludo.js',
-  'media/chatarra-thumb.jpg', 'media/chatarra-loop.mp4'];
+  'media/chatarra-thumb.jpg'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));

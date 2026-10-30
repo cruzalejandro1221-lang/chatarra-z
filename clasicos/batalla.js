@@ -90,7 +90,7 @@
         pending = [r, c]; ctx.send({ t: 'shot', r, c }); render();
       }
       function handleResult(r, c, o) {
-        pending = null; fired.push({ r, c, res: o.res });
+        pending = null; fired.push({ r, c, res: o.res }); CG.fx(o.res === 'miss' ? 'splash' : 'boom');
         if (o.res === 'miss') { enemy[r][c] = 1; msg = 'Disparaste a ' + coord(r, c) + ': ¡agua!'; }
         else {
           enemy[r][c] = 2; hitsMade++; msg = 'Disparaste a ' + coord(r, c) + ': ¡tocado!';
@@ -101,6 +101,7 @@
         if (bot) ctx.later(botShoot, 750 + Math.random() * 600);
       }
       function describeIn(r, c, o) {
+        CG.fx(o.res === 'miss' ? 'splash' : 'boom');
         return ctx.rivalName + ' disparó a ' + coord(r, c) + ': ' + (o.res === 'miss' ? '¡agua!' : o.res === 'hit' ? '¡te tocó!' : '¡hundió tu ' + NV.shipDef(o.id).name.toLowerCase() + '!');
       }
       function botShoot() {

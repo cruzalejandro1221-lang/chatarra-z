@@ -2,27 +2,27 @@
 // Ludo: tablero en SVG, dado animado, bot de 3 niveles y partida online (el anfitrión lleva las reglas y tira el dado).
 (() => {
   const LE = window.LudoEngine, Ludo = LE.Ludo, esc = CG.esc;
-  const COLS = ['#e0453a', '#3fae5a', '#f2b51f', '#3d7be0'], LIGHT = ['#f3a59f', '#9fd7ae', '#f8d98a', '#a3bdf0'], NAMES = ['rojo', 'verde', 'amarillo', 'azul'];
+  const COLS = ['#e5383b', '#22a35a', '#ffc629', '#2f6fe4'], LIGHT = ['#f9b4b5', '#a6e3bf', '#ffe49a', '#b3cbf7'], NAMES = ['rojo', 'verde', 'amarillo', 'azul'];
   const PIPS = { 1: [[1, 1]], 2: [[0, 0], [2, 2]], 3: [[0, 0], [1, 1], [2, 2]], 4: [[0, 0], [2, 0], [0, 2], [2, 2]], 5: [[0, 0], [2, 0], [1, 1], [0, 2], [2, 2]], 6: [[0, 0], [2, 0], [0, 1], [2, 1], [0, 2], [2, 2]] };
   const FIN = [[6.85, 7.5, 0, 1], [7.5, 6.85, 1, 0], [8.15, 7.5, 0, 1], [7.5, 8.15, 1, 0]];     // llegada en el centro: x, y, desplazamiento x, y
   CG.ICONS.ludo = '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="6" width="36" height="36" rx="9" fill="currentColor"/><g fill="#15101f"><circle cx="16" cy="16" r="3.4"/><circle cx="32" cy="16" r="3.4"/><circle cx="24" cy="24" r="3.4"/><circle cx="16" cy="32" r="3.4"/><circle cx="32" cy="32" r="3.4"/></g></svg>';
 
-  const diceSvg = n => '<svg viewBox="0 0 60 60" aria-hidden="true"><rect x="3" y="3" width="54" height="54" rx="13" fill="#fffaf0"/>' + (n ? '' : '<text x="30" y="41" text-anchor="middle" font-size="34" font-weight="800" fill="#1a1325" font-family="sans-serif">?</text>') + (PIPS[n] || []).map(([x, y]) => '<circle cx="' + (15 + x * 15) + '" cy="' + (15 + y * 15) + '" r="5.2" fill="#1a1325"/>').join('') + '</svg>';
+  const diceSvg = n => '<svg viewBox="0 0 60 60" aria-hidden="true"><rect x="3" y="3" width="54" height="54" rx="13" fill="#fffaf0"/>' + (n ? '' : '<text x="30" y="41" text-anchor="middle" font-size="34" font-weight="800" fill="#1d2a5b" font-family="sans-serif">?</text>') + (PIPS[n] || []).map(([x, y]) => '<circle cx="' + (15 + x * 15) + '" cy="' + (15 + y * 15) + '" r="5.2" fill="#1d2a5b"/>').join('') + '</svg>';
 
   function boardSvg(active) {
-    let s = '<svg class="ld-svg" viewBox="0 0 15 15" aria-label="Tablero de Ludo"><rect width="15" height="15" rx="0.5" fill="#fbf6ea"/>';
+    let s = '<svg class="ld-svg" viewBox="0 0 15 15" aria-label="Tablero de Ludo"><rect width="15" height="15" rx="0.5" fill="#ffffff"/>';
     LE.BASE.forEach(([bx, by], c) => {
       const on = active.includes(c);
-      s += '<g opacity="' + (on ? 1 : 0.28) + '"><rect x="' + bx + '" y="' + by + '" width="6" height="6" fill="' + COLS[c] + '"/><rect x="' + (bx + 0.8) + '" y="' + (by + 0.8) + '" width="4.4" height="4.4" rx="0.6" fill="#fbf6ea"/>';
+      s += '<g opacity="' + (on ? 1 : 0.28) + '"><rect x="' + bx + '" y="' + by + '" width="6" height="6" fill="' + COLS[c] + '"/><rect x="' + (bx + 0.8) + '" y="' + (by + 0.8) + '" width="4.4" height="4.4" rx="0.6" fill="#ffffff"/>';
       for (const [dx, dy] of [[1.8, 1.8], [4.2, 1.8], [1.8, 4.2], [4.2, 4.2]]) s += '<circle cx="' + (bx + dx) + '" cy="' + (by + dy) + '" r="0.62" fill="' + LIGHT[c] + '"/>';
       s += '</g>';
     });
     LE.TRACK.forEach(([x, y], i) => {
       const start = i % 13 === 0;
-      s += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + (start ? (active.includes(i / 13) ? COLS[i / 13] : LIGHT[i / 13]) : '#fbf6ea') + '" stroke="#cdbf9c" stroke-width="0.06"/>';
-      if (i % 13 === 8) s += '<path transform="translate(' + (x + 0.5) + ' ' + (y + 0.5) + ')" d="M0-0.36L0.1-0.12 0.36-0.1 0.16 0.07 0.22 0.32 0-0.1 -0.22 0.32 -0.16 0.07 -0.36-0.1 -0.1-0.12z" fill="#c4b283"/>';
+      s += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + (start ? (active.includes(i / 13) ? COLS[i / 13] : LIGHT[i / 13]) : '#ffffff') + '" stroke="#d9dce8" stroke-width="0.06"/>';
+      if (i % 13 === 8) s += '<path transform="translate(' + (x + 0.5) + ' ' + (y + 0.5) + ')" d="M0-0.36L0.1-0.12 0.36-0.1 0.16 0.07 0.22 0.32 0-0.1 -0.22 0.32 -0.16 0.07 -0.36-0.1 -0.1-0.12z" fill="#b8bdd0"/>';
     });
-    LE.LANE.forEach((cells, c) => cells.forEach(([x, y]) => { s += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + COLS[c] + '" opacity="' + (active.includes(c) ? 0.9 : 0.3) + '" stroke="#fbf6ea" stroke-width="0.06"/>'; }));
+    LE.LANE.forEach((cells, c) => cells.forEach(([x, y]) => { s += '<rect x="' + x + '" y="' + y + '" width="1" height="1" fill="' + COLS[c] + '" opacity="' + (active.includes(c) ? 0.9 : 0.3) + '" stroke="#ffffff" stroke-width="0.06"/>'; }));
     s += '<polygon points="6,6 7.5,7.5 6,9" fill="' + COLS[0] + '"/><polygon points="6,6 9,6 7.5,7.5" fill="' + COLS[1] + '"/><polygon points="9,6 9,9 7.5,7.5" fill="' + COLS[2] + '"/><polygon points="6,9 9,9 7.5,7.5" fill="' + COLS[3] + '"/>';
     return s + '<g id="ldDest"></g><g id="ldTok"></g></svg>';
   }
@@ -107,7 +107,7 @@
       function animate(done) {
         if (rolling) return;
         rolling = true; renderAll(); let k = 0;
-        const step = () => { diceVal = 1 + Math.floor(Math.random() * 6); dice(); if (++k < 9) ctx.later(step, 65); else if (done) done(); };
+        const step = () => { diceVal = 1 + Math.floor(Math.random() * 6); dice(); if (k % 3 === 0) CG.fx('dice'); if (++k < 9) ctx.later(step, 65); else if (done) done(); };
         step();
       }
       function userRoll() {
@@ -128,8 +128,10 @@
         apply(st);
       }
       function apply(st) {
-        const newRoll = !S || st.n !== S.n;
+        const newRoll = !S || st.n !== S.n, prevLast = S && S.last;
         S = st;
+        const l = st.last;
+        if (l && l !== prevLast && l.ev === 'mueve' && JSON.stringify(l) !== JSON.stringify(prevLast)) CG.fx(l.captured ? 'capture' : 'move');
         if (newRoll && st.dice) diceVal = st.dice;
         rolling = false; renderAll();
         if (st.winner !== null) { if (!finished) { finished = true; const w = st.winner === me; renderAll(); ctx.finish({ result: w ? 'win' : 'loss', title: w ? '¡Ganaste!' : 'Perdiste', sub: w ? 'Tus cuatro fichas llegaron a casa.' : ctx.rivalName + ' llegó primero.', delay: 1200 }); } return; }

@@ -12,6 +12,10 @@ Todo lo que entra en `main` queda en línea en 1-2 minutos: no subas nada roto n
 
 ```
 index.html, app.css, app.js   app móvil "Giorgio Games" (pestañas Juegos App, Clásicos, Trend, Perfil)
+account.js, config.js         cuentas Giorgio con Supabase (config.js solo lleva la URL y la clave pública anon)
+vendor/supabase.min.js        supabase-js 2.45.4 (copia local, sin CDN)
+supabase/migrations/          tablas, reglas RLS y funciones del servidor (fuente de verdad de la base)
+media/giorgio/                el gato Giorgio (mascota del canal Quiz con Giorgio) en varias poses
 manifest.webmanifest, sw.js   instalable como app (PWA) y funciona sin conexión
 clasicos/                     Ajedrez, Póker, Batalla Naval y Ludo (bot de 3 niveles y partida online por enlace)
 icons/, media/                iconos de la app; miniatura, clip y tráiler ligero (720p) sacados del render real
@@ -43,11 +47,16 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 
 ## App Giorgio Games
 
+- **Marca**: Giorgio Games es la marca del canal de YouTube "Quiz con Giorgio" (gato siamés con moño naranja). Colores: amarillo `#ffc629`, azul marino `#1d2a5b`, naranja `#ff7a1a`; letras Lilita One + Nunito; botones con relieve. La app NO tiene temática zombi: Chatarra Z es solo uno de los juegos.
+- **Cuentas** (`account.js`): registro con usuario, correo y contraseña (mín. 10, letras y números). Las contraseñas las procesa Supabase Auth (bcrypt); la app nunca las guarda. Los resultados se mandan a la función `record_match` (valida, limita frecuencia y calcula la XP en el servidor). Nunca pongas la service_role key ni la contraseña de la base en el repo: el repo es público.
+- Cambios de base: añade un archivo nuevo en `supabase/migrations/` (no edites los ya aplicados) y mantén RLS en toda tabla nueva.
+- Copias de seguridad: repo privado `giorgio-games-backups` (pg_dump diario cifrado con GPG, 30 días).
+
 - Pestañas con `#juegos`, `#clasicos`, `#trend`, `#perfil` en la URL.
 - **Perfil** lee el guardado del juego (`localStorage` `chatarraZ_v2`, mismo origen). Si cambias `RANKS` o `OPEN_LEVELS` en `game/js/data.js`, copia el cambio en `app.js`.
 - **Jugar** abre `game/index.html` en un iframe a pantalla completa, intenta bloquear la pantalla en horizontal y en vertical pide girar el teléfono.
-- **Clásicos** y parte de **Juegos App** son "Próximamente": para añadir un juego, crea su carpeta (como `game/`) y enlázalo desde una tarjeta con `data-play`.
-- Al cambiar archivos que la app guarda para uso sin conexión, sube la versión `CACHE` en `sw.js` (`gg-v1` → `gg-v2`).
+- Para añadir un juego propio, crea su carpeta (como `game/`) y enlázalo desde una tarjeta con `data-play`.
+- Al cambiar archivos que la app guarda para uso sin conexión, sube la versión `CACHE` en `sw.js` (ahora `gg-v3`).
 - En celulares el juego activa la clase `phone` (`game/js/main.js`) y `game/style.css` agranda la interfaz.
 
 ## Clásicos (clasicos/)
@@ -56,7 +65,7 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 - **Online** = WebRTC directo con PeerJS (copia local en `clasicos/vendor/`); solo se usa el servidor gratuito de PeerJS para que los dos se encuentren. Mensajes con número de secuencia y reenvío tras cortes cortos; reconexión automática. Enlace: `?juego=<id>&sala=<CÓDIGO>`. Todo lo que llega de la red se trata como no confiable (validar tipos y rangos; escapar nombres con `CG.esc`).
 - Lógica pura y testeable en `*-engine.js` (ajedrez, póker, batalla, ludo); la interfaz va en `<id>.js`.
 - Tests (Node, sin dependencias): `node tests/chess-perft.cjs`, `node tests/chess-bots.cjs`, `node tests/poker.cjs 150`, `node tests/batalla.cjs`, `node tests/ludo.cjs 200`. Los de bots comprueban que Difícil > Medio > Fácil: correrlos tras tocar un bot.
-- Perfil lee `gg_records` (ganadas/perdidas/empates por juego y modo) que escribe `CG.record`.
+- Perfil lee `gg_records` (ganadas/perdidas/empates por juego y modo) que escribe `CG.record`; con cuenta, lee los totales del servidor. `CG.fx(nombre)` da sonidos sintetizados (se apagan con `gg_sound`).
 
 ## Cómo trabajar
 

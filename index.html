@@ -4,122 +4,182 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Giorgio Games</title>
-<meta name="description" content="Juegos para el celular, gratis y sin descargas. Empieza con Chatarra Z.">
-<meta name="theme-color" content="#15101f">
+<meta name="description" content="Los juegos de Giorgio, del canal Quiz con Giorgio: ajedrez, póker, batalla naval, ludo y más. Gratis en tu celular, contra el bot o contra tus amigos.">
+<meta name="theme-color" content="#ffc629">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Giorgio Games">
 <meta property="og:title" content="Giorgio Games">
-<meta property="og:description" content="Juega Chatarra Z: defiende la muralla, gana armas y cuida cada flecha.">
-<meta property="og:image" content="media/chatarra-thumb.jpg">
+<meta property="og:description" content="Juega con Giorgio: clásicos contra el bot o contra tus amigos con un enlace.">
+<meta property="og:image" content="icons/icon-512.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/favicon-64.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="app.css">
 <link rel="stylesheet" href="clasicos/clasicos.css">
 </head>
 <body>
 <div id="app">
   <header class="top">
-    <h1 class="brand">GIORGIO <b>GAMES</b></h1>
-    <button class="avatar" id="topAvatar" aria-label="Abrir perfil"></button>
+    <a class="brand" href="#juegos" data-goto="juegos" aria-label="Giorgio Games, inicio"><img src="media/giorgio/cara.webp" alt="" width="40" height="37"><span>GIORGIO <b>GAMES</b></span></a>
+    <button class="acct" id="topAcct" aria-label="Tu perfil"><span class="avatar" id="topAvatar"></span></button>
   </header>
 
   <main id="views">
     <!-- JUEGOS APP -->
     <section class="view" id="v-juegos" data-tab="juegos">
-      <div class="vhead"><h2>Juegos App</h2><p>Hechos aquí. Gratis, sin descargas.</p></div>
-      <article class="hero">
-        <div class="hero-media">
-          <video id="heroVid" src="media/chatarra-loop.mp4" poster="media/chatarra-thumb.jpg" muted loop playsinline autoplay preload="metadata"></video>
+      <div class="hello">
+        <div class="hello-txt">
+          <h2 id="helloName">¡Hola!</h2>
+          <p>¿A qué jugamos hoy?</p>
+          <button class="btn blue sm" data-goto="clasicos">Ver clásicos</button>
+        </div>
+        <img src="media/giorgio/principal.webp" alt="Giorgio, el gato de Giorgio Games" width="128" height="180">
+      </div>
+
+      <h4 class="sub">Juegos Giorgio</h4>
+      <article class="game">
+        <div class="game-media">
+          <img src="media/chatarra-thumb.jpg" alt="" loading="lazy">
           <span class="badge">NUEVO</span>
         </div>
-        <div class="hero-body">
-          <div class="hero-title"><h3>Chatarra Z</h3><span class="prog" id="heroProg">Nuevo</span></div>
-          <p>Defiende la muralla con piedras. Gana palos, honda, arco, fuego… y cuida cada flecha.</p>
-          <ul class="chips"><li>Estrategia</li><li>Física</li><li>10 niveles</li><li>1 jefe</li></ul>
+        <div class="game-body">
+          <div class="game-title"><h3>Chatarra Z</h3><span class="prog" id="heroProg">Nuevo</span></div>
+          <p>Defensa con física: protege la muralla, consigue mejores armas y administra cada tiro.</p>
+          <ul class="chips"><li>Estrategia</li><li>10 niveles</li><li>Horizontal</li></ul>
           <div class="row">
-            <button class="btn primary" data-play="chatarra">▶ Jugar</button>
+            <button class="btn primary" data-play="chatarra">Jugar</button>
             <button class="btn ghost" data-goto="trend">Ver tráiler</button>
           </div>
         </div>
       </article>
-      <h4 class="sub">Próximamente en la app</h4>
+
+      <h4 class="sub">Muy pronto</h4>
       <div class="hscroll">
-        <div class="soon s-city"><span class="lock" aria-hidden="true"></span><b>Mundo 2</b><span>Chatarra Z · la era de la pólvora</span></div>
-        <div class="soon s-swamp"><span class="lock" aria-hidden="true"></span><b>Mundo 3</b><span>Chatarra Z · la era del metal</span></div>
-        <div class="soon s-new"><span class="lock" aria-hidden="true"></span><b>Juego nuevo</b><span>En desarrollo</span></div>
+        <div class="soon s-quiz"><img src="media/giorgio/pensando.webp" alt="" loading="lazy"><b>Quiz con Giorgio</b><span>Trivia contra tus amigos</span></div>
+        <div class="soon s-word"><img src="media/giorgio/guino.webp" alt="" loading="lazy"><b>Palabras</b><span>Adivina la palabra del día</span></div>
+        <div class="soon s-z"><b>Chatarra Z · Mundo 2</b><span>La era de la pólvora</span></div>
       </div>
     </section>
 
     <!-- CLÁSICOS -->
     <section class="view" id="v-clasicos" data-tab="clasicos" hidden>
-      <div class="vhead"><h2>Clásicos</h2><p>Juega contra el bot o reta a un amigo con un enlace.</p></div>
-      <div class="cl-list">
-        <button class="cl-card" data-classic="ajedrez"><span class="cl-ico"><svg viewBox="0 0 45 45" fill="currentColor" aria-hidden="true"><path d="M13.5 39.5c-.5-9 1.5-14.8 6-18.5-2-.3-3.8.2-5.5 1.6L12.5 19c2.5-3 5-5.5 6.5-9l.5-3.2 3.7 2c9-.5 16 6.7 15.3 19.2-.2 3.4-.5 6.8-.5 9.5z"/><circle cx="19.5" cy="14.5" r="1.4" fill="#15101f"/></svg></span><span class="cl-txt"><b>Ajedrez</b><span>Estrategia pura, jaque mate incluido</span></span><span class="cl-tags"><i>Bot</i><i>Online</i></span></button>
-        <button class="cl-card" data-classic="poker"><span class="cl-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="8" width="22" height="31" rx="3.5" fill="currentColor" transform="rotate(-12 17 23)"/><rect x="19" y="9" width="22" height="31" rx="3.5" fill="#f6eedf" stroke="currentColor" stroke-width="2.4" transform="rotate(9 30 24)"/><path d="M30 33.500c-4-3-6-5-6-7.500a3.200 3.200 0 0 1 6-1.400 3.200 3.200 0 0 1 6 1.400c0 2.500-2 4.500-6 7.500z" fill="#ff6a4f" transform="rotate(9 30 24)"/></svg></span><span class="cl-txt"><b>Póker</b><span>Texas Hold’em, uno contra uno</span></span><span class="cl-tags"><i>Bot</i><i>Online</i></span></button>
-        <button class="cl-card" data-classic="batalla"><span class="cl-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M4 31h40l-6.500 9H11z" fill="currentColor"/><path d="M13 31v-9h13v9M26 31v-6h9v6" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M19.500 22v-7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M4 44c5 0 5-2.500 10-2.500S19 44 24 44s5-2.500 10-2.500S39 44 44 44" fill="none" stroke="#ff6a4f" stroke-width="2.600" stroke-linecap="round"/></svg></span><span class="cl-txt"><b>Batalla Naval</b><span>Esconde tu flota y hunde la rival</span></span><span class="cl-tags"><i>Bot</i><i>Online</i></span></button>
-        <button class="cl-card" data-classic="ludo"><span class="cl-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="6" width="36" height="36" rx="9" fill="currentColor"/><g fill="#15101f"><circle cx="16" cy="16" r="3.400"/><circle cx="32" cy="16" r="3.400"/><circle cx="24" cy="24" r="3.400"/><circle cx="16" cy="32" r="3.400"/><circle cx="32" cy="32" r="3.400"/></g></svg></span><span class="cl-txt"><b>Ludo</b><span>Saca un 6 y lleva tus fichas a casa</span></span><span class="cl-tags"><i>Bot</i><i>Online</i></span></button>
+      <div class="vhead"><h2>Clásicos</h2><p>Contra el bot en 3 niveles o contra un amigo con un enlace.</p></div>
+      <div class="cl-grid">
+        <button class="cl-tile t-chess" data-classic="ajedrez"><span class="cl-art"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="57" rx="20" ry="4" fill="#0003"/><path d="M19 54c-.7-12 2-19.7 8-24.7-2.7-.4-5 .3-7.300 2.100L18.300 27c3.300-4 6.700-7.300 8.700-12l.7-4.300 4.900 2.700c12-.7 21.300 8.900 20.400 25.600-.3 4.500-.7 9-.7 12.700z" fill="#fff" stroke="#1d2a5b" stroke-width="2.600" stroke-linejoin="round"/><circle cx="27" cy="20.500" r="1.900" fill="#1d2a5b"/><path d="M34 18c6.500 2 10.500 8.500 11 18" fill="none" stroke="#1d2a5b" stroke-width="2.200" stroke-linecap="round"/></svg></span><b>Ajedrez</b><span>Jaque mate</span></button>
+        <button class="cl-tile t-poker" data-classic="poker"><span class="cl-art"><svg viewBox="0 0 64 64" aria-hidden="true"><g transform="rotate(-13 22 34)"><rect x="9" y="14" width="26" height="37" rx="4" fill="#fff" stroke="#1d2a5b" stroke-width="2.400"/><text x="14" y="26" font-family="Nunito,sans-serif" font-weight="900" font-size="10" fill="#1d2a5b">A</text><path d="M22 30c-4 4-6 6-6 8.300 0 2.200 2.600 3.300 4.700 1.700-.4 2-1 3-2 4h6.600c-1-1-1.600-2-2-4 2.100 1.600 4.700.5 4.700-1.700 0-2.300-2-4.300-6-8.300z" fill="#1d2a5b"/></g><g transform="rotate(11 42 32)"><rect x="29" y="12" width="26" height="37" rx="4" fill="#fff" stroke="#1d2a5b" stroke-width="2.400"/><text x="34" y="24" font-family="Nunito,sans-serif" font-weight="900" font-size="10" fill="#e5383b">K</text><path d="M42 41c-5-3.800-7.500-6.300-7.500-9.400a4 4 0 0 1 7.500-1.800 4 4 0 0 1 7.500 1.800c0 3.100-2.500 5.600-7.500 9.400z" fill="#e5383b"/></g></svg></span><b>Póker</b><span>Texas Hold’em</span></button>
+        <button class="cl-tile t-sea" data-classic="batalla"><span class="cl-art"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 40h48l-7 10H15z" fill="#fff" stroke="#1d2a5b" stroke-width="2.600" stroke-linejoin="round"/><path d="M18 40V30h15v10M33 40v-7h10v7" fill="#ffc629" stroke="#1d2a5b" stroke-width="2.600" stroke-linejoin="round"/><path d="M25 30v-9" stroke="#1d2a5b" stroke-width="2.600" stroke-linecap="round"/><path d="M25 21l8 3-8 3" fill="#ff7a1a" stroke="#1d2a5b" stroke-width="2" stroke-linejoin="round"/><path d="M6 56c5 0 5-3 10.400-3s5.300 3 10.600 3 5.300-3 10.600-3 5.300 3 10.600 3 5.400-3 9.800-3" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></span><b>Batalla Naval</b><span>Hunde la flota</span></button>
+        <button class="cl-tile t-ludo" data-classic="ludo"><span class="cl-art"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="11" y="11" width="42" height="42" rx="11" fill="#fff" stroke="#1d2a5b" stroke-width="2.600" transform="rotate(-8 32 32)"/><g fill="#1d2a5b" transform="rotate(-8 32 32)"><circle cx="22" cy="22" r="4"/><circle cx="42" cy="22" r="4"/><circle cx="32" cy="32" r="4" fill="#e5383b"/><circle cx="22" cy="42" r="4"/><circle cx="42" cy="42" r="4"/></g></svg></span><b>Ludo</b><span>Saca un 6</span></button>
       </div>
+      <p class="pill-note"><span class="dot"></span>Online: tu amigo entra con el enlace, sin instalar nada.</p>
       <h4 class="sub">Próximamente</h4>
-      <div class="cl-soon"><span>Serpiente</span><span>Bloques</span><span>Memoria</span><span>Minas</span><span>Ladrillos</span><span>Tres en raya</span></div>
+      <div class="cl-soon"><span>Damas</span><span>Dominó</span><span>Cuatro en raya</span><span>Memoria</span><span>Sudoku</span><span>Tres en raya</span></div>
     </section>
 
     <!-- TREND -->
     <section class="view" id="v-trend" data-tab="trend" hidden>
-      <div class="vhead"><h2>Trend</h2><p>Lo nuevo en Giorgio Games.</p></div>
+      <div class="vhead"><h2>Trend</h2><p>Lo nuevo de Giorgio.</p></div>
+      <a class="yt" href="https://www.youtube.com/results?search_query=Quiz+con+Giorgio" target="_blank" rel="noopener">
+        <img src="media/giorgio/feliz.webp" alt="" loading="lazy">
+        <div><span class="tag red">YOUTUBE</span><b>Quiz con Giorgio</b><p>Preguntas, retos y trivias nuevas cada semana.</p><span class="link">Ver el canal ›</span></div>
+      </a>
+      <section class="top-card" id="topCard" hidden>
+        <div class="tc-head"><h3>Top jugadores</h3><span class="muted small">por victorias</span></div>
+        <ol class="toplist" id="topList"></ol>
+      </section>
       <article class="trailer">
         <video id="trailerVid" src="media/chatarra-trailer-720.mp4" poster="media/chatarra-trailer-poster.jpg" controls playsinline preload="none"></video>
-        <div class="tbody"><span class="tag">TRÁILER OFICIAL</span><h3>Chatarra Z: de piedras a fuego</h3><p>2:38 · Mundo 1 completo</p></div>
+        <div class="tbody"><span class="tag">TRÁILER</span><h3>Chatarra Z: de piedras a fuego</h3><p>2:38 · uno de los juegos de Giorgio Games</p></div>
       </article>
-      <ul class="feed">
-        <li><img src="media/chatarra-thumb.jpg" alt="" loading="lazy"><div><span class="tag">ESTRENO</span><b>Chatarra Z ya se puede jugar</b><p>10 niveles, 9 armas y defensas y el jefe Mamut. Gratis, en el navegador.</p><button class="link" data-play="chatarra">Jugar ahora ›</button></div></li>
-        <li><img src="media/chatarra-arco.jpg" alt="" loading="lazy"><div><span class="tag">CONSEJO</span><b>Apunta a la cabeza</b><p>Un golpe en la cabeza hace el doble de daño. Las piedras rebotan en los cascos: ahí usa flechas.</p></div></li>
-        <li class="noimg"><div><span class="tag soft">EN CAMINO</span><b>Mundo 2: Ciudad Apagada</b><p>La era de la pólvora: ballesta, dinamita y nuevos aliados.</p></div></li>
-      </ul>
       <button class="btn ghost wide" id="shareBtn">Compartir Giorgio Games</button>
     </section>
 
     <!-- PERFIL -->
     <section class="view" id="v-perfil" data-tab="perfil" hidden>
-      <div class="pcard">
-        <button class="avatar big" id="bigAvatar" aria-label="Cambiar nombre"></button>
-        <div class="pname"><input id="nameInput" maxlength="18" autocomplete="off" aria-label="Tu nombre"><span id="rankName">Novato</span></div>
+      <div class="join-card" id="guestCard">
+        <img src="media/giorgio/asoma.webp" alt="" width="180" height="117">
+        <h3>Crea tu cuenta Giorgio</h3>
+        <p>Guarda tu historial en cualquier celular, sube de nivel y aparece en el top.</p>
+        <div class="join-btns"><button class="btn primary" id="openSignup">Crear cuenta</button><button class="btn ghost" id="openLogin">Ya tengo cuenta</button></div>
+        <p class="muted small" id="acctOff" hidden>Las cuentas se activan muy pronto. Mientras tanto tu progreso se guarda en este celular.</p>
       </div>
-      <div class="rankbar"><div class="r1"><b>Chatarra Z</b><span id="powerTxt">Poder 0</span></div><div class="bar"><i id="powerBar"></i></div><span id="nextRank" class="muted"></span></div>
+      <div class="me-card" id="meCard" hidden>
+        <div class="me-top">
+          <button class="avatar big" id="bigAvatar" aria-label="Cambiar avatar"></button>
+          <div class="me-id"><b id="meName"></b><span id="meSince" class="small"></span></div>
+        </div>
+        <div class="lvl"><div class="lvl-row"><b id="meLevel">Nivel 1</b><span id="meXp" class="small"></span></div><div class="bar"><i id="xpBar"></i></div></div>
+      </div>
+      <div class="kpis" id="kpis"></div>
+
+      <h4 class="sub">Clásicos</h4>
+      <div class="recs" id="recs"></div>
+
+      <div id="histWrap" hidden>
+        <h4 class="sub">Últimas partidas</h4>
+        <ul class="hist" id="hist"></ul>
+      </div>
+
+      <h4 class="sub">Chatarra Z</h4>
+      <div class="rankbar"><div class="r1"><b id="rankName">Novato</b><span id="powerTxt">Poder 0</span></div><div class="bar"><i id="powerBar"></i></div><span id="nextRank" class="muted small"></span></div>
       <div class="stats" id="stats"></div>
-      <div class="empty" id="emptyStats" hidden><p>Juega tu primera partida de Chatarra Z para ver tus estadísticas aquí.</p><button class="btn primary" data-play="chatarra">▶ Jugar</button></div>
-      <div id="classicRec" hidden><h4 class="sub">Clásicos</h4><div class="recs" id="recs"></div></div>
+
       <h4 class="sub">Ajustes</h4>
       <div class="settings">
-        <label class="set"><span>Sonido del juego</span><input type="checkbox" id="soundToggle" class="sw"></label>
-        <label class="set"><span>Música del juego</span><input type="checkbox" id="musicToggle" class="sw"></label>
-        <button class="set btnset" id="installBtn"><span>Instalar como app</span><em id="installHint">›</em></button>
+        <label class="set"><span>Nombre en partidas</span><input id="nameInput" maxlength="16" autocomplete="nickname" aria-label="Tu nombre en partidas"></label>
+        <label class="set"><span>Sonidos</span><input type="checkbox" id="soundToggle" class="sw"></label>
+        <button class="set btnset" id="installBtn"><span>Instalar como app</span><em>›</em></button>
+        <button class="set btnset" id="logoutBtn" hidden><span>Cerrar sesión</span><em>›</em></button>
+        <button class="set btnset danger" id="deleteBtn" hidden><span>Eliminar mi cuenta</span><em>›</em></button>
       </div>
       <p class="muted small" id="installHelp" hidden></p>
-      <p class="muted small foot">Tu progreso se guarda en este dispositivo.</p>
+      <p class="muted small foot" id="footNote">Sin cuenta, tu progreso se guarda solo en este dispositivo.</p>
     </section>
   </main>
 
   <nav class="tabs" aria-label="Secciones">
-    <button class="tab on" data-goto="juegos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10a5 5 0 015 5v1a4 4 0 01-7 2.6L14 15h-4l-1 1.6A4 4 0 012 14v-1a5 5 0 015-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 11v4M5 13h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16.5" cy="12" r="1.2" fill="currentColor"/><circle cx="18.5" cy="14.5" r="1.2" fill="currentColor"/></svg><span>Juegos App</span></button>
-    <button class="tab" data-goto="clasicos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="7" y="6" width="10" height="6" rx="1" fill="currentColor" opacity=".35"/><path d="M8 16h3M9.5 14.5v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="16" r="1.4" fill="currentColor"/></svg><span>Clásicos</span></button>
-    <button class="tab" data-goto="trend"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 01-8 0c0-1.6.7-2.7 1.5-3.5.2 1.4.9 2.2 1.8 2.5C11 8 11 5.5 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6 15a6 6 0 0012 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Trend</span></button>
-    <button class="tab" data-goto="perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.5-4 4.5-5.5 8-5.5s6.5 1.5 8 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Perfil</span></button>
+    <button class="tab on" data-goto="juegos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10a5 5 0 015 5v1a4 4 0 01-7 2.6L14 15h-4l-1 1.6A4 4 0 012 14v-1a5 5 0 015-5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M7 11v4M5 13h4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="16.5" cy="12" r="1.3" fill="currentColor"/><circle cx="18.5" cy="14.5" r="1.3" fill="currentColor"/></svg><span>Juegos App</span></button>
+    <button class="tab" data-goto="clasicos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="17" cy="17" r="3.6" fill="none" stroke="currentColor" stroke-width="2.2"/></svg><span>Clásicos</span></button>
+    <button class="tab" data-goto="trend"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 01-8 0c0-1.6.7-2.7 1.5-3.5.2 1.4.9 2.2 1.8 2.5C11 8 11 5.5 12 3z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 15a6 6 0 0012 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Trend</span></button>
+    <button class="tab" data-goto="perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4 20c1.5-4 4.5-5.5 8-5.5s6.5 1.5 8 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>Perfil</span></button>
   </nav>
 </div>
 
-<div id="play" hidden>
-  <iframe id="frame" title="Chatarra Z" allow="fullscreen; autoplay"></iframe>
-  <button id="closePlay" aria-label="Salir del juego">✕</button>
-  <div id="rotate"><div class="phone-ico" aria-hidden="true"></div><b>Gira tu teléfono</b><span>Chatarra Z se juega en horizontal</span></div>
+<!-- hoja de cuenta: crear, entrar, recuperar, nueva contraseña -->
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <button class="sheet-x" id="sheetX" type="button" aria-label="Cerrar">✕</button>
+    <img class="sheet-cat" src="media/giorgio/guino.webp" alt="" width="94" height="96">
+    <h3 id="sheetTitle">Crear cuenta</h3>
+    <div class="seg2" id="sheetTabs"><button type="button" data-mode="signup" class="on">Crear cuenta</button><button type="button" data-mode="login">Entrar</button></div>
+    <form id="authForm" novalidate>
+      <label class="fld" data-for="signup"><span>Nombre de usuario</span><input id="fUser" autocomplete="username" maxlength="16" spellcheck="false" autocapitalize="none" placeholder="giorgio_fan"><small id="userHint">3 a 16: letras, números o _</small></label>
+      <label class="fld" data-for="signup login reset"><span>Correo</span><input id="fEmail" type="email" autocomplete="email" inputmode="email" maxlength="120" placeholder="tu@correo.com"></label>
+      <label class="fld" data-for="signup login newpw"><span id="pwLabel">Contraseña</span><span class="pw"><input id="fPass" type="password" autocomplete="new-password" maxlength="72"><button type="button" class="eye" id="eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg></button></span>
+        <span class="meter" data-for="signup newpw"><i id="pwBar"></i></span><small id="pwHint" data-for="signup newpw">Mínimo 10 caracteres, con letras y números.</small></label>
+      <label class="chk" data-for="signup"><input type="checkbox" id="fTerms"><span>Tengo 13 años o más y acepto que se guarden mi usuario, correo e historial de partidas.</span></label>
+      <p class="ferr" id="fErr" role="alert" hidden></p>
+      <p class="fok" id="fOk" role="status" hidden></p>
+      <button class="btn primary wide" id="fSubmit" type="submit">Crear cuenta</button>
+      <button class="link center" type="button" id="forgot" data-for="login">¿Olvidaste tu contraseña?</button>
+    </form>
+  </div>
 </div>
 
+<div id="play" hidden>
+  <iframe id="frame" title="Juego" allow="fullscreen; autoplay"></iframe>
+  <button id="closePlay" aria-label="Salir del juego">✕</button>
+  <div id="rotate"><div class="phone-ico" aria-hidden="true"></div><b>Gira tu teléfono</b><span>Este juego se juega en horizontal</span></div>
+</div>
+
+<script src="config.js"></script>
+<script src="vendor/supabase.min.js"></script>
 <script src="clasicos/core.js"></script>
+<script src="account.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
