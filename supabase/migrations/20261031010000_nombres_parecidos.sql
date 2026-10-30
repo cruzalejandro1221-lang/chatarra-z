@@ -4,19 +4,19 @@
 -- Así "coronel1221", "coronel_1221", "c0ronel1221" y "coronell1221" cuentan como el mismo nombre.
 -- También se reservan nombres oficiales para que nadie se haga pasar por la marca.
 
-create function public.username_key(p text) returns text
+create or replace function public.username_key(p text) returns text
 language sql immutable parallel safe set search_path = '' as $$
   select regexp_replace(translate(replace(lower(p), '_', ''), '013457890i', 'oleastbgol'), '(.)\1+', '\1', 'g');
 $$;
 
-create function public.username_reserved(p text) returns boolean
+create or replace function public.username_reserved(p text) returns boolean
 language sql immutable parallel safe set search_path = '' as $$
   select public.username_key(p) in (select public.username_key(x) from unnest(array[
     'giorgio', 'giorgiogames', 'giorgio_games', 'quizcongiorgio', 'admin', 'administrador', 'soporte', 'support',
     'moderador', 'mod', 'staff', 'oficial', 'official', 'sistema', 'system', 'root', 'invitado', 'jugador', 'bot']) as x);
 $$;
 
-create unique index profiles_username_key on public.profiles (public.username_key(username));
+create unique index if not exists profiles_username_similar on public.profiles (public.username_key(username));
 
 -- ¿Está libre? (ni igual, ni parecido, ni reservado)
 create or replace function public.username_available(p_username text) returns boolean
