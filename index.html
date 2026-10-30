@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Giorgio Games</title>
+<meta name="description" content="Juegos para el celular, gratis y sin descargas. Empieza con Chatarra Z.">
+<meta name="theme-color" content="#15101f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Giorgio Games">
+<meta property="og:title" content="Giorgio Games">
+<meta property="og:description" content="Juega Chatarra Z: defiende la muralla, gana armas y cuida cada flecha.">
+<meta property="og:image" content="media/chatarra-thumb.jpg">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <h1 class="brand">GIORGIO <b>GAMES</b></h1>
+    <button class="avatar" id="topAvatar" aria-label="Abrir perfil"></button>
+  </header>
+
+  <main id="views">
+    <!-- JUEGOS APP -->
+    <section class="view" id="v-juegos" data-tab="juegos">
+      <div class="vhead"><h2>Juegos App</h2><p>Hechos aquí. Gratis, sin descargas.</p></div>
+      <article class="hero">
+        <div class="hero-media">
+          <video id="heroVid" src="media/chatarra-loop.mp4" poster="media/chatarra-thumb.jpg" muted loop playsinline autoplay preload="metadata"></video>
+          <span class="badge">NUEVO</span>
+        </div>
+        <div class="hero-body">
+          <div class="hero-title"><h3>Chatarra Z</h3><span class="prog" id="heroProg">Nuevo</span></div>
+          <p>Defiende la muralla con piedras. Gana palos, honda, arco, fuego… y cuida cada flecha.</p>
+          <ul class="chips"><li>Estrategia</li><li>Física</li><li>10 niveles</li><li>1 jefe</li></ul>
+          <div class="row">
+            <button class="btn primary" data-play="chatarra">▶ Jugar</button>
+            <button class="btn ghost" data-goto="trend">Ver tráiler</button>
+          </div>
+        </div>
+      </article>
+      <h4 class="sub">Próximamente en la app</h4>
+      <div class="hscroll">
+        <div class="soon s-city"><span class="lock" aria-hidden="true"></span><b>Mundo 2</b><span>Chatarra Z · la era de la pólvora</span></div>
+        <div class="soon s-swamp"><span class="lock" aria-hidden="true"></span><b>Mundo 3</b><span>Chatarra Z · la era del metal</span></div>
+        <div class="soon s-new"><span class="lock" aria-hidden="true"></span><b>Juego nuevo</b><span>En desarrollo</span></div>
+      </div>
+    </section>
+
+    <!-- CLÁSICOS -->
+    <section class="view" id="v-clasicos" data-tab="clasicos" hidden>
+      <div class="vhead"><h2>Clásicos</h2><p>Juegos de toda la vida, rehechos para el celular. Llegan pronto.</p></div>
+      <div class="grid">
+        <div class="classic"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 34h14V20h12V10" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="10" r="4" fill="#ff6a4f"/></svg><b>Serpiente</b><span>Próximamente</span></div>
+        <div class="classic"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="currentColor"><rect x="6" y="26" width="10" height="10" rx="2"/><rect x="18" y="26" width="10" height="10" rx="2"/><rect x="18" y="14" width="10" height="10" rx="2"/><rect x="30" y="26" width="10" height="10" rx="2" fill="#ff6a4f"/></g></svg><b>Bloques</b><span>Próximamente</span></div>
+        <div class="classic"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="10" width="16" height="22" rx="3" fill="currentColor"/><rect x="26" y="16" width="16" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="14" cy="21" r="3" fill="#15101f"/></svg><b>Memoria</b><span>Próximamente</span></div>
+        <div class="classic"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="26" r="11" fill="currentColor"/><path d="M24 15V7M24 7l5-3" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="29" cy="4" r="2.5" fill="#ff6a4f"/></svg><b>Minas</b><span>Próximamente</span></div>
+        <div class="classic"><svg viewBox="0 0 48 48" aria-hidden="true"><g fill="currentColor"><rect x="5" y="8" width="11" height="6" rx="1"/><rect x="18" y="8" width="11" height="6" rx="1"/><rect x="31" y="8" width="11" height="6" rx="1" fill="#ff6a4f"/><rect x="5" y="16" width="11" height="6" rx="1"/><rect x="16" y="38" width="16" height="4" rx="2"/></g><circle cx="27" cy="30" r="3" fill="currentColor"/></svg><b>Ladrillos</b><span>Próximamente</span></div>
+        <div class="classic"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M18 6v36M30 6v36M6 18h36M6 30h36" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M9 9l6 6M15 9l-6 6" stroke="#ff6a4f" stroke-width="3" stroke-linecap="round"/><circle cx="36" cy="36" r="4" fill="none" stroke="currentColor" stroke-width="3"/></svg><b>Tres en raya</b><span>Próximamente</span></div>
+      </div>
+    </section>
+
+    <!-- TREND -->
+    <section class="view" id="v-trend" data-tab="trend" hidden>
+      <div class="vhead"><h2>Trend</h2><p>Lo nuevo en Giorgio Games.</p></div>
+      <article class="trailer">
+        <video id="trailerVid" src="media/chatarra-trailer-720.mp4" poster="media/chatarra-trailer-poster.jpg" controls playsinline preload="none"></video>
+        <div class="tbody"><span class="tag">TRÁILER OFICIAL</span><h3>Chatarra Z: de piedras a fuego</h3><p>2:38 · Mundo 1 completo</p></div>
+      </article>
+      <ul class="feed">
+        <li><img src="media/chatarra-thumb.jpg" alt="" loading="lazy"><div><span class="tag">ESTRENO</span><b>Chatarra Z ya se puede jugar</b><p>10 niveles, 9 armas y defensas y el jefe Mamut. Gratis, en el navegador.</p><button class="link" data-play="chatarra">Jugar ahora ›</button></div></li>
+        <li><img src="media/chatarra-arco.jpg" alt="" loading="lazy"><div><span class="tag">CONSEJO</span><b>Apunta a la cabeza</b><p>Un golpe en la cabeza hace el doble de daño. Las piedras rebotan en los cascos: ahí usa flechas.</p></div></li>
+        <li class="noimg"><div><span class="tag soft">EN CAMINO</span><b>Mundo 2: Ciudad Apagada</b><p>La era de la pólvora: ballesta, dinamita y nuevos aliados.</p></div></li>
+      </ul>
+      <button class="btn ghost wide" id="shareBtn">Compartir Giorgio Games</button>
+    </section>
+
+    <!-- PERFIL -->
+    <section class="view" id="v-perfil" data-tab="perfil" hidden>
+      <div class="pcard">
+        <button class="avatar big" id="bigAvatar" aria-label="Cambiar nombre"></button>
+        <div class="pname"><input id="nameInput" maxlength="18" autocomplete="off" aria-label="Tu nombre"><span id="rankName">Novato</span></div>
+      </div>
+      <div class="rankbar"><div class="r1"><b>Chatarra Z</b><span id="powerTxt">Poder 0</span></div><div class="bar"><i id="powerBar"></i></div><span id="nextRank" class="muted"></span></div>
+      <div class="stats" id="stats"></div>
+      <div class="empty" id="emptyStats" hidden><p>Juega tu primera partida de Chatarra Z para ver tus estadísticas aquí.</p><button class="btn primary" data-play="chatarra">▶ Jugar</button></div>
+      <h4 class="sub">Ajustes</h4>
+      <div class="settings">
+        <label class="set"><span>Sonido del juego</span><input type="checkbox" id="soundToggle" class="sw"></label>
+        <label class="set"><span>Música del juego</span><input type="checkbox" id="musicToggle" class="sw"></label>
+        <button class="set btnset" id="installBtn"><span>Instalar como app</span><em id="installHint">›</em></button>
+      </div>
+      <p class="muted small" id="installHelp" hidden></p>
+      <p class="muted small foot">Tu progreso se guarda en este dispositivo.</p>
+    </section>
+  </main>
+
+  <nav class="tabs" aria-label="Secciones">
+    <button class="tab on" data-goto="juegos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8h10a5 5 0 015 5v1a4 4 0 01-7 2.6L14 15h-4l-1 1.6A4 4 0 012 14v-1a5 5 0 015-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 11v4M5 13h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="16.5" cy="12" r="1.2" fill="currentColor"/><circle cx="18.5" cy="14.5" r="1.2" fill="currentColor"/></svg><span>Juegos App</span></button>
+    <button class="tab" data-goto="clasicos"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="7" y="6" width="10" height="6" rx="1" fill="currentColor" opacity=".35"/><path d="M8 16h3M9.5 14.5v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="16" r="1.4" fill="currentColor"/></svg><span>Clásicos</span></button>
+    <button class="tab" data-goto="trend"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1 3 4 4.5 4 8.5a4 4 0 01-8 0c0-1.6.7-2.7 1.5-3.5.2 1.4.9 2.2 1.8 2.5C11 8 11 5.5 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6 15a6 6 0 0012 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Trend</span></button>
+    <button class="tab" data-goto="perfil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.5-4 4.5-5.5 8-5.5s6.5 1.5 8 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Perfil</span></button>
+  </nav>
+</div>
+
+<div id="play" hidden>
+  <iframe id="frame" title="Chatarra Z" allow="fullscreen; autoplay"></iframe>
+  <button id="closePlay" aria-label="Salir del juego">✕</button>
+  <div id="rotate"><div class="phone-ico" aria-hidden="true"></div><b>Gira tu teléfono</b><span>Chatarra Z se juega en horizontal</span></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

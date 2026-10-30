@@ -3,9 +3,17 @@
 Juego de defensa 2D con física, en el navegador. HTML + canvas + JavaScript sin dependencias ni build: se abre `game/index.html` y funciona.
 Idioma del juego y de los textos: español.
 
+El repo es **público** y se publica solo con GitHub Pages desde `main`:
+- App: https://cruzalejandro1221-lang.github.io/chatarra-z/
+- Juego directo: https://cruzalejandro1221-lang.github.io/chatarra-z/game/
+Todo lo que entra en `main` queda en línea en 1-2 minutos: no subas nada roto ni secretos.
+
 ## Estructura
 
 ```
+index.html, app.css, app.js   app móvil "Giorgio Games" (pestañas Juegos App, Clásicos, Trend, Perfil)
+manifest.webmanifest, sw.js   instalable como app (PWA) y funciona sin conexión
+icons/, media/                iconos de la app; miniatura, clip y tráiler ligero (720p) sacados del render real
 game/                 el juego (lo que se publica)
   index.html          contenedor, HUD y pantallas (los scripts se cargan en orden, sin módulos)
   style.css           estilos de la interfaz
@@ -32,9 +40,18 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 - Progresión del Mundo 1 (niveles 1-10, a mano en `LEVELS` de data.js): piedras → barricada → palos → honda → púas → arco → aliado → flechas de fuego → molotov → jefe Mamut.
 - Mundos 2-4 están marcados "Próximamente" (`OPEN_LEVELS = 10` en data.js). Plan: era de la pólvora, del metal y de la chatarra eléctrica; las torretas de `legacy/` son el material de partida para la última.
 
+## App Giorgio Games
+
+- Pestañas con `#juegos`, `#clasicos`, `#trend`, `#perfil` en la URL.
+- **Perfil** lee el guardado del juego (`localStorage` `chatarraZ_v2`, mismo origen). Si cambias `RANKS` o `OPEN_LEVELS` en `game/js/data.js`, copia el cambio en `app.js`.
+- **Jugar** abre `game/index.html` en un iframe a pantalla completa, intenta bloquear la pantalla en horizontal y en vertical pide girar el teléfono.
+- **Clásicos** y parte de **Juegos App** son "Próximamente": para añadir un juego, crea su carpeta (como `game/`) y enlázalo desde una tarjeta con `data-play`.
+- Al cambiar archivos que la app guarda para uso sin conexión, sube la versión `CACHE` en `sw.js` (`gg-v1` → `gg-v2`).
+- En celulares el juego activa la clase `phone` (`game/js/main.js`) y `game/style.css` agranda la interfaz.
+
 ## Cómo trabajar
 
-- Probar en el navegador: servir la carpeta `game/` (por ejemplo `python -m http.server 8765 --directory game`) y abrir http://localhost:8765.
+- Probar en el navegador: servir la raíz del repo (`python -m http.server 8770`) y abrir http://localhost:8770 (app) o http://localhost:8770/game/ (juego). Prueba también en tamaño celular, vertical y horizontal.
 - Comprobar sintaxis: `for f in game/js/*.js; do node --check "$f"; done`
 - **Dificultad**: después de tocar niveles, armas, vida o materiales, correr el simulador con tres perfiles y comparar:
   - bueno: `GEST=0.9 node tools/balance-sim.cjs 0.05 0.3`

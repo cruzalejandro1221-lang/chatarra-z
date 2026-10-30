@@ -12,6 +12,8 @@ function resize() {
   cv.width = Math.round(W * SCALE * DPR); cv.height = Math.round(H * SCALE * DPR);
   cv.style.width = W * SCALE + 'px'; cv.style.height = H * SCALE + 'px';
   uiRoot.style.transform = `scale(${SCALE})`;
+  // En celulares la interfaz se agranda para que se pueda leer y tocar.
+  document.body.classList.toggle('phone', SCALE < 0.75);
 }
 addEventListener('resize', resize);
 

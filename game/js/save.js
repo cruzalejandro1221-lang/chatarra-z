@@ -17,6 +17,10 @@ function loadSave() {
   SAVE = Object.assign(d, s || {});
   SAVE.stats = Object.assign(defaultSave().stats, SAVE.stats || {});
   SAVE.mats = Object.assign({ madera: 0, tela: 0, chatarra: 0 }, SAVE.mats || {});
+  // Ajustes de sonido elegidos en la app Giorgio Games antes de la primera partida.
+  for (const k of ['sound', 'music']) {
+    try { const v = localStorage.getItem('gg_pending_' + k); if (v !== null) { SAVE[k] = JSON.parse(v); localStorage.removeItem('gg_pending_' + k); } } catch (e) { /* sin almacenamiento */ }
+  }
   grantUnlocks();
 }
 function writeSave() {
