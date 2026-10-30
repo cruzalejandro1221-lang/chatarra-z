@@ -206,12 +206,10 @@ const CG = (() => {
   function record(id, mode, result, level) {
     if (window.GGAccount) try { window.GGAccount.onMatch(id, mode, mode === 'bot' ? level : null, result); } catch (e) { /* la cuenta es opcional */ }
     fx(result === 'win' ? 'win' : result === 'loss' ? 'lose' : 'notify');
-    const all = rd('gg_records', {});
-    const g = all[id] || (all[id] = {});
-    const r = g[mode] || (g[mode] = { w: 0, l: 0, d: 0 });
-    r[result === 'win' ? 'w' : result === 'loss' ? 'l' : 'd']++;
-    wr('gg_records', all);
+    // Sin cuenta (invitado) no se guarda nada: los resultados solo viven en la cuenta Giorgio.
   }
+  // Juego en curso (para "en línea · jugando…" y las horas por juego).
+  const playing = () => (S.open && S.ctx && S.ctx.started && !S.ctx.dead ? S.id : null);
 
   // ------------------------------------------------------------------ pantallas
   function showLobby(id) {
@@ -486,5 +484,5 @@ const CG = (() => {
     if (navigator.vibrate && (name === 'capture' || name === 'boom' || name === 'win')) try { navigator.vibrate(name === 'win' ? [20, 40, 20] : 15); } catch (e) { /* nada */ }
   }
 
-  return { _S: S, fx, register, open, join, load: loadScript, INFO, LEVELS, ICONS, esc, rd, wr, rnd, record, toast, modal, closeModal, linkFor };
+  return { _S: S, fx, playing, register, open, join, load: loadScript, INFO, LEVELS, ICONS, esc, rd, wr, rnd, record, toast, modal, closeModal, linkFor };
 })();

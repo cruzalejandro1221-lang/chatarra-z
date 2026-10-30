@@ -49,6 +49,8 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 
 - **Marca**: Giorgio Games es la marca del canal de YouTube "Quiz con Giorgio" (gato siamés con moño naranja). Colores: amarillo `#ffc629`, azul marino `#1d2a5b`, naranja `#ff7a1a`; letras Lilita One + Nunito; botones con relieve. La app NO tiene temática zombi: Chatarra Z es solo uno de los juegos.
 - **Cuentas** (`account.js`): registro con usuario, correo y contraseña (mín. 10, letras y números). Las contraseñas las procesa Supabase Auth (bcrypt); la app nunca las guarda. Los resultados se mandan a la función `record_match` (valida, limita frecuencia y calcula la XP en el servidor). Nunca pongas la service_role key ni la contraseña de la base en el repo: el repo es público.
+- **Invitado vs cuenta**: al abrir la app sale una bienvenida (Google/Facebook si están en `config.js` → `oauth`, correo + código, o invitado). El invitado juega todo (también online por enlace) pero no se guarda nada; los enlaces de invitación saltan la bienvenida.
+- **Perfil de juego**: nivel/XP, victorias y horas por juego (función `heartbeat` cada minuto; el servidor mide el tiempo), amigos (`friend_request`, `my_friends`, `get_profile`; "en línea / jugando" solo lo ven los amigos).
 - Cambios de base: añade un archivo nuevo en `supabase/migrations/` (no edites los ya aplicados) y mantén RLS en toda tabla nueva.
 - Copias de seguridad: repo privado `giorgio-games-backups` (pg_dump diario cifrado con GPG, 30 días).
 
@@ -56,7 +58,7 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 - **Perfil** lee el guardado del juego (`localStorage` `chatarraZ_v2`, mismo origen). Si cambias `RANKS` o `OPEN_LEVELS` en `game/js/data.js`, copia el cambio en `app.js`.
 - **Jugar** abre `game/index.html` en un iframe a pantalla completa, intenta bloquear la pantalla en horizontal y en vertical pide girar el teléfono.
 - Para añadir un juego propio, crea su carpeta (como `game/`) y enlázalo desde una tarjeta con `data-play`.
-- Al cambiar archivos que la app guarda para uso sin conexión, sube la versión `CACHE` en `sw.js` (ahora `gg-v3`).
+- Al cambiar archivos que la app guarda para uso sin conexión, sube la versión `CACHE` en `sw.js` (ahora `gg-v4`).
 - En celulares el juego activa la clase `phone` (`game/js/main.js`) y `game/style.css` agranda la interfaz.
 
 ## Clásicos (clasicos/)

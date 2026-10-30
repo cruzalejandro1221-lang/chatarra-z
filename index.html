@@ -102,26 +102,40 @@
     <section class="view" id="v-perfil" data-tab="perfil" hidden>
       <div class="join-card" id="guestCard">
         <img src="media/giorgio/asoma.webp" alt="" width="180" height="117">
-        <h3>Crea tu cuenta Giorgio</h3>
-        <p>Guarda tu historial en cualquier celular, sube de nivel y aparece en el top.</p>
-        <div class="join-btns"><button class="btn primary" id="openSignup">Crear cuenta</button><button class="btn ghost" id="openLogin">Ya tengo cuenta</button></div>
-        <p class="muted small" id="acctOff" hidden>Las cuentas se activan muy pronto. Mientras tanto tu progreso se guarda en este celular.</p>
+        <h3>Estás jugando como invitado</h3>
+        <p>Crea tu cuenta Giorgio en segundos y desbloquea:</p>
+        <ul class="perks">
+          <li><b>🏆</b>Tu perfil con nivel, victorias y horas por juego</li>
+          <li><b>👥</b>Amigos: mira quién está en línea y a qué juega</li>
+          <li><b>⭐</b>Puntos de experiencia y lugar en el top</li>
+          <li><b>📱</b>Tu progreso en cualquier celular</li>
+        </ul>
+        <div class="join-btns"><button class="btn primary" data-auth="welcome">Crear cuenta o entrar</button></div>
+        <p class="muted small" id="acctOff" hidden>Las cuentas se activan muy pronto.</p>
       </div>
-      <div class="me-card" id="meCard" hidden>
-        <div class="me-top">
-          <button class="avatar big" id="bigAvatar" aria-label="Cambiar avatar"></button>
-          <div class="me-id"><b id="meName"></b><span id="meSince" class="small"></span></div>
+
+      <div id="meWrap" hidden>
+        <div class="me-card">
+          <div class="me-top">
+            <button class="avatar big" id="bigAvatar" aria-label="Cambiar avatar"></button>
+            <div class="me-id"><b id="meName"></b><span class="online on"><i></i>En línea</span><span id="meSince" class="small"></span></div>
+          </div>
+          <div class="lvl"><div class="lvl-row"><b id="meLevel">Nivel 1</b><span id="meXp" class="small"></span></div><div class="bar"><i id="xpBar"></i></div></div>
         </div>
-        <div class="lvl"><div class="lvl-row"><b id="meLevel">Nivel 1</b><span id="meXp" class="small"></span></div><div class="bar"><i id="xpBar"></i></div></div>
-      </div>
-      <div class="kpis" id="kpis"></div>
+        <div class="kpis four" id="kpis"></div>
 
-      <h4 class="sub">Clásicos</h4>
-      <div class="recs" id="recs"></div>
+        <h4 class="sub">Mis juegos</h4>
+        <div class="recs" id="recs"></div>
 
-      <div id="histWrap" hidden>
-        <h4 class="sub">Últimas partidas</h4>
-        <ul class="hist" id="hist"></ul>
+        <h4 class="sub">Amigos <span class="count" id="friendCount"></span></h4>
+        <form class="addfriend" id="addFriend" autocomplete="off"><input id="friendName" maxlength="17" placeholder="Usuario de tu amigo" autocapitalize="none" spellcheck="false" aria-label="Usuario de tu amigo"><button class="btn blue sm" type="submit">Agregar</button></form>
+        <p class="ferr" id="friendMsg" role="status" hidden></p>
+        <ul class="friends" id="friends"></ul>
+
+        <div id="histWrap" hidden>
+          <h4 class="sub">Últimas partidas</h4>
+          <ul class="hist" id="hist"></ul>
+        </div>
       </div>
 
       <h4 class="sub">Chatarra Z</h4>
@@ -130,14 +144,14 @@
 
       <h4 class="sub">Ajustes</h4>
       <div class="settings">
-        <label class="set"><span>Nombre en partidas</span><input id="nameInput" maxlength="16" autocomplete="nickname" aria-label="Tu nombre en partidas"></label>
         <label class="set"><span>Sonidos</span><input type="checkbox" id="soundToggle" class="sw"></label>
         <button class="set btnset" id="installBtn"><span>Instalar como app</span><em>›</em></button>
+        <button class="set btnset" id="renameBtn" hidden><span>Cambiar usuario</span><em>›</em></button>
         <button class="set btnset" id="logoutBtn" hidden><span>Cerrar sesión</span><em>›</em></button>
         <button class="set btnset danger" id="deleteBtn" hidden><span>Eliminar mi cuenta</span><em>›</em></button>
       </div>
       <p class="muted small" id="installHelp" hidden></p>
-      <p class="muted small foot" id="footNote">Sin cuenta, tu progreso se guarda solo en este dispositivo.</p>
+      <p class="muted small foot" id="footNote"></p>
     </section>
   </main>
 
@@ -149,24 +163,11 @@
   </nav>
 </div>
 
-<!-- hoja de cuenta: crear, entrar, recuperar, nueva contraseña -->
+<!-- hoja: bienvenida, crear cuenta, entrar, código, usuario, avatar, perfil de amigo -->
 <div id="sheet" class="sheet" hidden>
   <div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
     <button class="sheet-x" id="sheetX" type="button" aria-label="Cerrar">✕</button>
-    <img class="sheet-cat" src="media/giorgio/guino.webp" alt="" width="94" height="96">
-    <h3 id="sheetTitle">Crear cuenta</h3>
-    <div class="seg2" id="sheetTabs"><button type="button" data-mode="signup" class="on">Crear cuenta</button><button type="button" data-mode="login">Entrar</button></div>
-    <form id="authForm" novalidate>
-      <label class="fld" data-for="signup"><span>Nombre de usuario</span><input id="fUser" autocomplete="username" maxlength="16" spellcheck="false" autocapitalize="none" placeholder="giorgio_fan"><small id="userHint">3 a 16: letras, números o _</small></label>
-      <label class="fld" data-for="signup login reset"><span>Correo</span><input id="fEmail" type="email" autocomplete="email" inputmode="email" maxlength="120" placeholder="tu@correo.com"></label>
-      <label class="fld" data-for="signup login newpw"><span id="pwLabel">Contraseña</span><span class="pw"><input id="fPass" type="password" autocomplete="new-password" maxlength="72"><button type="button" class="eye" id="eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg></button></span>
-        <span class="meter" data-for="signup newpw"><i id="pwBar"></i></span><small id="pwHint" data-for="signup newpw">Mínimo 10 caracteres, con letras y números.</small></label>
-      <label class="chk" data-for="signup"><input type="checkbox" id="fTerms"><span>Tengo 13 años o más y acepto que se guarden mi usuario, correo e historial de partidas.</span></label>
-      <p class="ferr" id="fErr" role="alert" hidden></p>
-      <p class="fok" id="fOk" role="status" hidden></p>
-      <button class="btn primary wide" id="fSubmit" type="submit">Crear cuenta</button>
-      <button class="link center" type="button" id="forgot" data-for="login">¿Olvidaste tu contraseña?</button>
-    </form>
+    <div id="sheetBody"></div>
   </div>
 </div>
 
