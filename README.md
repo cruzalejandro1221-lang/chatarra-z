@@ -11,7 +11,8 @@ Juego de defensa 2D con física para el navegador. Eres un superviviente sobre u
 - **Controles:** arrastra hacia atrás en el campo y suelta para lanzar · teclas 1-6 para cambiar de arma · toca una defensa y luego una ranura para colocarla · Espacio pausa · F velocidad.
 - **Contenido actual:** Mundo 1 completo (10 niveles y un jefe), taller de mejoras y fabricación, modo infinito. Mundos 2-4 en camino.
 - **Cuentas:** Supabase (contraseñas con hash bcrypt, reglas RLS). Ver `supabase/migrations/`.
-- **Clásicos:** Ajedrez, Póker, Batalla Naval y Ludo, contra un bot (Fácil, Medio o Difícil) o contra un amigo online con solo mandarle un enlace.
+- **Clásicos:** Ajedrez, Póker, Batalla Naval, Ludo y Tres en raya, contra un bot (Fácil, Medio o Difícil) o contra un amigo online con solo mandarle un enlace. Además Sudoku, Pupiletras y Tetris.
+- **Juegos de fiesta (Trend):** El Impostor, Charada y Es un 10 pero…, con un solo celular.
 - **Tráiler:** proyecto HyperFrames en `trailer/`; el video está en la release `trailer-v1`.
 
 Para agentes y colaboradores: ver [AGENTS.md](AGENTS.md).

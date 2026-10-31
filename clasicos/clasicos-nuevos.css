@@ -1,0 +1,71 @@
+/* Clásicos nuevos: Tres en raya, Sudoku, Pupiletras y Tetris. Usa las variables de app.css. */
+
+/* ---------- Tres en raya ---------- */
+.ttt { display: flex; flex-direction: column; gap: 10px; max-width: 460px; width: 100%; margin: auto; padding: 2px 0; }
+.ttt-board { width: min(100%, 360px, calc(100dvh - 300px)); min-width: 240px; aspect-ratio: 1; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 8px; padding: 8px; border-radius: 22px; background: var(--ink); box-shadow: 0 5px 0 #121b3f; }
+.tc { background: #fff; border-radius: 14px; display: grid; place-items: center; padding: 14%; transition: transform .08s, background .15s; }
+.tc:not(.f):not([disabled]):active { transform: scale(.94); background: var(--soft); }
+.tc svg { width: 100%; height: 100%; animation: tcpop .18s cubic-bezier(.2, 1.5, .4, 1); }
+@keyframes tcpop { from { transform: scale(.3); opacity: 0; } }
+.tc.w { background: #fff0c4; box-shadow: inset 0 0 0 4px var(--yellow); }
+.ttt-sym svg { width: 24px; height: 24px; }
+@media (prefers-reduced-motion: reduce) { .tc svg { animation: none; } }
+
+/* ---------- Sudoku y Pupiletras (comunes) ---------- */
+.sd, .pl { display: flex; flex-direction: column; gap: 10px; max-width: 460px; width: 100%; margin: auto; padding: 2px 0; }
+.sd-top { display: flex; justify-content: space-between; align-items: center; font-weight: 900; font-size: 14.5px; padding: 0 4px; font-variant-numeric: tabular-nums; }
+.sd-load { margin: auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--mut); font-weight: 800; padding: 60px 0; }
+
+/* Sudoku */
+.sd-board { width: min(100%, 440px, calc(100dvh - 360px)); min-width: 270px; aspect-ratio: 1; margin: 0 auto; display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr); border: 3px solid var(--ink); border-radius: 10px; overflow: hidden; background: #fff; }
+.sc { position: relative; display: grid; place-items: center; background: #fff; font-family: var(--body); font-weight: 900; font-size: clamp(16px, 5.6vw, 26px); color: var(--blue-d); border: 0; border-right: 1px solid #d5dae8; border-bottom: 1px solid #d5dae8; padding: 0; line-height: 1; min-width: 0; border-radius: 0; }
+.sc.g { color: var(--ink); background: #f3f4fa; }
+.sc.rb { border-right: 2.5px solid var(--ink); } .sc.bb { border-bottom: 2.5px solid var(--ink); }
+.sc.pr { background: #eef3ff; } .sc.g.pr { background: #e4e9f8; }
+.sc.same { background: #ffe9a8; }
+.sc.sel { background: var(--yellow); }
+.sc.bad { color: var(--red); background: #fde2e2; }
+.nt { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; height: 100%; padding: 1px; }
+.nt i { font-style: normal; font-size: clamp(7px, 2.2vw, 11px); font-weight: 800; color: var(--mut); display: grid; place-items: center; }
+.sd-tools { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sd-tools button { min-height: 52px; border-radius: 14px; background: #fff; border: 2px solid var(--line2); box-shadow: 0 3px 0 var(--line2); font-size: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.sd-tools button small { font-size: 11px; font-weight: 800; color: var(--mut); margin-top: 3px; }
+.sd-tools button.on { background: #e7efff; border-color: var(--blue); box-shadow: 0 3px 0 var(--blue); }
+.sd-tools button:active { transform: translateY(2px); box-shadow: none; }
+.sd-pad { display: grid; grid-template-columns: repeat(9, 1fr); gap: 5px; }
+.sd-pad button { min-height: 52px; border-radius: 12px; background: var(--ink); color: #fff; font-family: var(--display); font-size: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; padding: 0; }
+.sd-pad button small { font-family: var(--body); font-size: 10px; font-weight: 800; opacity: .7; margin-top: 2px; }
+.sd-pad button:active { background: var(--blue); } .sd-pad button[disabled] { opacity: .25; }
+
+/* Pupiletras */
+.pl-board { container-type: inline-size; width: min(100%, 440px, calc(100dvh - 400px)); min-width: 260px; aspect-ratio: 1; margin: 0 auto; display: grid; grid-template-columns: repeat(var(--n), 1fr); grid-template-rows: repeat(var(--n), 1fr); gap: 2px; padding: 6px; border-radius: 16px; background: var(--ink); touch-action: none; -webkit-user-select: none; user-select: none; box-shadow: 0 5px 0 #121b3f; }
+.pc { background: #fff; border-radius: 6px; display: grid; place-items: center; font-weight: 900; font-size: 16px; font-size: calc(100cqw / var(--n) * .52); color: var(--ink); line-height: 1; pointer-events: none; }
+.pc.sel { background: var(--yellow); }
+.pc.hint { animation: plh .5s ease-in-out infinite alternate; box-shadow: inset 0 0 0 3px var(--orange); }
+@keyframes plh { to { background: #ffe1c2; } }
+.pl-words { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.pl-words span { background: #fff; border: 2px solid var(--line); border-radius: 999px; padding: 5px 11px; font-size: 13px; font-weight: 900; }
+.pl-words span.f { text-decoration: line-through; color: var(--ink); border-color: transparent; opacity: .85; }
+@media (prefers-reduced-motion: reduce) { .pc.hint { animation: none; } }
+
+/* ---------- Tetris ---------- */
+.tt { display: flex; flex-direction: column; gap: 8px; max-width: 460px; width: 100%; margin: auto; align-items: center; padding: 2px 0; }
+.tt-info { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: min(100%, 360px); }
+.tt-info > div { text-align: center; min-width: 0; } .tt-info small { display: block; font-size: 10.5px; font-weight: 800; color: var(--mut); text-transform: uppercase; letter-spacing: .5px; }
+.tt-info b { font-family: var(--display); font-weight: 400; font-size: 20px; font-variant-numeric: tabular-nums; }
+.tt-info canvas { width: 56px; height: 42px; background: var(--ink); border-radius: 10px; flex: none; }
+.tt-wrap { position: relative; height: max(300px, min(calc(100dvh - 340px), 480px)); aspect-ratio: 1 / 2; border-radius: 14px; overflow: hidden; border: 4px solid var(--ink); background: var(--ink); touch-action: none; box-shadow: 0 5px 0 #121b3f; }
+.tt-wrap canvas { display: block; width: 100%; height: 100%; }
+.tt-pause { position: absolute; inset: 0; background: rgba(29, 42, 91, .85); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 26px; font-family: var(--display); }
+.tt-pause small { font-family: var(--body); font-size: 14px; font-weight: 800; }
+.tt-pause[hidden] { display: none; }
+.tt-pad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; width: min(100%, 400px); touch-action: none; }
+.tt-pad button { min-height: 58px; border-radius: 16px; background: #fff; border: 2px solid var(--line2); box-shadow: 0 4px 0 var(--line2); font-size: 22px; color: var(--ink); padding: 0; -webkit-user-select: none; user-select: none; touch-action: none; }
+.tt-pad button:active { transform: translateY(3px); box-shadow: none; background: var(--soft); }
+.tt-pad button[data-k=rot] { background: var(--yellow); border-color: var(--yellow-d); box-shadow: 0 4px 0 var(--yellow-d); }
+
+/* tarjetas de los clásicos nuevos (pestaña Clásicos) */
+.t-ttt { background: linear-gradient(160deg, #ff8a3d, #ffc629); box-shadow: 0 5px 0 #c98a00; }
+.t-sudoku { background: linear-gradient(160deg, #7b3fe4, #4a2aa8); box-shadow: 0 5px 0 #2f1a73; }
+.t-words { background: linear-gradient(160deg, #1fb5a3, #12806f); box-shadow: 0 5px 0 #0b5a4d; }
+.t-tetris { background: linear-gradient(160deg, #e5383b, #8f1f6b); box-shadow: 0 5px 0 #5c1245; }

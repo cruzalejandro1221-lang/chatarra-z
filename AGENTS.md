@@ -17,7 +17,8 @@ vendor/supabase.min.js        supabase-js 2.45.4 (copia local, sin CDN)
 supabase/migrations/          tablas, reglas RLS y funciones del servidor (fuente de verdad de la base)
 media/giorgio/                el gato Giorgio (mascota del canal Quiz con Giorgio) en varias poses
 manifest.webmanifest, sw.js   instalable como app (PWA) y funciona sin conexión
-clasicos/                     Ajedrez, Póker, Batalla Naval y Ludo (bot de 3 niveles y partida online por enlace)
+clasicos/                     Ajedrez, Póker, Batalla Naval, Ludo y Tres en raya (bot de 3 niveles y partida online por enlace) + Sudoku, Pupiletras y Tetris (un jugador)
+fiesta/                       juegos de fiesta de la pestaña Trend (un solo celular)
 icons/, media/                iconos de la app; miniatura, clip y tráiler ligero (720p) sacados del render real
 game/                 el juego (lo que se publica)
   index.html          contenedor, HUD y pantallas (los scripts se cargan en orden, sin módulos)
@@ -72,6 +73,7 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 - **Online** = WebRTC directo con PeerJS (copia local en `clasicos/vendor/`); solo se usa el servidor gratuito de PeerJS para que los dos se encuentren. Mensajes con número de secuencia y reenvío tras cortes cortos; reconexión automática. Enlace: `?juego=<id>&sala=<CÓDIGO>`. Todo lo que llega de la red se trata como no confiable (validar tipos y rangos; escapar nombres con `CG.esc`).
 - Lógica pura y testeable en `*-engine.js` (ajedrez, póker, batalla, ludo); la interfaz va en `<id>.js`.
 - Tests (Node, sin dependencias): `node tests/chess-perft.cjs`, `node tests/chess-bots.cjs`, `node tests/poker.cjs 150`, `node tests/batalla.cjs`, `node tests/ludo.cjs 200`. Los de bots comprueban que Difícil > Medio > Fácil: correrlos tras tocar un bot.
+- **Juegos de un jugador** (Sudoku, Pupiletras, Tetris): en `INFO` de core.js llevan `solo: true` y sus propios nombres de dificultad (`levels`); el lobby no muestra online. Los juegos que cuentan en el perfil de la cuenta están en `TRACKED` (core.js) y en las restricciones de la base; para sumar uno nuevo hay que ampliar la migración (`game` check) y `record_match`.
 - Perfil lee `gg_records` (ganadas/perdidas/empates por juego y modo) que escribe `CG.record`; con cuenta, lee los totales del servidor. `CG.fx(nombre)` da sonidos sintetizados (se apagan con `gg_sound`).
 
 ## Cómo trabajar

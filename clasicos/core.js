@@ -10,7 +10,13 @@ const CG = (() => {
     poker: { name: 'Póker', file: 'clasicos/poker.js', deps: ['clasicos/poker-engine.js'] },
     batalla: { name: 'Batalla Naval', file: 'clasicos/batalla.js', deps: ['clasicos/batalla-engine.js'] },
     ludo: { name: 'Ludo', file: 'clasicos/ludo.js', deps: ['clasicos/ludo-engine.js'] },
+    tresenraya: { name: 'Tres en raya', file: 'clasicos/tresenraya.js', deps: [] },
+    sudoku: { name: 'Sudoku', file: 'clasicos/sudoku.js', deps: [], solo: true, levels: [['Fácil', 'Muchas pistas'], ['Medio', 'Un reto tranquilo'], ['Difícil', 'Pocas pistas']] },
+    pupiletras: { name: 'Pupiletras', file: 'clasicos/pupiletras.js', deps: [], solo: true, levels: [['Fácil', 'Tablero chico'], ['Medio', 'Con diagonales'], ['Difícil', 'Palabras al revés']] },
+    tetris: { name: 'Tetris', file: 'clasicos/tetris.js', deps: [], solo: true, levels: [['Fácil', 'Piezas lentas'], ['Medio', 'Ritmo normal'], ['Difícil', 'Piezas rápidas']] },
   };
+  const TRACKED = ['ajedrez', 'poker', 'batalla', 'ludo'];          // los que cuentan en el perfil de la cuenta
+  const lvls = id => INFO[id].levels || LEVELS;
   const LEVELS = [['Fácil', 'Para aprender y relajarte'], ['Medio', 'Un reto justo'], ['Difícil', 'Juega en serio']];
   const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
   const GAMES = {};
@@ -197,14 +203,14 @@ const CG = (() => {
     const c = $('#cgChip'), ctx = S.ctx;
     if (!ctx || !S.open) { c.hidden = true; return; }
     c.hidden = false;
-    if (ctx.mode === 'bot') { c.textContent = 'Bot · ' + LEVELS[ctx.level][0]; c.className = 'cg-chip'; }
+    if (ctx.mode === 'bot') { c.textContent = (INFO[ctx.id].solo ? '' : 'Bot · ') + lvls(ctx.id)[ctx.level][0]; c.className = 'cg-chip'; }
     else if (st === 'lost') { c.textContent = '● Reconectando…'; c.className = 'cg-chip warn'; }
     else { c.textContent = '● En línea'; c.className = 'cg-chip ok'; }
   }
   const body = () => $('#cgBody');
 
   function record(id, mode, result, level) {
-    if (window.GGAccount) try { window.GGAccount.onMatch(id, mode, mode === 'bot' ? level : null, result); } catch (e) { /* la cuenta es opcional */ }
+    if (TRACKED.includes(id) && window.GGAccount) try { window.GGAccount.onMatch(id, mode, mode === 'bot' ? level : null, result); } catch (e) { /* la cuenta es opcional */ }
     fx(result === 'win' ? 'win' : result === 'loss' ? 'lose' : 'notify');
     // Sin cuenta (invitado) no se guarda nada: los resultados solo viven en la cuenta Giorgio.
   }
@@ -217,13 +223,13 @@ const CG = (() => {
     const lv = S.level;
     const art = document.querySelector('[data-classic="' + id + '"] .cl-art');
     body().innerHTML = '<div class="cg-lobby"><div class="cg-hero ' + TILE[id] + '"><span class="cg-heroart">' + (art ? art.innerHTML : '') + '</span><p>' + esc(GAME_BLURB[id]) + '</p></div>' +
-      '<section class="cg-card"><h3>Contra el bot</h3><div class="cg-seg" id="cgSeg">' +
-      LEVELS.map((l, i) => '<button data-l="' + i + '" class="' + (i === lv ? 'on' : '') + '"><b>' + l[0] + '</b><span>' + l[1] + '</span></button>').join('') +
-      '</div><button class="cg-btn primary" id="cgBot">Jugar contra el bot</button></section>' +
-      '<section class="cg-card"><h3>Con un amigo · online</h3><p class="cg-hint">Crea una partida y mándale el enlace. Se une desde su celular, sin instalar nada.</p>' +
+      '<section class="cg-card"><h3>' + (INFO[id].solo ? 'Dificultad' : 'Contra el bot') + '</h3><div class="cg-seg" id="cgSeg">' +
+      lvls(id).map((l, i) => '<button data-l="' + i + '" class="' + (i === lv ? 'on' : '') + '"><b>' + l[0] + '</b><span>' + l[1] + '</span></button>').join('') +
+      '</div><button class="cg-btn primary" id="cgBot">' + (INFO[id].solo ? 'Jugar' : 'Jugar contra el bot') + '</button></section>' + (INFO[id].solo ? '</div>' : '') +
+      (INFO[id].solo ? '' : '<section class="cg-card"><h3>Con un amigo · online</h3><p class="cg-hint">Crea una partida y mándale el enlace. Se une desde su celular, sin instalar nada.</p>' +
       '<button class="cg-btn primary" id="cgHost">Crear partida y compartir enlace</button>' +
       '<div class="cg-or"><span>o entra con un código</span></div>' +
-      '<div class="cg-join"><input id="cgCode" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CÓDIGO" aria-label="Código de la partida"><button class="cg-btn ghost" id="cgJoin">Unirme</button></div></section></div>';
+      '<div class="cg-join"><input id="cgCode" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CÓDIGO" aria-label="Código de la partida"><button class="cg-btn ghost" id="cgJoin">Unirme</button></div></section></div>');
     loadGame(id).catch(() => { /* el error se muestra al jugar */ });
     $('#cgSeg').onclick = e => {
       const b = e.target.closest('button'); if (!b) return;
@@ -231,6 +237,7 @@ const CG = (() => {
       document.querySelectorAll('#cgSeg button').forEach(x => x.classList.toggle('on', x === b));
     };
     $('#cgBot').onclick = () => startBot(id, S.level);
+    if (INFO[id].solo) return;
     $('#cgHost').onclick = () => hostOnline(id);
     const codeIn = $('#cgCode');
     codeIn.oninput = () => { codeIn.value = codeIn.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); };
@@ -374,7 +381,7 @@ const CG = (() => {
   }
   function showResult(ctx, result, title, sub) {
     if (ctx.dead || S.ctx !== ctx) return;
-    const rematchTxt = ctx.online ? 'Pedir revancha' : 'Revancha';
+    const rematchTxt = ctx.online ? 'Pedir revancha' : INFO[ctx.id].solo ? 'Jugar otra vez' : 'Revancha';
     const m = modal({
       title: title || (result === 'win' ? '¡Ganaste!' : result === 'loss' ? 'Perdiste' : 'Empate'), text: sub || '',
       html: '<img class="cg-cat" src="media/giorgio/' + (result === 'win' ? 'feliz' : result === 'loss' ? 'triste' : 'pensando') + '.webp" alt="" width="110" height="140">',
@@ -452,9 +459,13 @@ const CG = (() => {
     poker: 'Texas Hold’em uno contra uno. Fichas, faroles y sangre fría.',
     batalla: 'Esconde tu flota y hunde la del rival antes de que hunda la tuya.',
     ludo: 'Saca un 6, recorre el tablero y lleva tus cuatro fichas a casa.',
+    tresenraya: 'Tres en línea gana. Fácil de aprender, difícil de ganarle al bot en Difícil.',
+    sudoku: 'Completa la cuadrícula: del 1 al 9 sin repetir en filas, columnas ni cuadros.',
+    pupiletras: 'Encuentra todas las palabras escondidas arrastrando el dedo sobre las letras.',
+    tetris: 'Encaja las piezas, completa líneas y aguanta cada vez más rápido.',
   };
   const ICONS = {};
-  const TILE = { ajedrez: 't-chess', poker: 't-poker', batalla: 't-sea', ludo: 't-ludo' };
+  const TILE = { ajedrez: 't-chess', poker: 't-poker', batalla: 't-sea', ludo: 't-ludo', tresenraya: 't-ttt', sudoku: 't-sudoku', pupiletras: 't-words', tetris: 't-tetris' };
 
   // Sonidos cortos sintetizados (sin archivos) y vibración leve. Se apagan desde Perfil > Sonidos.
   let actx = null;
