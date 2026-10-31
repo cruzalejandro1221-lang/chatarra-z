@@ -15,7 +15,7 @@
   const sprite = () => {
     if (document.getElementById('chSprite')) return;
     const el = document.createElement('div');
-    el.innerHTML = '<svg id="chSprite" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>' +
+    el.innerHTML = '<svg id="chSprite" width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="chgw" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d6def2"/></linearGradient><linearGradient id="chgb" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#4a5a93"/><stop offset="1" stop-color="#161d42"/></linearGradient></defs><defs>' +
       Object.keys(SHAPES).map(k => '<symbol id="ch-' + k + '" viewBox="0 0 45 45"><g fill="var(--pf)" stroke="var(--ps)" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round">' + SHAPES[k] + '</g></symbol>').join('') + '</defs></svg>';
     document.body.append(el.firstChild);
   };

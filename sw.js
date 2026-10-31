@@ -2,7 +2,7 @@
 // Código (páginas, scripts, estilos): primero la red, así siempre ves la última versión; si no hay red, la copia guardada.
 // Imágenes y video: primero la copia guardada y se refresca en segundo plano.
 // Las llamadas a Supabase (otro dominio) nunca pasan por aquí: los datos de la cuenta no se guardan en caché.
-const CACHE = 'gg-v11';
+const CACHE = 'gg-v12';
 const CORE = ['./', 'index.html', 'app.css', 'app.js', 'config.js', 'account.js', 'vendor/supabase.min.js', 'manifest.webmanifest', 'icons/icon-192.png',
   'media/giorgio/cara.webp', 'media/giorgio/principal.webp', 'media/giorgio/feliz.webp', 'media/giorgio/triste.webp', 'media/giorgio/pensando.webp', 'media/giorgio/guino.webp', 'media/giorgio/asoma.webp',
   'game/index.html', 'game/style.css', 'game/js/util.js', 'game/js/data.js', 'game/js/save.js', 'game/js/audio.js',

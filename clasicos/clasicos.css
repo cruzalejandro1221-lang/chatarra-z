@@ -223,3 +223,15 @@ html.cg-open, html.cg-open body { overflow: hidden; }
 .cg-confetti i { position: absolute; top: -14px; width: 9px; height: 15px; border-radius: 2px; animation: cgfall linear forwards; }
 @keyframes cgfall { to { transform: translate(var(--x), 105vh) rotate(var(--r)); opacity: .9; } }
 @media (prefers-reduced-motion: reduce) { .ch-board .sq .pc.slide { animation: none; } }
+
+/* ---------- Segunda ronda: piezas con volumen, Batalla Naval con más cuerpo, turno resaltado ---------- */
+.pc.w { --pf: url(#chgw); } .pc.b { --pf: url(#chgb); }
+.cg-player.turn { animation: cgturn 1.6s ease-in-out infinite; }
+@keyframes cgturn { 50% { box-shadow: 0 3px 0 var(--blue), 0 0 0 5px rgba(47, 111, 228, .18); } }
+.bc { background: radial-gradient(circle at 25% 30%, rgba(255, 255, 255, .28) 0 14%, transparent 15%), radial-gradient(circle at 75% 70%, rgba(255, 255, 255, .18) 0 12%, transparent 13%), linear-gradient(160deg, #4fb0ff, #2a86e0); }
+.bc.s { background: linear-gradient(180deg, #aab4cc 0, #7d8aa8 55%, #5d6988 100%); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .45), inset 0 -3px 0 rgba(0, 0, 0, .25); }
+.bc.s::before { content: ""; position: absolute; left: 50%; top: 50%; width: 22%; height: 22%; transform: translate(-50%, -50%); border-radius: 50%; background: rgba(29, 42, 91, .35); }
+.bc.m::before { content: ""; position: absolute; inset: 20%; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .8); animation: bnrip .6s ease-out forwards; }
+@keyframes bnrip { from { transform: scale(.2); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
+.bc.k { background: linear-gradient(180deg, #5a3547, #2c1824); }
+@media (prefers-reduced-motion: reduce) { .cg-player.turn { animation: none; } .bc.m::before { animation: none; opacity: 0; } }
