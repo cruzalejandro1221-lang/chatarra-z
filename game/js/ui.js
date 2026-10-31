@@ -45,6 +45,8 @@ const UI = (() => {
     mb.append(btn(ico('gear') + '&nbsp;TALLER', 'dark', () => shop()));
     mb.append(btn(ico('star') + '&nbsp;PROGRESO', 'dark', () => stats()));
     mb.append(btn('⚙&nbsp; OPCIONES', 'dark small', () => options()));
+    // Dentro de la app Giorgio Games: volver al portal sin botones tapando el juego
+    if (window.parent !== window) mb.append(btn('‹&nbsp; GIORGIO GAMES', 'dark small', () => { try { window.parent.postMessage({ gg: 'exit' }, location.origin); } catch (e) { /* nada */ } }));
   }
 
   // ------------------------------------------------------------ mapa

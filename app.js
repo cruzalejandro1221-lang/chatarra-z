@@ -367,8 +367,6 @@ function openGame() {
   frame.src = 'game/index.html';
   $('#trailerVid').pause();
   history.pushState({ play: 1 }, '', location.hash || '#juegos');
-  const fs = play.requestFullscreen || play.webkitRequestFullscreen;
-  if (fs) Promise.resolve(fs.call(play)).then(() => screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape')).catch(() => {});
   setTimeout(() => { try { frame.focus(); } catch (e) { /* nada */ } }, 300);
   beat(true);
 }
@@ -376,13 +374,13 @@ function closeGame(fromHistory) {
   if (play.hidden) return;
   play.hidden = true;
   frame.src = 'about:blank';
-  try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) { /* nada */ }
-  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   if (!fromHistory && history.state && history.state.play) history.back();
   renderChatarra(); beat(true);
   goTo(location.hash.slice(1) || 'juegos', false);
 }
 $('#closePlay').addEventListener('click', () => closeGame(false));
+// El juego avisa desde su menú ("Salir a Giorgio Games") para cerrar la pantalla de juego.
+addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.gg === 'exit') closeGame(false); });
 addEventListener('popstate', () => closeGame(true));
 
 // ---------------------------------------------------------------- compartir e instalar

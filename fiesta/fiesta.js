@@ -1,6 +1,6 @@
 'use strict';
 // Juegos de fiesta (pestaña Trend): un solo celular para jugar con amigos en la vida real.
-// El Impostor, Carta en la frente (se inclina el celular) y "Es un 10 pero…". Todo es local: no se envía nada a ningún servidor.
+// El Impostor, Charada (se inclina el celular) y "Es un 10 pero…". Todo es local: no se envía nada a ningún servidor.
 (() => {
   const D = window.FIESTA_DATA, esc = CG.esc;
   const rnd = n => { if (window.crypto && crypto.getRandomValues) { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } return Math.floor(Math.random() * n); };
@@ -173,11 +173,11 @@
       });
   }
 
-  // ================================================================ CARTA EN LA FRENTE
+  // ================================================================ CHARADA
   function huSetup() {
     const h = S.hu, canTilt = 'DeviceOrientationEvent' in window;
     if (!canTilt) h.tilt = false;
-    screen('Carta en la frente', '<div class="pt-hero hu"><span class="pt-art">🤯</span><p>Un jugador se pone el celular <b>en la frente</b>, con la pantalla hacia los demás. Los demás dan pistas o hacen mímica (¡sin decir la palabra!) hasta que la adivine.</p></div>' +
+    screen('Charada', '<div class="pt-hero hu"><span class="pt-art">🤯</span><p>Un jugador se pone el celular <b>en la frente</b>, con la pantalla hacia los demás. Los demás dan pistas o hacen mímica (¡sin decir la palabra!) hasta que la adivine.</p></div>' +
       '<section class="pt-card"><div class="pt-row"><div><b>Tiempo por turno</b></div>' + seg('time', [30, 60, 90, 120], h.time, v => v + ' s') + '</div>' +
       '<div class="pt-row"><div><b>Inclinar el celular</b><small>' + (canTilt ? 'Abajo = ✓ acierto · Arriba = paso' : 'Tu navegador no lo permite: se juega tocando') + '</small></div>' + (canTilt ? sw('tilt', h.tilt) : '') + '</div></section>' +
       '<h4 class="pt-sub">Categoría</h4>' + chips(D.head.cats, h.cat) +
@@ -204,7 +204,7 @@
       if (H.armed) { if (rel < -0.5) huAnswer(true); else if (rel > 0.5) huAnswer(false); }
       else if (Math.abs(rel) < 0.28) H.armed = true;
     };
-    const draw = () => screen('Carta en la frente', '<div class="hu-stage count' + (H.flip ? ' flip' : '') + '"><div class="hu-ready">Ponte el celular en la frente,<br>pantalla hacia tus amigos</div><div class="hu-count" id="cnt">' + n + '</div><button class="hu-mini" id="flip">↻ Girar pantalla</button></div>', () => {
+    const draw = () => screen('Charada', '<div class="hu-stage count' + (H.flip ? ' flip' : '') + '"><div class="hu-ready">Ponte el celular en la frente,<br>pantalla hacia tus amigos</div><div class="hu-count" id="cnt">' + n + '</div><button class="hu-mini" id="flip">↻ Girar pantalla</button></div>', () => {
       $('#flip').onclick = () => { H.flip = !H.flip; $('.hu-stage').classList.toggle('flip', H.flip); };
     }, { full: true, guard: true });
     draw(); fx('click');
@@ -222,7 +222,7 @@
     const H = S.H, h = S.hu; H.phase = 'play'; H.lock = false; H.armed = true; H.score = 0; H.left = h.time; H.results = [];
     if (H.useTilt && !H.events) { H.useTilt = false; H.fallback = true; }
     H.endAt = Date.now() + h.time * 1000;
-    screen('Carta en la frente', '<div class="hu-stage' + (H.flip ? ' flip' : '') + '" id="stage"><div class="hu-top"><span id="huTime">' + h.time + '</span><span>✓ <b id="huScore">0</b></span></div><div class="hu-word" id="huWord"></div>' +
+    screen('Charada', '<div class="hu-stage' + (H.flip ? ' flip' : '') + '" id="stage"><div class="hu-top"><span id="huTime">' + h.time + '</span><span>✓ <b id="huScore">0</b></span></div><div class="hu-word" id="huWord"></div>' +
       '<button class="hu-zone l" data-a="0" aria-label="Pasar"><span>⏭ PASO</span></button><button class="hu-zone r" data-a="1" aria-label="Acertó"><span>✓ ACIERTO</span></button><div class="hu-flash" id="huFlash"></div></div>', () => {
         if (H.onOri && H.useTilt) { window.addEventListener('deviceorientation', H.onOri); cleanups.push(() => window.removeEventListener('deviceorientation', H.onOri)); }
         $('#stage').onclick = e => { const z = e.target.closest('[data-a]'); if (z) huAnswer(z.dataset.a === '1'); };
@@ -249,7 +249,7 @@
     const H = S.H; H.phase = 'end';
     const yes = H.results.filter(r => r.ok).length;
     fx('win'); buzz([200, 80, 200]);
-    screen('Carta en la frente', '<div class="pt-center"><h3>¡Se acabó el tiempo!</h3><div class="hu-score">' + yes + '</div><p class="pt-lead">' + (yes === 1 ? 'palabra adivinada' : 'palabras adivinadas') + '</p>' +
+    screen('Charada', '<div class="pt-center"><h3>¡Se acabó el tiempo!</h3><div class="hu-score">' + yes + '</div><p class="pt-lead">' + (yes === 1 ? 'palabra adivinada' : 'palabras adivinadas') + '</p>' +
       '<div class="hu-words">' + H.results.map(r => '<span class="' + (r.ok ? 'y' : 'n') + '">' + esc(r.w) + '</span>').join('') + '</div>' +
       '<button class="pt-btn primary" id="again">Siguiente jugador</button><div class="pt-two"><button class="pt-btn ghost" id="cfg">Ajustes</button><button class="pt-btn ghost" id="out">Salir</button></div></div>', () => {
         $('#again').onclick = () => { S.H.phase = 'count'; huCount(); }; $('#cfg').onclick = huSetup; $('#out').onclick = () => close();
@@ -257,59 +257,26 @@
   }
 
   // ================================================================ ES UN 10 PERO…
+  // Un jugador se pone el celular en la frente (horizontal) con un número del 1 al 10. El público dice el "pero…".
+  const dzColor = n => ['#e5383b', '#e5383b', '#ee5a2b', '#f2701f', '#f29a1f', '#e6b81f', '#b9c21f', '#7cc226', '#3fb23a', '#22a35a'][n - 1];
   function dzSetup() {
-    const z = S.dz;
-    screen('Es un 10 pero…', '<div class="pt-hero dz"><span class="pt-art"><b style="font-family:var(--display);font-size:30px">10</b></span><p>Alguien perfecto… <b>pero</b> con un defecto. Cada turno hay un juez: ¿cuántos defectos aguanta antes de quedarse con esa persona? ¡Cuidado con los rompe-tratos!</p></div>' +
-      '<section class="pt-card"><div class="pt-row"><div><b>Jugadores</b><small>Un solo celular en la mesa</small></div>' + stepper('count', z.count) + '</div>' +
-      '<div class="pt-row"><div><b>Rondas por jugador</b><small>Cada uno es juez estas veces</small></div>' + seg('rounds', [1, 2], z.rounds) + '</div></section>' +
-      '<details class="pt-names" open><summary>Nombres de los jugadores</summary><div class="pt-name-grid">' + nameInputs(z.names, z.count) + '</div></details>' +
-      '<button class="pt-btn primary pt-go" id="go">Empezar</button>',
-      () => { wire(z, { count: [2, 10] }, dzSetup); $('#go').onclick = () => { fx('deal'); persist(); dzStart(); }; }, { keep: true });
+    screen('Es un 10 pero…', '<div class="pt-hero dz"><span class="pt-art"><b style="font-family:var(--display);font-size:30px">10</b></span><p>Un jugador se pone el celular <b>en la frente</b>, en horizontal, con un número del 1 al 10 que solo ve el público.</p></div>' +
+      '<section class="pt-card"><div class="pt-row"><div><b>1. El público mira el número</b><small>Es el nivel de esa persona: del 1 al 10</small></div></div>' +
+      '<div class="pt-row"><div><b>2. Dicen el "pero…"</b><small>"Es un 8, pero…" y cada uno inventa el defecto que lo baja o lo hace gracioso</small></div></div>' +
+      '<div class="pt-row"><div><b>3. Cambio de persona</b><small>Toca "Siguiente persona" y sale otro número para el próximo jugador</small></div></div></section>' +
+      '<button class="pt-btn primary pt-go" id="go">Empezar</button><p class="pt-note">Si la pantalla se ve al revés, toca "Girar pantalla".</p>',
+      () => { $('#go').onclick = () => { fx('deal'); S.Z = { n: 0, flip: false, count: 0 }; dzNext(true); }; });
   }
-  function dzStart() {
-    const z = S.dz, P = D.diez, order = [];
-    for (let k = 0; k < z.rounds; k++) shuffle([...Array(z.count).keys()]).forEach(i => order.push(i));
-    S.Z = { order, qi: 0, scores: Array(z.count).fill(0), perf: deck(P.perf), flaw: deck(P.flaws), brk: deck(P.breakers) };
-    dzTurn();
-  }
-  function dzScoreStrip(judge) { const z = S.dz, Z = S.Z; return '<div class="dz-score">' + Z.scores.map((p, i) => '<span class="' + (i === judge ? 'me' : '') + '">' + esc(nameOf(z.names, i)) + ' · ' + p + '</span>').join('') + '</div>'; }
-  function dzTurn() {
-    const z = S.dz, Z = S.Z, judge = Z.order[Z.qi];
-    Z.t = { judge, perf: Z.perf(), flaws: [], end: null };
-    screen('Es un 10 pero…', dzScoreStrip(judge) + '<div class="pt-center" style="min-height:auto;padding:6px 0"><span class="pt-count">Turno ' + (Z.qi + 1) + ' de ' + Z.order.length + '</span><h3>Juez: ' + esc(nameOf(z.names, judge)) + '</h3></div>' +
-      '<div class="dz-card"><div class="dz-ten">10</div><h3>Es un 10 en ' + esc(Z.t.perf) + '</h3></div><p class="pt-lead" style="text-align:center">Todos lo imaginan… y ahora llega el defecto.</p>' +
-      '<button class="pt-btn primary" id="pero">…pero →</button>', () => { $('#pero').onclick = () => { fx('deal'); dzFlaw(true); }; }, { guard: true });
-  }
-  function dzFlaw(first) {
-    const Z = S.Z, t = Z.t, n = t.flaws.length;
-    if (!first && Math.random() < Math.min(0.12 * n, 0.6)) { t.end = 'break'; t.breaker = Z.brk(); fx('lose'); buzz([300, 100, 300]); return dzRound(); }
-    t.flaws.push(Z.flaw()); fx('notify'); dzRound();
-  }
-  function dzRound() {
-    const z = S.dz, Z = S.Z, t = Z.t, n = t.flaws.length, judge = t.judge, last = Z.qi >= Z.order.length - 1;
-    const list = t.flaws.map(f => '<li><b>pero</b> ' + esc(f) + '</li>').join('') + (t.end === 'break' ? '<li class="break">🚩 ¡ROMPE-TRATO! …y además ' + esc(t.breaker) + '</li>' : '');
-    const head = dzScoreStrip(judge) + '<div class="dz-card"><div class="dz-ten">10</div><h3>Es un 10 en ' + esc(t.perf) + '</h3></div><ul class="dz-flaws">' + list + '</ul>';
-    let foot;
-    if (t.end === 'break') foot = '<p class="dz-pts">¡Se acabó! ' + esc(nameOf(z.names, judge)) + ' pierde ' + (n === 1 ? 'el <b>1</b> punto' : 'los <b>' + n + '</b> puntos') + ' de esta ronda.</p><button class="pt-btn primary" id="nx">' + (last ? 'Ver resultados' : 'Siguiente turno') + '</button>';
-    else if (t.end === 'bank') foot = '<p class="dz-pts">💘 ' + esc(nameOf(z.names, judge)) + ' se queda y suma <b>' + n + '</b> punto' + (n === 1 ? '' : 's') + '.</p><button class="pt-btn primary" id="nx">' + (last ? 'Ver resultados' : 'Siguiente turno') + '</button>';
-    else foot = '<p class="dz-pts">Si te quedas ahora ganas <b>' + n + '</b> punto' + (n === 1 ? '' : 's') + '</p><button class="pt-btn green" id="bank">💘 Me quedo con esta persona</button><button class="pt-btn ghost" id="more">😬 Aguanto otro defecto (riesgo de rompe-trato)</button>';
-    screen('Es un 10 pero…', head + foot, () => {
-      const b = $('#bank'), m = $('#more'), nx = $('#nx');
-      if (b) b.onclick = () => { t.end = 'bank'; Z.scores[judge] += n; fx('win'); buzz([40, 50, 40]); dzRound(); };
-      if (m) m.onclick = () => dzFlaw(false);
-      if (nx) nx.onclick = () => { fx('click'); Z.qi++; if (Z.qi >= Z.order.length) dzEnd(); else dzTurn(); };
-      const l = bodyEl.querySelector('.dz-flaws li:last-child'); if (l && l.scrollIntoView) l.scrollIntoView({ block: 'nearest' });
-    }, { guard: !t.end });
-  }
-  function dzEnd() {
-    const z = S.dz, Z = S.Z, rank = Z.scores.map((p, i) => ({ p, i })).sort((a, b) => b.p - a.p), top = rank[0].p;
-    const winners = rank.filter(r => r.p === top).map(r => esc(nameOf(z.names, r.i))).join(' y ');
-    fx('win'); buzz([60, 40, 60, 40, 120]);
-    screen('Es un 10 pero…', '<div class="pt-center"><img class="pt-cat" src="media/giorgio/feliz.webp" alt="" width="110"><h3>' + (top ? '¡Ganó ' + winners + '!' : 'Nadie sumó puntos 😅') + '</h3><ol class="dz-rank">' +
-      rank.map((r, k) => '<li><span>' + (['🥇', '🥈', '🥉'][k] || (k + 1) + '.') + '</span><span class="n">' + esc(nameOf(z.names, r.i)) + '</span><span class="p">' + r.p + '</span></li>').join('') + '</ol>' +
-      '<button class="pt-btn primary" id="again">Jugar otra vez</button><div class="pt-two"><button class="pt-btn ghost" id="cfg">Ajustes</button><button class="pt-btn ghost" id="out">Salir</button></div></div>', () => {
-        $('#again').onclick = dzStart; $('#cfg').onclick = dzSetup; $('#out').onclick = () => close();
-      });
+  function dzNext(first) {
+    const Z = S.Z; let n; do { n = 1 + rnd(10); } while (n === Z.n); Z.n = n; Z.count++;
+    if (!first) { fx('deal'); buzz(30); }
+    screen('Es un 10 pero…', '<div class="hu-stage" id="stage" style="background:' + dzColor(n) + '"><div class="hu-top"><span>Es un</span><span>pero…</span></div><div class="dz-num">' + n + '</div>' +
+      '<div class="dz-bar"><button class="dz-btn" id="out">Salir</button><button class="dz-btn big" id="next">Siguiente persona →</button><button class="dz-btn" id="flip">↻ Girar</button></div></div>', () => {
+        const st = $('#stage'); st.classList.toggle('flip', Z.flip);
+        $('#next').onclick = () => dzNext(false);
+        $('#flip').onclick = () => { Z.flip = !Z.flip; st.classList.toggle('flip', Z.flip); };
+        $('#out').onclick = () => ask('¿Salir?', 'Volverás a las instrucciones.', 'Salir', dzSetup);
+      }, { full: true, guard: true });
   }
 
   window.Fiesta = { open, close, _state: () => S };

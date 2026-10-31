@@ -63,7 +63,7 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 
 ## Juegos de fiesta (fiesta/, pestaña Trend)
 
-- Un solo celular para jugar en persona: **El Impostor** (rol oculto con "mantén presionado"), **Carta en la frente** (inclinar el celular; usa `deviceorientation` y la componente vertical `cos(beta)·cos(gamma)`; en iPhone pide permiso al tocar; si no hay sensor se juega tocando los lados; en vertical gira la pantalla por CSS) y **Es un 10 pero…** (juez que arriesga puntos; los "rompe-tratos" aparecen con más probabilidad cada defecto).
+- Un solo celular para jugar en persona: **El Impostor** (rol oculto con "mantén presionado"), **Charada** (inclinar el celular; usa `deviceorientation` y la componente vertical `cos(beta)·cos(gamma)`; en iPhone pide permiso al tocar; si no hay sensor se juega tocando los lados; en vertical gira la pantalla por CSS) y **Es un 10 pero…** (número gigante del 1 al 10 en la frente, en horizontal; el público inventa el "pero" y toca "Siguiente persona"). Chatarra Z ya no pide pantalla completa (en Android mostraba un aviso que tapaba el juego); se sale desde su menú ("Giorgio Games") o con el botón Atrás.
 - Todo es local, sin servidor ni cuenta. Se cargan al abrirlos (`openParty` en app.js). Para añadir palabras o cartas edita solo `fiesta/data.js`; para un juego nuevo añade su función en `fiesta/fiesta.js` y una tarjeta `data-party` en index.html.
 
 ## Clásicos (clasicos/)
