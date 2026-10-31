@@ -235,3 +235,43 @@ html.cg-open, html.cg-open body { overflow: hidden; }
 @keyframes bnrip { from { transform: scale(.2); opacity: 1; } to { transform: scale(1.6); opacity: 0; } }
 .bc.k { background: linear-gradient(180deg, #5a3547, #2c1824); }
 @media (prefers-reduced-motion: reduce) { .cg-player.turn { animation: none; } .bc.m::before { animation: none; opacity: 0; } }
+
+/* ---------- Batalla Naval: mar, barcos 2D y efectos ---------- */
+.bn-grid { position: relative; gap: 0; background: linear-gradient(180deg, #3ea4f2, #1b66c4); box-shadow: 0 5px 0 #082a57, inset 0 0 0 2px #0d3d7a; }
+.bn-grid.mini { gap: 0; }
+.bn-grid .bc { background: none; border-radius: 0; box-shadow: inset 0 0 0 .5px rgba(255, 255, 255, .22); }
+.bn-grid .bc::before, .bn-grid .bc::after { content: none !important; }
+.bn-grid .bc.t { box-shadow: inset 0 0 0 3px var(--yellow), 0 0 12px rgba(255, 198, 41, .8); outline: 0; animation: bnt 1s ease-in-out infinite; }
+@keyframes bnt { 50% { box-shadow: inset 0 0 0 3px #fff, 0 0 16px rgba(255, 255, 255, .9); } }
+.bn-fx { position: absolute; left: 4px; top: 4px; width: calc(100% - 8px); height: calc(100% - 8px); pointer-events: none; overflow: hidden; }
+.bn-grid.mini .bn-fx { left: 3px; top: 3px; width: calc(100% - 6px); height: calc(100% - 6px); }
+.bn-waves path { fill: none; stroke: #fff; stroke-opacity: .16; stroke-width: .05; animation: bnwave 3.2s ease-in-out infinite alternate; }
+@keyframes bnwave { to { transform: translateX(-1.2px); } }
+.bn-sg { filter: drop-shadow(.04px .08px .03px rgba(0, 20, 60, .55)); }
+.bn-sg .hl { fill: #7f8caa; stroke: #263256; stroke-width: .05; stroke-linejoin: round; }
+.bn-sg .dk { fill: #aab5d0; }
+.bn-sg .rw { fill: #56627f; } .bn-sg .lane { stroke: #fff; stroke-width: .04; stroke-dasharray: .22 .18; fill: none; opacity: .85; }
+.bn-sg .tw { fill: #e1e7f6; stroke: #263256; stroke-width: .03; } .bn-sg .pl { stroke: #ffc629; stroke-width: .07; stroke-linecap: round; fill: none; }
+.bn-sg .tr { fill: #4c5877; stroke: #263256; stroke-width: .03; } .bn-sg .gun { stroke: #263256; stroke-width: .07; stroke-linecap: round; }
+.bn-sg .fn { fill: #ff7a1a; stroke: #263256; stroke-width: .03; }
+.bn-sg .sub { fill: #f2bd1d; stroke: #263256; stroke-width: .05; } .bn-sg .sub2 { fill: #ffd95a; stroke: #263256; stroke-width: .04; }
+.bn-sg .per { stroke: #263256; stroke-width: .05; fill: none; stroke-linecap: round; } .bn-sg .ph { fill: #263256; }
+.bn-sg.rv { opacity: .6; filter: grayscale(.4); }
+.bn-sg.sunk { opacity: .88; filter: grayscale(.75) brightness(.6) drop-shadow(0 .05px .03px rgba(0, 0, 0, .6)); }
+.bn-fx .ember { fill: #ff5a1f; opacity: .38; animation: bnember .9s ease-in-out infinite alternate; }
+.bn-fx .flame, .bn-fx .flame2 { transform-box: fill-box; transform-origin: 50% 100%; animation: bnflame .5s ease-in-out infinite alternate; } .bn-fx .flame { fill: #ff7a1a; } .bn-fx .flame2 { fill: #ffe27d; animation-duration: .38s; }
+.bn-fx .smoke { fill: #2b2b33; opacity: 0; animation: bnsmoke 2.2s ease-out infinite; } .bn-fx .smoke.s2 { animation-delay: 1.1s; }
+.bn-fx .boom { fill: #fff2a8; opacity: 0; transform-box: fill-box; transform-origin: center; animation: bnboom .6s ease-out forwards; }
+.bn-fx .boom.ring { fill: none; stroke: #ff9a3d; stroke-width: .07; animation-duration: .8s; }
+.bn-fx .rip { fill: none; stroke: #fff; stroke-opacity: .75; stroke-width: .05; } .bn-fx .rip2 { fill: #fff; opacity: .8; }
+.bn-fx .spl { fill: none; stroke: #fff; stroke-width: .06; opacity: 0; transform-box: fill-box; transform-origin: center; animation: bnspl .7s ease-out forwards; } .bn-fx .spl.d2 { animation-delay: .12s; }
+@keyframes bnflame { from { transform: scale(.85, .82) rotate(-4deg); } to { transform: scale(1.08, 1.15) rotate(4deg); } }
+@keyframes bnember { to { opacity: .6; } }
+@keyframes bnsmoke { 0% { transform: translate(0, 0) scale(.6); opacity: 0; } 20% { opacity: .55; } 100% { transform: translate(.1px, -.8px) scale(1.7); opacity: 0; } }
+@keyframes bnboom { 0% { transform: scale(.2); opacity: .95; } 100% { transform: scale(2.4); opacity: 0; } }
+@keyframes bnspl { 0% { transform: scale(.3); opacity: .95; } 100% { transform: scale(2.6); opacity: 0; } }
+.bn-grid.shake { animation: bnshake .45s cubic-bezier(.36, .07, .19, .97); }
+@keyframes bnshake { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { .bn-waves path, .bn-fx .ember, .bn-fx .flame, .bn-fx .flame2, .bn-fx .smoke, .bn-grid .bc.t, .bn-grid.shake { animation: none; } .bn-fx .smoke { opacity: .25; } .bn-fx .boom, .bn-fx .spl { display: none; } }
+.bn-grid, .bn-mini, .bn-info { flex: none; }
+.bn-grid.mini { height: 140px; box-sizing: border-box; grid-template-rows: repeat(10, 1fr); }

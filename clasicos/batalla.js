@@ -8,11 +8,39 @@
   CG.ICONS.batalla = '<svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true"><path d="M4 31h40l-6.500 9H11z"/><path d="M13 31v-9h13v9M26 31v-6h9v6" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M19.500 22v-7" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M4 44c5 0 5-2.500 10-2.500S19 44 24 44s5-2.500 10-2.500S39 44 44 44" fill="none" stroke="#ff6a4f" stroke-width="2.600" stroke-linecap="round"/></svg>';
   const isInt = (x, a, b) => Number.isInteger(x) && x >= a && x <= b;
 
+
+  // ---------------------------------------------------------------- dibujo 2D de barcos y efectos (SVG sobre la cuadrícula, 1 casilla = 1 unidad)
+  const HULL = L => '<path class="hl" d="M.12 .2H' + (L - .42) + 'Q' + (L - .04) + ' .5 ' + (L - .42) + ' .8H.12Q.02 .5 .12 .2Z"/><path class="dk" d="M.22 .3H' + (L - .5) + 'Q' + (L - .24) + ' .5 ' + (L - .5) + ' .7H.22Z"/>';
+  const TURRET = x => '<circle class="tr" cx="' + x + '" cy=".5" r=".16"/><path class="gun" d="M' + x + ' .5H' + (x + .36) + '"/>';
+  const DECK = {
+    portaaviones: L => '<rect class="rw" x=".3" y=".31" width="' + (L - .95) + '" height=".38" rx=".05"/><path class="lane" d="M.5 .5H' + (L - .75) + '"/><rect class="tw" x="' + (L - 1.9) + '" y=".16" width=".5" height=".17"/><path class="pl" d="M1 .5h.3M1.15 .4v.2M2 .5h.3M2.15 .4v.2"/>',
+    acorazado: L => TURRET(.85) + TURRET(L - 1.45) + '<rect class="tw" x="1.5" y=".35" width=".55" height=".3" rx=".05"/><circle class="fn" cx="2.35" cy=".5" r=".09"/>',
+    crucero: L => TURRET(.8) + '<rect class="tw" x="1.25" y=".35" width=".5" height=".3" rx=".05"/><circle class="fn" cx="2" cy=".5" r=".09"/>',
+    destructor: L => '<rect class="tw" x=".6" y=".38" width=".4" height=".24" rx=".05"/><circle class="tr" cx="1.3" cy=".5" r=".1"/>',
+  };
+  function shipSvg(id, len, r, c, h, cls) {
+    const body = id === 'submarino'
+      ? '<rect class="sub" x=".1" y=".22" width="' + (len - .3) + '" height=".56" rx=".28"/><rect class="sub2" x="' + (len / 2 - .3) + '" y=".1" width=".5" height=".3" rx=".08"/><path class="per" d="M' + (len / 2 - .05) + ' .1V.02H' + (len / 2 + .15) + '"/><circle class="ph" cx=".7" cy=".5" r=".06"/><circle class="ph" cx="' + (len - .7) + '" cy=".5" r=".06"/>'
+      : HULL(len) + DECK[id](len);
+    return '<g class="bn-sg ' + cls + '" transform="' + (h ? 'translate(' + c + ' ' + r + ')' : 'translate(' + (c + 1) + ' ' + r + ') rotate(90)') + '">' + body + '</g>';
+  }
+  const shipGeo = cells => { const r = Math.min(...cells.map(x => x[0])), c = Math.min(...cells.map(x => x[1])); return { r, c, h: cells.length < 2 || cells[0][0] === cells[1][0] }; };
+  const age = f => Date.now() - f.t;
+  function fireSvg(r, c, freshHit) {
+    return '<g transform="translate(' + (c + .5) + ' ' + (r + .5) + ')"><circle class="ember" r=".34"/><path class="flame" d="M0 -.4C.2 -.2 .28 0 .13 .2Q0 .32 -.13 .2C-.28 0 -.1 -.2 0 -.4Z"/><path class="flame2" d="M0 -.2C.1 -.07 .13 .04 .05 .15Q0 .19 -.05 .15C-.13 .04 -.04 -.07 0 -.2Z"/><circle class="smoke" cx=".05" cy="-.3" r=".13"/><circle class="smoke s2" cx="-.06" cy="-.3" r=".1"/>' +
+      (freshHit ? '<circle class="boom" r=".5" style="animation-delay:-' + age(freshHit) + 'ms"/><circle class="boom ring" r=".5" style="animation-delay:-' + age(freshHit) + 'ms"/>' : '') + '</g>';
+  }
+  function splashSvg(r, c, fr) {
+    return '<g transform="translate(' + (c + .5) + ' ' + (r + .5) + ')"><circle class="rip" r=".2"/><circle class="rip2" r=".08"/>' +
+      (fr ? '<circle class="spl" r=".25" style="animation-delay:-' + age(fr) + 'ms"/><circle class="spl d2" r=".25" style="animation-delay:-' + age(fr) + 'ms"/>' : '') + '</g>';
+  }
+
   CG.register('batalla', {
     start(ctx) {
       const root = ctx.root, online = ctx.online;
       let mine = new NV.Board(), phase = 'place', turn = null, sel = SHIPS[0].id, horiz = true, target = null, pending = null, over = false, msg = '';
-      const enemy = Array.from({ length: N }, () => new Array(N).fill(0)), enemySunk = new Set(), fired = [];
+      const enemy = Array.from({ length: N }, () => new Array(N).fill(0)), enemySunk = new Set(), fired = [], sunkShips = [];
+      let fresh = null, shakeNext = false;
       let shotsFired = 0, hitsMade = 0, myReady = false, rivalReady = false, revealed = null, bot = null;
       if (!online) bot = { board: NV.Board.random(), shooter: new NV.Shooter(ctx.level) };
 
@@ -21,7 +49,24 @@
       const $ = s => root.querySelector(s);
 
       const shipIdx = id => SHIPS.findIndex(s => s.id === id);
-      const grid = fn => { let h = ''; for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) h += '<div class="bc ' + fn(r, c) + '" data-r="' + r + '" data-c="' + c + '" role="gridcell" aria-label="' + coord(r, c) + '"></div>'; return h; };
+      const WAVES = '<g class="bn-waves">' + [1.2, 3.2, 5.2, 7.2, 9.2].map((y, i) => '<path d="M-2 ' + y + 'q.5 -.22 1 0t1 0t1 0t1 0t1 0t1 0t1 0t1 0t1 0t1 0t1 0t1 0t1 0t1 0" style="animation-delay:-' + i * .6 + 's"/>').join('') + '</g>';
+      function layer(side) {
+        let sv = '';
+        const mark = (r, c, v) => {
+          const f = fresh && fresh.side === side && fresh.r === r && fresh.c === c && age(fresh) < 900 ? fresh : null;
+          return v === 1 ? splashSvg(r, c, f) : v >= 2 ? fireSvg(r, c, f) : '';
+        };
+        if (side === 'mine') {
+          mine.ships.forEach(sh => { sv += shipSvg(sh.id, sh.len, sh.r, sh.c, sh.h, sh.cells.every(x => mine.shots[x[0]][x[1]] === 2) ? 'sunk' : ''); });
+          for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) sv += mark(r, c, mine.shots[r][c]);
+        } else {
+          if (revealed) revealed.ships.forEach(sh => { if (!sunkShips.some(x => x.id === sh.id)) sv += shipSvg(sh.id, sh.len, sh.r, sh.c, sh.h, 'rv'); });
+          sunkShips.forEach(x => { const g = shipGeo(x.cells); sv += shipSvg(x.id, x.cells.length, g.r, g.c, g.h, 'sunk'); });
+          for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) sv += mark(r, c, enemy[r][c]);
+        }
+        return '<svg class="bn-fx" viewBox="0 0 10 10" preserveAspectRatio="none" aria-hidden="true">' + WAVES + sv + '</svg>';
+      }
+      const grid = (fn, side) => { let h = ''; for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) h += '<div class="bc ' + fn(r, c) + '" data-r="' + r + '" data-c="' + c + '" role="gridcell" aria-label="' + coord(r, c) + '"></div>'; return h + layer(side); };
       const mineCell = (r, c) => {
         const s = mine.shipAt(r, c), sh = mine.shots[r][c];
         return (s ? 's sh' + shipIdx(s.id) : '') + (sh === 1 ? ' m' : sh === 2 ? ' h' : '');
@@ -39,7 +84,7 @@
         $('#bnMsg').textContent = msg;
         if (phase === 'place') {
           head.textContent = 'Coloca tu flota';
-          main.className = 'bn-grid'; main.innerHTML = grid(mineCell); mini.hidden = true;
+          main.className = 'bn-grid'; main.innerHTML = grid(mineCell, 'mine'); mini.hidden = true;
           ctl.innerHTML = '<div class="bn-tray">' + SHIPS.map(s => '<button class="bn-ship' + (mine.ships.some(x => x.id === s.id) ? ' done' : '') + (sel === s.id ? ' on' : '') + '" data-id="' + s.id + '"><span class="bl">' + '<u></u>'.repeat(s.len) + '</span><b>' + s.name + '</b></button>').join('') + '</div>' +
             '<div class="cg-actions"><button class="cg-btn ghost" id="bnRot">' + (horiz ? '↔ Horizontal' : '↕ Vertical') + '</button><button class="cg-btn ghost" id="bnRnd">Aleatoria</button></div>' +
             '<button class="cg-btn primary" id="bnReady"' + (mine.complete() ? '' : ' disabled') + '>' + (mine.complete() ? '¡Listo para la batalla!' : 'Coloca los 5 barcos') + '</button>';
@@ -47,18 +92,19 @@
         }
         if (phase === 'wait') {
           head.textContent = 'Flota lista';
-          main.className = 'bn-grid'; main.innerHTML = grid(mineCell); mini.hidden = true;
+          main.className = 'bn-grid'; main.innerHTML = grid(mineCell, 'mine'); mini.hidden = true;
           ctl.innerHTML = '<div class="cg-wait"><div class="cg-spin sm"></div><span>Esperando a ' + esc(ctx.rivalName) + '…</span></div>';
           return;
         }
         head.textContent = over ? 'Fin de la batalla' : turn === 'me' ? 'Tu turno · elige dónde disparar' : 'Turno de ' + ctx.rivalName;
         head.classList.toggle('mine', !over && turn === 'me');
-        main.className = 'bn-grid radar' + (turn === 'me' && !over ? ' live' : ''); main.innerHTML = grid(radarCell);
-        $('#bnMini').innerHTML = grid(mineCell); mini.hidden = false;
+        main.className = 'bn-grid radar' + (turn === 'me' && !over ? ' live' : ''); main.innerHTML = grid(radarCell, 'radar');
+        $('#bnMini').innerHTML = grid(mineCell, 'mine'); mini.hidden = false;
         $('#bnFleet').innerHTML = SHIPS.map(s => '<span class="' + (enemySunk.has(s.id) ? 'x' : '') + '" title="' + s.name + '">' + '<u></u>'.repeat(s.len) + '</span>').join('');
         if (over) ctl.innerHTML = '';
         else if (turn === 'me') ctl.innerHTML = '<button class="cg-btn primary" id="bnFire"' + (target && !pending ? '' : ' disabled') + '>' + (pending ? 'Disparando…' : target ? '¡Fuego! ' + coord(target[0], target[1]) : 'Toca una casilla del radar') + '</button>';
         else ctl.innerHTML = '<div class="cg-wait"><div class="cg-spin sm"></div><span>' + esc(ctx.rivalName) + ' apunta…</span></div>';
+        if (shakeNext) { shakeNext = false; main.classList.add('shake'); ctx.later(() => main.classList.remove('shake'), 450); }
       }
 
       // ---------------------------------------------------------------- colocación
@@ -90,18 +136,18 @@
         pending = [r, c]; ctx.send({ t: 'shot', r, c }); render();
       }
       function handleResult(r, c, o) {
-        pending = null; fired.push({ r, c, res: o.res }); CG.fx(o.res === 'miss' ? 'splash' : 'boom');
+        pending = null; fired.push({ r, c, res: o.res }); CG.fx(o.res === 'miss' ? 'splash' : 'boom'); fresh = { side: 'radar', r, c, t: Date.now() };
         if (o.res === 'miss') { enemy[r][c] = 1; msg = 'Disparaste a ' + coord(r, c) + ': ¡agua!'; }
         else {
           enemy[r][c] = 2; hitsMade++; msg = 'Disparaste a ' + coord(r, c) + ': ¡tocado!';
-          if (o.res === 'sunk') { for (const [a, b] of o.cells) enemy[a][b] = 3; enemySunk.add(o.id); msg = '¡Hundiste el ' + NV.shipDef(o.id).name.toLowerCase() + ' de ' + ctx.rivalName + '!'; }
+          if (o.res === 'sunk') { for (const [a, b] of o.cells) enemy[a][b] = 3; enemySunk.add(o.id); sunkShips.push({ id: o.id, cells: o.cells }); shakeNext = true; msg = '¡Hundiste el ' + NV.shipDef(o.id).name.toLowerCase() + ' de ' + ctx.rivalName + '!'; }
         }
         if (o.over) { endGame(true); return; }
         turn = 'rival'; render();
         if (bot) ctx.later(botShoot, 750 + Math.random() * 600);
       }
       function describeIn(r, c, o) {
-        CG.fx(o.res === 'miss' ? 'splash' : 'boom');
+        CG.fx(o.res === 'miss' ? 'splash' : 'boom'); fresh = { side: 'mine', r, c, t: Date.now() }; if (o.res === 'sunk') shakeNext = true;
         return ctx.rivalName + ' disparó a ' + coord(r, c) + ': ' + (o.res === 'miss' ? '¡agua!' : o.res === 'hit' ? '¡te tocó!' : '¡hundió tu ' + NV.shipDef(o.id).name.toLowerCase() + '!');
       }
       function botShoot() {
