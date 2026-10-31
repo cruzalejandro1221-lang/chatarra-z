@@ -205,3 +205,21 @@ html.cg-open, html.cg-open body { overflow: hidden; }
   .cg-actions .cg-btn { min-height: 42px; }
   .ch-wrap { width: min(100%, 540px, calc(100dvh - 268px)); }
 }
+
+/* ---------- Ambiente por juego, confeti y animaciones ---------- */
+#cg[data-game=ajedrez] { background: radial-gradient(circle at 50% 30%, #fbefd2 0, #ecd3a0 100%); }
+#cg[data-game=ludo] { background: linear-gradient(160deg, #e6f1ff 0, #fff3d6 100%); }
+#cg[data-game=tresenraya] { background: linear-gradient(160deg, #fff0c4 0, #ffd9b0 100%); }
+#cg[data-game=sudoku], #cg[data-game=pupiletras] { background: #fbf6e8 repeating-linear-gradient(0deg, transparent 0 31px, rgba(29, 42, 91, .05) 31px 32px); }
+#cg[data-game=batalla] { background: linear-gradient(180deg, #f1fbff 0, #cdeaf8 100%); }
+#cg[data-game=poker] { background: radial-gradient(circle at 50% 38%, #26795a 0, #12452f 70%, #0b2c1e 100%); }
+#cg[data-game=poker] .cg-msg, #cg[data-game=poker] .pk-info, #cg[data-game=poker] #cgBody > .pk > :first-child { color: #e9f6ee; }
+#cg[data-game=tetris] { background: radial-gradient(circle at 50% 20%, #34428a 0, #1d2a5b 55%, #101838 100%); }
+#cg[data-game=tetris] .tt-info small { color: #b7c0ea; } #cg[data-game=tetris] .tt-info b { color: #fff; }
+.ch-board .sq.l { background: linear-gradient(135deg, #f6e4bd, #ecd3a0); } .ch-board .sq.d { background: linear-gradient(135deg, #bf9160, #a97646); }
+.ch-board .sq .pc.slide { animation: chslide .22s cubic-bezier(.3, .8, .3, 1); z-index: 3; }
+@keyframes chslide { from { transform: translate(calc(var(--dx) * 100%), calc(var(--dy) * 100%)); } }
+.cg-confetti { position: absolute; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; }
+.cg-confetti i { position: absolute; top: -14px; width: 9px; height: 15px; border-radius: 2px; animation: cgfall linear forwards; }
+@keyframes cgfall { to { transform: translate(var(--x), 105vh) rotate(var(--r)); opacity: .9; } }
+@media (prefers-reduced-motion: reduce) { .ch-board .sq .pc.slide { animation: none; } }

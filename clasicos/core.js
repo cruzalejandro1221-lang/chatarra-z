@@ -388,6 +388,18 @@ const CG = (() => {
       buttons: [{ label: rematchTxt, cls: 'primary', keep: ctx.online, fn: () => requestRematch() }, { label: 'Salir', cls: 'ghost', fn: () => showLobby(ctx.id) }],
     });
     m.classList.add(result);
+    if (result === 'win') confetti();
+  }
+  function confetti() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !S.dom) return;
+    const box = document.createElement('div'); box.className = 'cg-confetti'; box.setAttribute('aria-hidden', 'true');
+    const cols = ['#ffc629', '#ff7a1a', '#2f6fe4', '#22a35a', '#e5383b', '#ffffff'];
+    for (let i = 0; i < 46; i++) {
+      const p = document.createElement('i');
+      p.style.cssText = 'left:' + (Math.random() * 100) + '%;background:' + cols[i % cols.length] + ';animation-delay:' + (Math.random() * 0.5) + 's;animation-duration:' + (1.8 + Math.random() * 1.4) + 's;--r:' + Math.round(Math.random() * 720 - 360) + 'deg;--x:' + Math.round(Math.random() * 120 - 60) + 'px';
+      box.append(p);
+    }
+    S.dom.append(box); setTimeout(() => box.remove(), 3600);
   }
   function requestRematch() {
     const ctx = S.ctx; if (!ctx) return;
@@ -417,7 +429,7 @@ const CG = (() => {
   // ------------------------------------------------------------------ apertura / cierre
   function openOverlay(id) {
     ensureDom();
-    S.id = id; S.level = rd('gg_level', 1);
+    S.id = id; S.dom.dataset.game = id; S.level = rd('gg_level', 1);
     if (!(S.level >= 0 && S.level <= 2)) S.level = 1;
     $('#cgTitle').textContent = INFO[id].name;
     S.dom.hidden = false;
@@ -492,6 +504,7 @@ const CG = (() => {
         o.connect(g).connect(actx.destination); o.start(t0 + at); o.stop(t0 + at + dur + .02);
       }
     } catch (e) { /* sin audio */ }
+    if (navigator.vibrate && (name === 'move' || name === 'click')) try { navigator.vibrate(6); } catch (e) { /* nada */ }
     if (navigator.vibrate && (name === 'capture' || name === 'boom' || name === 'win')) try { navigator.vibrate(name === 'win' ? [20, 40, 20] : 15); } catch (e) { /* nada */ }
   }
 

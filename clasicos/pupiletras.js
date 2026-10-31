@@ -52,7 +52,7 @@
       const cells = (a, b) => { const dr = Math.sign(b.r - a.r), dc = Math.sign(b.c - a.c), len = Math.max(Math.abs(b.r - a.r), Math.abs(b.c - a.c)); return Array.from({ length: len + 1 }, (_, k) => (a.r + dr * k) * n + a.c + dc * k); };
       function draw() {
         const sel = drag ? new Set(drag.cells) : new Set();
-        board.innerHTML = P.g.map((ch, i) => '<div class="pc ' + (sel.has(i) ? 'sel ' : '') + (owner[i] >= 0 ? 'ok ' : '') + (i === hintCell ? 'hint' : '') + '" data-i="' + i + '"' + (owner[i] >= 0 ? ' style="background:' + COLORS[owner[i] % COLORS.length] + '"' : '') + '>' + ch + '</div>').join('');
+        board.innerHTML = P.g.map((ch, i) => '<div class="plc ' + (sel.has(i) ? 'sel ' : '') + (owner[i] >= 0 ? 'ok ' : '') + (i === hintCell ? 'hint' : '') + '" data-i="' + i + '"' + (owner[i] >= 0 ? ' style="background:' + COLORS[owner[i] % COLORS.length] + '"' : '') + '>' + ch + '</div>').join('');
         $('#plWords').innerHTML = P.placed.map((p, k) => '<span class="' + (found.has(k) ? 'f' : '') + '"' + (found.has(k) ? ' style="background:' + COLORS[k % COLORS.length] + '"' : '') + '>' + esc(p.w) + '</span>').join('');
       }
       const at = e => { const r = board.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; return { r: Math.max(0, Math.min(n - 1, Math.floor(y / r.height * n))), c: Math.max(0, Math.min(n - 1, Math.floor(x / r.width * n))), fx: x / r.width * n, fy: y / r.height * n }; };

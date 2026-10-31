@@ -78,7 +78,12 @@
           if (last && (last.from === s || last.to === s)) cl += ' last';
           if (st && s === ksq) cl += ' chk';
           if (targets.has(s)) cl += targets.get(s) ? ' cap' : ' tgt';
-          h += '<div class="' + cl + '" data-s="' + s + '" role="gridcell" aria-label="' + C.sqName(s) + '">' + (p ? piece(p) : '') +
+          let pc = p ? piece(p) : '';
+          if (p && last && Date.now() - last.t < 220 && last.to === s) {              // la pieza que acaba de moverse se desliza desde su casilla anterior
+            const fr = Math.floor(last.from / 16), ff = last.from % 16, dx = (flip ? 7 - ff : ff) - f, dy = (flip ? fr : 7 - fr) - r;
+            pc = piece(p, 'slide').replace('<svg ', '<svg style="--dx:' + dx + ';--dy:' + dy + ';animation-delay:-' + (Date.now() - last.t) + 'ms" ');
+          }
+          h += '<div class="' + cl + '" data-s="' + s + '" role="gridcell" aria-label="' + C.sqName(s) + '">' + pc +
             (f === 0 ? '<i class="rk">' + (rank + 1) + '</i>' : '') + (r === 7 ? '<i class="fl">' + 'abcdefgh'[file] + '</i>' : '') + '</div>';
         }
         board.innerHTML = h; bars();
@@ -107,7 +112,7 @@
       }
       function apply(m) {
         const d = C.dec(m), took = !!g.b[d.to] || (d.flags & 1);
-        g.play(m); hist.push(C.uci(m)); last = { from: d.from, to: d.to }; sel = null; targets = new Map();
+        g.play(m); hist.push(C.uci(m)); last = { from: d.from, to: d.to, t: Date.now() }; sel = null; targets = new Map();
         legal = g.legalMoves(); draw(); slide(d.from, d.to);
         CG.fx(took ? 'capture' : 'move');
         const st = g.status();
