@@ -313,3 +313,9 @@ h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: .3px; }
 .pf-head .online { color: var(--mut); } .pf-head .online.on { color: var(--green-d); }
 .pf-load { display: grid; place-items: center; min-height: 240px; }
 .sheet-card .btn.wide { margin-top: 12px; }
+
+.inst { margin-left: auto; display: flex; align-items: center; gap: 5px; background: var(--ink); color: #fff; font-weight: 900; font-size: 13px; padding: 8px 12px; border-radius: 999px; box-shadow: 0 3px 0 #121b3f; white-space: nowrap; }
+.inst[hidden], .inst-help[hidden] { display: none; }
+.inst:active { transform: translateY(2px); box-shadow: none; }
+.inst-help { margin: 8px 16px 0; padding: 10px 14px; border-radius: 16px; background: #fff0c4; border: 2px solid var(--yellow); font-weight: 800; font-size: 13.5px; line-height: 1.35; }
+@media (max-width: 420px) { .top .brand span { font-size: 18px; } .inst { padding: 7px 10px; font-size: 12px; gap: 3px; } .top { gap: 8px; } }

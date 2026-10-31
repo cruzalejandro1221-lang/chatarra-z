@@ -393,15 +393,19 @@ $('#shareBtn').addEventListener('click', async () => {
 });
 let installEvt = null;
 addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
-$('#installBtn').addEventListener('click', async () => {
-  const help = $('#installHelp');
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+async function installApp(help) {
   if (installEvt) { installEvt.prompt(); await installEvt.userChoice.catch(() => {}); installEvt = null; return; }
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
   help.hidden = false;
-  help.textContent = matchMedia('(display-mode: standalone)').matches ? 'Ya la tienes instalada.'
+  help.textContent = isStandalone() ? 'Ya la tienes instalada.'
     : ios ? 'En iPhone: toca Compartir (el cuadro con la flecha) y luego "Añadir a pantalla de inicio".'
     : 'Abre el menú del navegador (⋮) y elige "Instalar app" o "Añadir a pantalla de inicio".';
-});
+}
+$('#installBtn').addEventListener('click', () => installApp($('#installHelp')));
+if (!isStandalone()) $('#topInstall').hidden = false;
+$('#topInstall').addEventListener('click', () => { const h = $('#topInstHelp'); if (!h.hidden && !installEvt) { h.hidden = true; return; } installApp(h); });
+addEventListener('appinstalled', () => { $('#topInstall').hidden = true; $('#topInstHelp').hidden = true; });
 if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 
 // ---------------------------------------------------------------- arranque
