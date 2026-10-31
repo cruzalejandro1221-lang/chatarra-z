@@ -42,7 +42,7 @@ $('#topAcct').addEventListener('click', () => goTo('perfil'));
 
 // ---------------------------------------------------------------- juegos de fiesta (se cargan al abrirlos)
 async function openParty(id) {
-  try { await CG.load('fiesta/data.js'); await CG.load('fiesta/fiesta.js'); window.Fiesta.open(id); }
+  try { await CG.load('fiesta/data.js'); await CG.load('fiesta/fiesta.js'); if (id === 'reverse') await CG.load('fiesta/reverse.js'); window.Fiesta.open(id); }
   catch (e) { alert('No se pudo cargar el juego. Revisa tu conexión.'); }
 }
 

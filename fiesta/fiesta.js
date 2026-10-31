@@ -64,7 +64,7 @@
     document.documentElement.classList.add('cg-open');
     try { history.pushState({ pt: 1 }, '', location.href); } catch (e) { /* nada */ }
     lock();
-    ({ impostor: impSetup, frente: huSetup, diez: dzSetup })[id]();
+    ({ impostor: impSetup, frente: huSetup, diez: dzSetup, reverse: () => window.FiestaReverse({ screen, $, cleanups, fx, buzz }) })[id]();
   }
   function close(fromHistory) {
     if (!isOpen) return;
