@@ -36,8 +36,15 @@ document.addEventListener('click', e => {
   const pf = e.target.closest('[data-profile]'); if (pf) { showProfile(pf.dataset.profile); return; }
   const p = e.target.closest('[data-play]'); if (p) openGame();
   const c = e.target.closest('[data-classic]'); if (c) CG.open(c.dataset.classic);
+  const pa = e.target.closest('[data-party]'); if (pa) openParty(pa.dataset.party);
 });
 $('#topAcct').addEventListener('click', () => goTo('perfil'));
+
+// ---------------------------------------------------------------- juegos de fiesta (se cargan al abrirlos)
+async function openParty(id) {
+  try { await CG.load('fiesta/data.js'); await CG.load('fiesta/fiesta.js'); window.Fiesta.open(id); }
+  catch (e) { alert('No se pudo cargar el juego. Revisa tu conexión.'); }
+}
 
 // ---------------------------------------------------------------- identidad
 function displayName() { return logged() ? A.profile.username : 'Invitado'; }

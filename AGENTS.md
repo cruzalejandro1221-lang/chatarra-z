@@ -61,6 +61,11 @@ legacy/v1-torres/     versión anterior (torretas, 40 niveles generados); refere
 - Al cambiar archivos que la app guarda para uso sin conexión, sube la versión `CACHE` en `sw.js` (ahora `gg-v4`).
 - En celulares el juego activa la clase `phone` (`game/js/main.js`) y `game/style.css` agranda la interfaz.
 
+## Juegos de fiesta (fiesta/, pestaña Trend)
+
+- Un solo celular para jugar en persona: **El Impostor** (rol oculto con "mantén presionado"), **Carta en la frente** (inclinar el celular; usa `deviceorientation` y la componente vertical `cos(beta)·cos(gamma)`; en iPhone pide permiso al tocar; si no hay sensor se juega tocando los lados; en vertical gira la pantalla por CSS) y **Es un 10 pero…** (juez que arriesga puntos; los "rompe-tratos" aparecen con más probabilidad cada defecto).
+- Todo es local, sin servidor ni cuenta. Se cargan al abrirlos (`openParty` en app.js). Para añadir palabras o cartas edita solo `fiesta/data.js`; para un juego nuevo añade su función en `fiesta/fiesta.js` y una tarjeta `data-party` en index.html.
+
 ## Clásicos (clasicos/)
 
 - `core.js`: lobby (bot o amigo), conexión online, sesión y revancha. Cada juego se registra con `CG.register(id, { start(ctx) })` y recibe `ctx` (`ctx.root`, `ctx.mode`, `ctx.level` 0-2, `ctx.isHost`, `ctx.send`, `ctx.onmsg`, `ctx.later`, `ctx.finish`). Para añadir un juego: crear `clasicos/<id>.js`, añadirlo a `INFO` en core.js, a `CORE` en sw.js y una tarjeta en index.html.
