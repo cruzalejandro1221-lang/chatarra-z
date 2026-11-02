@@ -7,7 +7,7 @@ const SAVE_KEY = 'chatarraZ_v2';                 // mismo guardado que game/js/s
 const RANKS = [[0, 'Novato'], [12, 'Superviviente'], [30, 'Cazador'], [55, 'Veterano'], [85, 'Guardián'], [120, 'Leyenda del muro']];
 const OPEN_LEVELS = 10;
 const GAMES = [['ajedrez', 'Ajedrez', '#1d2a5b'], ['poker', 'Póker', '#22a35a'], ['batalla', 'Batalla Naval', '#2f6fe4'], ['ludo', 'Ludo', '#e5383b']];
-const GAME_NAME = Object.assign(Object.fromEntries(GAMES.map(c => [c[0], c[1]])), { chatarra: 'Chatarra Z' });
+const GAME_NAME = Object.assign(Object.fromEntries(GAMES.map(c => [c[0], c[1]])), { chatarra: 'Guerra Zombie' });
 const LEVEL_NAME = ['fácil', 'medio', 'difícil'];
 const A = window.GGAccount;
 
@@ -34,7 +34,7 @@ document.addEventListener('click', e => {
   const g = e.target.closest('[data-goto]'); if (g) { e.preventDefault(); goTo(g.dataset.goto); return; }
   const au = e.target.closest('[data-auth]'); if (au) { openSheet(au.dataset.auth); return; }
   const pf = e.target.closest('[data-profile]'); if (pf) { showProfile(pf.dataset.profile); return; }
-  const p = e.target.closest('[data-play]'); if (p) openGame();
+  const p = e.target.closest('[data-play]'); if (p) openGame(p.dataset.play);
   const c = e.target.closest('[data-classic]'); if (c) CG.open(c.dataset.classic);
   const pa = e.target.closest('[data-party]'); if (pa) openParty(pa.dataset.party);
 });
@@ -154,6 +154,8 @@ function renderChatarra() {
   }
   if (!s || (!s.stats.kills && s.maxLevel <= 1)) $('#heroProg').textContent = 'Nuevo';
   else $('#heroProg').textContent = `Nivel ${Math.min(s.maxLevel, OPEN_LEVELS)} · ${stars}★`;
+  const gz = logged() ? readJSON('gz_save_' + A.user.id) : null;
+  $('#heroProg').textContent = gz && !gz.wiped ? 'Día ' + gz.day + ' · Era ' + gz.era : 'Nuevo';
 }
 $('#soundToggle').addEventListener('change', e => {
   writeJSON('gg_sound', e.target.checked);
@@ -362,9 +364,11 @@ document.addEventListener('visibilitychange', () => beat(true));
 
 // ---------------------------------------------------------------- juego a pantalla completa
 const play = $('#play'), frame = $('#frame');
-function openGame() {
+function openGame(which) {
+  // Guerra Zombie se juega con cuenta (la partida se guarda en ella); el modo clásico Chatarra Z, no.
+  if (which === 'guerra' && !logged()) { openSheet('welcome'); return; }
   play.hidden = false;
-  frame.src = 'game/index.html';
+  frame.src = which === 'guerra' ? 'guerra/index.html' : 'game/index.html';
   $('#trailerVid').pause();
   history.pushState({ play: 1 }, '', location.hash || '#juegos');
   setTimeout(() => { try { frame.focus(); } catch (e) { /* nada */ } }, 300);
@@ -380,7 +384,11 @@ function closeGame(fromHistory) {
 }
 $('#closePlay').addEventListener('click', () => closeGame(false));
 // El juego avisa desde su menú ("Salir a Giorgio Games") para cerrar la pantalla de juego.
-addEventListener('message', e => { if (e.origin === location.origin && e.data && e.data.gg === 'exit') closeGame(false); });
+addEventListener('message', e => {
+  if (e.origin !== location.origin || !e.data) return;
+  if (e.data.gg === 'exit') closeGame(false);
+  if (e.data.gg === 'account') { closeGame(false); setTimeout(() => openSheet('welcome'), 250); }
+});
 addEventListener('popstate', () => closeGame(true));
 
 // ---------------------------------------------------------------- compartir e instalar

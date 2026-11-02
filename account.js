@@ -192,12 +192,15 @@ const GGAccount = (() => {
   }
   async function friendRespond(username, accept) { const { error } = await sb.rpc('friend_respond', { p_username: username, p_accept: !!accept }); if (error) fail(error); }
   async function friendRemove(username) { const { error } = await sb.rpc('friend_remove', { p_username: username }); if (error) fail(error); }
+  // Guerra Zombie: partida en la nube (falla si la tabla aún no existe; el juego guarda igual en el celular)
+  async function gzLoad() { if (!user) return null; const { data, error } = await sb.rpc('gz_load'); if (error) fail(error); return data || null; }
+  async function gzSave(state) { if (!user) return; const { error } = await sb.rpc('gz_save', { p_data: state }); if (error) fail(error); }
   const level = xp => { const lv = Math.floor(Math.sqrt((xp || 0) / 50)) + 1; return { lv, from: 50 * (lv - 1) ** 2, to: 50 * lv ** 2 }; };
 
   return { ready, providers, usernameFree, AVATARS, USER_RE, strength, level,
     get enabled() { return enabled; }, get user() { return user; }, get profile() { return profile; },
     on: f => { subs.add(f); return () => subs.delete(f); },
     signUp, verifyCode, resend, signIn, signInWith, signOut, resetPassword, updatePassword, setUsername, setAvatar, deleteAccount,
-    onMatch, heartbeat, stats, playtime, history, leaderboard, friends, getProfile, friendRequest, friendRespond, friendRemove };
+    onMatch, heartbeat, stats, playtime, history, leaderboard, friends, getProfile, friendRequest, friendRespond, friendRemove, gzLoad, gzSave };
 })();
 window.GGAccount = GGAccount;

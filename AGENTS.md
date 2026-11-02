@@ -17,6 +17,9 @@ vendor/supabase.min.js        supabase-js 2.45.4 (copia local, sin CDN)
 supabase/migrations/          tablas, reglas RLS y funciones del servidor (fuente de verdad de la base)
 media/giorgio/                el gato Giorgio (mascota del canal Quiz con Giorgio) en varias poses
 manifest.webmanifest, sw.js   instalable como app (PWA) y funciona sin conexión
+guerra/                       Guerra Zombie (juego principal): aldea isométrica + noches de zombies con Phaser 3 (vendor/phaser-3.80.1.min.js).
+                              Solo con cuenta; guarda en el celular y en la nube (funciones gz_load/gz_save). Balance en guerra/js/data.js.
+                              La propuesta completa (eras, recursos, zombies) está en Guerra-Zombie-propuesta.pdf (fuera del repo). Fase 1: eras 0 y 1.
 clasicos/                     Ajedrez, Póker, Batalla Naval, Ludo y Tres en raya (bot de 3 niveles y partida online por enlace) + Sudoku, Pupiletras y Tetris (un jugador)
 fiesta/                       juegos de fiesta de la pestaña Trend (un solo celular)
 icons/, media/                iconos de la app; miniatura, clip y tráiler ligero (720p) sacados del render real

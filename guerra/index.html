@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1b2a1f">
+<title>Guerra Zombie · La Aldea de Giorgio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="guerra.css">
+</head>
+<body>
+<div id="stage"></div>
+<div id="ui">
+  <header id="hud" hidden>
+    <button id="menuBtn" aria-label="Menú">☰</button>
+    <div class="day"><b id="hDay">Día 1</b><small id="hEra"></small></div>
+    <div class="res" id="hRes"></div>
+  </header>
+  <div id="questBar" hidden></div>
+  <div id="narr" hidden role="status"><img src="../media/giorgio/cara.webp" alt="Giorgio"><p id="narrText"></p><button id="narrOk" aria-label="Cerrar">✕</button></div>
+  <nav id="bar" hidden>
+    <button id="bBuild"><span class="ic">🔨</span><span>Construir</span></button>
+    <button id="bAllies"><span class="ic">👥</span><span>Comunidad</span></button>
+    <button id="bNight" class="night"><span class="ic">🌙</span><span>Pasar la noche</span></button>
+  </nav>
+  <div id="place" hidden></div>
+  <div id="nhud" hidden></div>
+  <div id="sheet" hidden><div class="card" id="sheetCard" role="dialog" aria-modal="true"></div></div>
+  <div id="screen" hidden></div>
+  <div id="toast" hidden role="status"></div>
+</div>
+<script src="../vendor/phaser-3.80.1.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/art.js"></script>
+<script src="js/store.js"></script>
+<script src="js/world.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
