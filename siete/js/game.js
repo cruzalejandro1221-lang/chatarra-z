@@ -5,7 +5,7 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const FUR = [['#f3e6d2', '#5a4032'], ['#8d93a3', '#4d5263'], ['#ff9f43', '#c96a12'], ['#3a3a46', '#1c1c24']];
   const cat = (i, sad) => { const [a, b] = FUR[i % 4]; return '<svg viewBox="0 0 64 60" aria-hidden="true"><path d="M10 28 L12 4 L28 16 Q32 15 36 16 L52 4 L54 28 Q58 52 32 54 Q6 52 10 28Z" fill="' + a + '" stroke="#0f0b1a" stroke-width="2.5" stroke-linejoin="round"/><path d="M15 12 L16 22 L23 17Z M49 12 L48 22 L41 17Z" fill="' + b + '"/>' + (sad ? '<path d="M18 30l8 6M26 30l-8 6M38 30l8 6M46 30l-8 6" stroke="#0f0b1a" stroke-width="3" stroke-linecap="round"/>' : '<circle cx="23" cy="32" r="5.500" fill="#ffe27d" stroke="#0f0b1a" stroke-width="2"/><circle cx="41" cy="32" r="5.500" fill="#ffe27d" stroke="#0f0b1a" stroke-width="2"/><ellipse cx="23" cy="32" rx="1.800" ry="4" fill="#0f0b1a"/><ellipse cx="41" cy="32" rx="1.800" ry="4" fill="#0f0b1a"/>') + '<path d="M29 41l3 3 3-3z" fill="#e5788f"/><path d="M6 40l12 1M6 46l12-2M58 40l-12 1M58 46l-12-2" stroke="#0f0b1a" stroke-width="1.400"/></svg>'; };
-  let myName = 'Gato', host = null, guest = null, G = null, V = null, seatNames = [], lastSeq = 0, serving = null, chatOpen = false, timer = 0, timeLeft = 0, busyUntil = 0, botT = 0, round = 0;
+  let myName = 'Gato', host = null, guest = null, G = null, V = null, seatNames = [], lastSeq = 0, serving = null, chatOpen = false, timer = 0, timeLeft = 0, busyUntil = 0, botT = 0, round = 0, prevTools = null;
   try { const A = window.parent !== window && window.parent.GGAccount; if (A && A.profile) myName = A.profile.username; else myName = localStorage.getItem('siete_name') || myName; } catch (e) { /* nada */ }
 
   // ------------------------------------------------------------ sonido
@@ -71,7 +71,8 @@
 
   // ------------------------------------------------------------ anfitrión: árbitro de la partida
   function startGame() {
-    host.started = true; round = 0; G = C.create(host.seats.map(s => ({ name: s.name })));
+    host.started = true; round = 0; prevTools = null; G = C.create(host.seats.map(s => ({ name: s.name })));
+    busyUntil = Date.now() + INTRO;
     broadcast(); step();
   }
   function broadcast() {
@@ -79,17 +80,18 @@
     host.seats.forEach((s, i) => { const v = C.view(G, i); if (s.me) show(v); else if (s.conn) host.send(i, { t: 'view', v }); });
   }
   const actor = () => (G.phase === 'respond' ? G.offer.to : G.turn);
+  const pace = r0 => { busyUntil = Date.now() + (G.last && G.last.type === 'eat' ? 2300 : 500) + (G.round !== r0 && G.phase !== 'over' ? INTRO : 0); };
   function tryAct(i, a) {
     if (!G || G.phase === 'over' || Date.now() < busyUntil || i !== actor()) return;
+    const r0 = G.round;
     if (!C.act(G, i, a)) return;
-    const reveal = G.last && G.last.type === 'eat';
-    busyUntil = Date.now() + (reveal ? 2300 : 500);
+    pace(r0);
     broadcast(); step();
   }
   function step() {
     clearInterval(timer); clearTimeout(botT); if (!G || G.phase === 'over') return;
     const p = actor(), s = host.seats[p], delay = Math.max(0, busyUntil - Date.now());
-    if (s.bot || s.away) { botT = setTimeout(() => { if (!G || actor() !== p) return step(); busyUntil = 0; const a = C.bot(G, p); if (!C.act(G, p, a)) C.act(G, p, G.phase === 'respond' ? { t: 'accept' } : { t: 'eat' }); const r = G.last && G.last.type === 'eat'; busyUntil = Date.now() + (r ? 2300 : 500); broadcast(); step(); }, delay + 900 + Math.random() * 900); return; }
+    if (s.bot || s.away) { botT = setTimeout(() => { if (!G || actor() !== p) return step(); busyUntil = 0; const r0 = G.round, a = C.bot(G, p); if (!C.act(G, p, a)) C.act(G, p, G.phase === 'respond' ? { t: 'accept' } : { t: 'eat' }); pace(r0); broadcast(); step(); }, delay + 900 + Math.random() * 900); return; }
     timeLeft = 30;
     timer = setInterval(() => { if (Date.now() < busyUntil) return; if (--timeLeft <= 0) { clearInterval(timer); busyUntil = 0; tryAct(p, G.phase === 'respond' ? { t: 'accept' } : { t: 'eat' }); } }, 1000);
   }
@@ -112,9 +114,36 @@
     const isNew = v.last && v.last.seq !== lastSeq, newRound = v.round !== round; V = v; round = v.round; serving = null;
     if (v.phase === 'over') { if (isNew) { lastSeq = v.last.seq; reveal(v, () => finish(v)); } else finish(v); return; }
     table(v);
+    const isNewEat = isNew && v.last.type === 'eat';
     if (isNew) { lastSeq = v.last.seq; reveal(v); }
-    if (newRound && v.event) setTimeout(() => banner(C.EVENTS[v.event]), isNew ? 2300 : 300);
-    else if (newRound && v.round > 1) setTimeout(() => banner({ icon: '💦', name: 'Ronda ' + v.round, desc: 'La pistola se recarga.' }), isNew ? 2300 : 300);
+    const delay = isNewEat ? 2300 : 150, mine = v.players[v.me].tools || [];
+    if (newRound) setTimeout(() => roundIntro(v), delay);
+    else if (prevTools && mine.length > prevTools.length && v.last && v.last.type === 'eat') { const t = C.TOOLS[mine[mine.length - 1]]; setTimeout(() => toast('🎁 Caja sorpresa: ' + t.icon + ' ' + t.name, 2600), delay); }
+    prevTools = mine.slice();
+  }
+  // Inicio de ronda: se muestran las cargas, se revuelven, entran en la pistola y cada gato abre la caja sorpresa.
+  const INTRO = 6800;
+  function roundIntro(v) {
+    const el = $('#intro'), n = v.left, bad = v.bad, dark = bad === null;
+    const caps = Array.from({ length: n }, (_, i) => '<i class="cap ' + (dark ? 'q' : i < bad ? 'w' : 'e') + '" style="animation-delay:' + (i * 0.11) + 's">' + (dark ? '?' : i < bad ? '💧' : '') + '</i>').join('');
+    const pct = dark ? null : Math.round(bad / n * 100), ev = v.event ? C.EVENTS[v.event] : null;
+    el.innerHTML = '<div class="in-card"><h2>Ronda ' + v.round + '</h2>' + (ev ? '<p class="in-ev">' + ev.icon + ' <b>' + esc(ev.name) + '</b> · ' + esc(ev.desc) + '</p>' : '') + '<div class="caps" id="caps">' + caps + '</div><p class="in-cnt" id="cnt">&nbsp;</p><div class="gift" id="gift" hidden><div class="g-lid"></div><div class="g-box"></div><div class="g-item" id="gitem"></div></div><p class="in-sub" id="gname">&nbsp;</p></div>';
+    el.hidden = false;
+    const at = (ms, fn) => setTimeout(() => { if (!el.hidden) fn(); }, ms);
+    for (let i = 0; i < n; i++) at(i * 110, () => tone(520 + i * 40, 0.05, 'triangle', 0.05));
+    at(1150, () => { $('#cnt').innerHTML = dark ? 'Apagón: nadie sabe cuántas traen agua' : '<b class="w">' + bad + ' con agua</b> · <b class="e">' + (n - bad) + ' vacía' + (n - bad === 1 ? '' : 's') + '</b>'; $('#gname').textContent = dark ? '' : pct + ' % de probabilidad de mojarte'; tone(330, 0.2, 'triangle', 0.07); });
+    at(2700, () => { $('#caps').classList.add('mix'); $('#gname').textContent = 'Se revuelven…'; for (let i = 0; i < 6; i++) tone(240 + (i % 2) * 80, 0.05, 'square', 0.03, i * 0.09); });
+    at(3500, () => { $('#caps').classList.add('load'); $('#gname').textContent = 'A la pistola'; for (let i = 0; i < n; i++) tone(1200, 0.03, 'square', 0.05, i * 0.07); });
+    at(4200, () => {
+      $('#caps').hidden = true; $('#cnt').innerHTML = '<b>Caja sorpresa</b>'; $('#gname').textContent = '¿Qué te tocará?'; const g = $('#gift'); g.hidden = false; g.classList.add('shake');
+      for (let i = 0; i < 5; i++) tone(180, 0.06, 'square', 0.05, i * 0.13);
+    });
+    at(5050, () => {
+      const g = $('#gift'), t = v.gain[0] ? C.TOOLS[v.gain[0]] : null; g.classList.remove('shake'); g.classList.add('open'); $('#gitem').textContent = t ? t.icon : '🎒';
+      $('#gname').innerHTML = t ? '<b>' + esc(t.name) + '</b><br>' + esc(t.desc) + (v.gain[1] ? '<br>Y también: ' + C.TOOLS[v.gain[1]].icon + ' ' + esc(C.TOOLS[v.gain[1]].name) : '') : 'Tu mochila está llena';
+      tone(523, 0.14, 'triangle', 0.08); tone(784, 0.2, 'triangle', 0.08, 0.1); tone(1046, 0.26, 'triangle', 0.07, 0.2); buzz(20);
+    });
+    at(INTRO - 150, () => { el.hidden = true; el.innerHTML = ''; });
   }
   const seatPos = (i, v) => { const n = v.players.length, r = (i - v.me + n) % n; return n === 2 ? ['me', 'top'][r] : n === 3 ? ['me', 'left', 'right'][r] : ['me', 'left', 'top', 'right'][r]; };
   function table(v) {
@@ -123,6 +152,9 @@
     const dishes = Array.from({ length: v.left }, (_, i) => { const s = v.seen.find(x => x.i === i); return '<i class="dish' + (i === 0 ? ' next' : '') + (s ? (s.bad ? ' kbad' : ' kgood') : '') + '" title="Plato ' + (i + 1) + '">' + (s ? (s.bad ? '☠' : '✓') : '') + '</i>'; }).join('');
     const seats = v.players.map((p, i) => '<button class="seat ' + seatPos(i, v) + (i === actorNow ? ' turn' : '') + (p.out ? ' out' : '') + '" data-p="' + i + '"><span class="cat">' + cat(p.cat, p.out) + '</span><b>' + esc(p.name) + '</b><span class="lv">' + '♥'.repeat(p.lives) + '<u>' + '♥'.repeat(Math.max(0, C.LIVES - p.lives)) + '</u>' + (p.shield ? ' 🧻' : '') + '</span>' + (i !== v.me ? '<small>🎒 ' + p.n + '</small>' : '') + '<em class="bub" id="bub' + i + '"></em></button>').join('');
     const info = v.left + ' cargas · ' + (v.bad === null ? '¿? con agua' : v.bad + ' con agua');
+    const known = v.seen.find(x => x.i === 0), kBad = v.seen.filter(x => x.bad).length, unk = v.left - v.seen.length;
+    const pNext = v.bad === null ? null : unk > 0 ? Math.round(Math.max(0, v.bad - kBad) / unk * 100) : 0;
+    const prob = known ? '<p class="prob ' + (known.bad ? 'w' : 'e') + '">' + (known.bad ? '💧 Sabes que esta carga trae agua' : '✓ Sabes que esta carga está vacía') + '</p>' : pNext === null ? '<p class="prob">Probabilidad de agua: ¿?</p>' : '<p class="prob">Probabilidad de agua: <b>' + pNext + ' %</b><i class="meter"><u style="width:' + pNext + '%"></u></i></p>';
     let bar = '';
     if (mine.out) bar = '<p class="say">Quedaste fuera. Mira cómo termina la partida 👻</p>';
     else if (v.phase === 'respond' && v.offer.to === v.me) bar = '<p class="say">' + esc(v.players[v.offer.from].name) + ' te pasa la pistola y dice: <b>“' + (v.offer.claim === 'malo' ? 'Está cargada' : 'Está vacía') + '”</b></p><div class="acts"><button class="b gold" data-a="accept">Disparar</button><button class="b" data-a="return">Devolver</button></div>';
@@ -130,7 +162,7 @@
     else if (myTurn) bar = '<p class="say">Tu turno</p><div class="acts"><button class="b gold" data-a="eat">Dispararme</button><button class="b" data-a="serve">Pasar a…</button></div>';
     else bar = '<p class="say">Turno de ' + esc(v.players[v.turn].name) + '…</p>';
     const tools = (mine.tools || []).map((k, i) => { const T = C.TOOLS[k]; return '<button class="tool" data-t="' + k + '" aria-label="' + T.name + '"' + (myTurn && v.phase === 'choose' && !T.passive ? '' : ' disabled') + '>' + T.icon + '</button>'; }).join('');
-    app.innerHTML = '<div class="top"><button class="back sm" id="out">‹</button><b>Ronda ' + v.round + '</b><span>' + info + '</span><button class="back sm" id="chat">💬</button></div><div class="board"><div class="candle"></div><div class="plate"><div class="dishes">' + dishes + '</div><div class="cloche" id="cloche"></div>' + (v.event ? '<p class="evt">' + C.EVENTS[v.event].icon + ' ' + C.EVENTS[v.event].name + '</p>' : '') + '</div>' + seats + '</div><div class="bot"><div class="tools">' + tools + '</div>' + bar + '</div><div class="chatbox" id="cbox" hidden>' + C.CHAT.map((c, i) => '<button data-c="' + i + '">' + esc(c) + '</button>').join('') + '</div>';
+    app.innerHTML = '<div class="top"><button class="back sm" id="out">‹</button><b>Ronda ' + v.round + '</b><span>' + info + '</span><button class="back sm" id="chat">💬</button></div><div class="board"><div class="candle"></div><div class="plate"><div class="dishes">' + dishes + '</div><div class="cloche" id="cloche"></div>' + (v.event ? '<p class="evt">' + C.EVENTS[v.event].icon + ' ' + C.EVENTS[v.event].name + '</p>' : '') + '</div>' + seats + '</div><div class="bot">' + prob + '<div class="tools">' + tools + '</div>' + bar + '</div><div class="chatbox" id="cbox" hidden>' + C.CHAT.map((c, i) => '<button data-c="' + i + '">' + esc(c) + '</button>').join('') + '</div>';
     if (window.Siete3D) window.Siete3D.update(v, i => seatPos(i, v));
     $('#out').onclick = () => confirmOut();
     $('#chat').onclick = () => { $('#cbox').hidden = !$('#cbox').hidden; };

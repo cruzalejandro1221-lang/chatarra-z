@@ -32,7 +32,7 @@
   }
   const shuffle = (a, R) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const alive = G => G.players.map((p, i) => i).filter(i => !G.players[i].out);
-  const give = (G, p, R) => { if (G.players[p].tools.length < MAX_TOOLS) G.players[p].tools.push(pickTool(R)); };
+  const give = (G, p, R) => { if (G.players[p].tools.length >= MAX_TOOLS) return null; const t = pickTool(R); G.players[p].tools.push(t); return t; };
 
   function create(players, R) {
     R = R || Math.random;
@@ -48,10 +48,12 @@
     G.queue = shuffle(Array.from({ length: n }, (_, i) => (i < bad ? 1 : 0)), R); G.idx = 0;
     G.know = G.players.map(() => new Set()); G.pub = new Set();
     const live = alive(G), spots = shuffle(Array.from({ length: n }, (_, i) => i), R);
-    live.forEach((p, i) => { G.know[p].add(spots[i % n]); give(G, p, R); });                     // cada gato sabe en secreto un plato
+    G.gain = G.players.map(() => []);
+    const box = p => { const t = give(G, p, R); if (t) G.gain[p].push(t); };
+    live.forEach((p, i) => { G.know[p].add(spots[i % n]); box(p); });                     // cada gato sabe en secreto un plato
     if (G.event === 'apagon') G.dark = true;
     if (G.event === 'doble') G.bonus = 1;
-    if (G.event === 'hambre') live.forEach(p => give(G, p, R));
+    if (G.event === 'hambre') live.forEach(box);
     if (G.event === 'fantasma') G.pub.add(Math.floor(R() * n));
     if (G.event === 'corriente') { const held = live.map(p => G.players[p].tools.pop()); live.forEach((p, i) => { const t = held[(i + live.length - 1) % live.length]; if (t) G.players[p].tools.push(t); }); }
     G.phase = 'choose'; G.offer = null;
@@ -126,7 +128,7 @@
   function view(G, p) {
     const r = remaining(G), seen = [];
     for (let i = G.idx; i < G.queue.length; i++) if (G.pub.has(i) || (G.know[p] && G.know[p].has(i))) seen.push({ i: i - G.idx, bad: !!G.queue[i], pub: G.pub.has(i) });
-    return { round: G.round, left: r.n, bad: G.dark ? null : r.bad, seen, turn: G.turn, phase: G.phase, offer: G.offer, event: G.event, bonus: G.bonus, spice: G.spice, winner: G.winner, last: G.last, me: p,
+    return { round: G.round, left: r.n, bad: G.dark ? null : r.bad, seen, gain: (G.gain && G.gain[p]) || [], turn: G.turn, phase: G.phase, offer: G.offer, event: G.event, bonus: G.bonus, spice: G.spice, winner: G.winner, last: G.last, me: p,
       players: G.players.map((x, i) => ({ name: x.name, cat: x.cat, lives: x.lives, out: x.out, shield: x.shield, n: x.tools.length, tools: i === p ? x.tools : null })) };
   }
 

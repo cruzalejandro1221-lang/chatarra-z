@@ -93,3 +93,35 @@ body.wet::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-ev
 /* gotas en la cámara cuando te mojan a ti */
 body.wet::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(circle at 30% 30%, rgba(127, 212, 255, .5) 0 7%, transparent 8%), radial-gradient(circle at 70% 55%, rgba(127, 212, 255, .45) 0 10%, transparent 11%), radial-gradient(circle at 45% 80%, rgba(127, 212, 255, .4) 0 6%, transparent 7%), rgba(47, 143, 228, .28); animation: wetf 1.3s forwards; }
 @keyframes wetf { to { opacity: 0; transform: translateY(40px); } }
+
+/* inicio de ronda: cargas y caja sorpresa */
+#intro { position: fixed; inset: 0; z-index: 7; display: grid; place-items: center; padding: 18px; background: rgba(6, 3, 12, .78); }
+.in-card { width: min(100%, 360px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.in-card h2 { font-size: 34px; color: var(--gold); animation: inpop .35s cubic-bezier(.2, 1.5, .4, 1); }
+.in-ev { margin: 0; font-size: 13.5px; color: var(--mut); } .in-ev b { color: var(--txt); }
+.caps { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; min-height: 76px; }
+.cap { width: 30px; height: 72px; border-radius: 15px; display: grid; place-items: center; font-style: normal; font-size: 15px; border: 2px solid #0f0b1a; animation: indrop .34s cubic-bezier(.2, 1.5, .4, 1) backwards; transition: background .3s, transform .5s, opacity .5s; }
+.cap.w { background: linear-gradient(180deg, #8fdcff, #2f8fe4); box-shadow: 0 0 14px rgba(53, 168, 255, .7); }
+.cap.e { background: linear-gradient(180deg, #d9dde6, #8f96a8); }
+.cap.q { background: linear-gradient(180deg, #4b3a68, #2a1c3c); color: var(--gold); }
+.caps.mix .cap { background: linear-gradient(180deg, #d9dde6, #8f96a8); box-shadow: none; color: transparent; animation: inmix .22s ease-in-out infinite alternate; }
+.caps.mix .cap:nth-child(even) { animation-direction: alternate-reverse; }
+.caps.load .cap { animation: none; transform: translateY(-170px) scale(.3); opacity: 0; }
+.in-cnt { margin: 0; font-size: 20px; min-height: 28px; } .in-cnt .w { color: #6fc7ff; } .in-cnt .e { color: #cfd4df; }
+.in-sub { margin: 0; color: var(--mut); font-size: 14.5px; line-height: 1.4; min-height: 42px; } .in-sub b { color: var(--gold); font-size: 18px; }
+.gift { position: relative; width: 132px; height: 128px; }
+.g-box { position: absolute; left: 14px; right: 14px; bottom: 0; height: 80px; border-radius: 8px; border: 3px solid #0f0b1a; background: linear-gradient(90deg, #7b3fe4 0 42%, var(--gold) 42% 58%, #7b3fe4 58%); }
+.g-lid { position: absolute; left: 6px; right: 6px; bottom: 76px; height: 28px; z-index: 2; border-radius: 7px; border: 3px solid #0f0b1a; background: linear-gradient(90deg, #9b63f0 0 42%, var(--gold) 42% 58%, #9b63f0 58%); transition: transform .4s cubic-bezier(.3, 1.3, .5, 1); transform-origin: 12% 100%; }
+.g-item { position: absolute; left: 0; right: 0; bottom: 34px; font-size: 54px; line-height: 1; opacity: 0; }
+.gift.shake { animation: inshake .13s linear infinite; }
+.gift.open .g-lid { transform: rotate(-38deg) translateY(-18px); }
+.gift.open .g-item { opacity: 1; animation: initem .5s cubic-bezier(.2, 1.5, .4, 1) forwards; filter: drop-shadow(0 0 16px var(--gold)); }
+@keyframes inpop { from { transform: scale(.5); opacity: 0; } }
+@keyframes indrop { from { transform: translateY(-46px); opacity: 0; } }
+@keyframes inmix { from { transform: translateX(-7px) rotate(-6deg); } to { transform: translateX(7px) rotate(6deg); } }
+@keyframes inshake { 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+@keyframes initem { from { transform: translateY(30px) scale(.4); } to { transform: translateY(-56px) scale(1.1); } }
+.prob { margin: 0; text-align: center; font-size: 12.5px; color: var(--mut); display: flex; align-items: center; justify-content: center; gap: 7px; } .prob b { color: #6fc7ff; font-size: 15px; } .prob.w { color: #6fc7ff; } .prob.e { color: #cfd4df; }
+.meter { display: block; width: 74px; height: 7px; border-radius: 9px; background: rgba(255, 255, 255, .16); overflow: hidden; } .meter u { display: block; height: 100%; background: linear-gradient(90deg, #8fdcff, #2f8fe4); }
+@media (prefers-reduced-motion: reduce) { .cap, .caps.mix .cap, .gift.shake, .gift.open .g-item, .in-card h2 { animation: none; } .gift.open .g-item { transform: translateY(-56px); } }
+.gift { margin-top: 58px; }
