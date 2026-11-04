@@ -330,3 +330,6 @@ h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: .3px; }
 .gb-media { background: radial-gradient(circle at 70% 80%, #e5383b 0, #7b3fe4 60%, #1d2a5b 100%); }
 .gb-media img { position: absolute; right: 6%; bottom: -6%; width: 34%; height: auto; object-fit: contain; filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .3)); }
 .gb-media .gz-logo span { color: #ffc629; }
+.gs-media { background: radial-gradient(circle at 70% 80%, #6e1f2e 0, #2a1633 58%, #0d0818 100%); }
+.gs-media img { position: absolute; right: 6%; bottom: -6%; width: 34%; height: auto; object-fit: contain; filter: drop-shadow(0 0 16px rgba(255, 198, 41, .4)); }
+.gs-media .gz-logo span { color: #ffc629; }

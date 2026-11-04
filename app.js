@@ -367,12 +367,12 @@ document.addEventListener('visibilitychange', () => beat(true));
 
 // ---------------------------------------------------------------- juego a pantalla completa
 const play = $('#play'), frame = $('#frame');
-function openGame(which) {
+function openGame(which, sala) {
   // Guerra Zombie se juega con cuenta (la partida se guarda en ella); el modo clásico Chatarra Z, no.
   if (which === 'guerra' && !logged()) { openSheet('welcome'); return; }
   play.hidden = false;
-  frame.src = which === 'guerra' ? 'guerra/index.html' : which === 'turbo' ? 'turbo/index.html' : which === 'pelea' ? 'pelea/index.html' : 'game/index.html';
-  playingId = which === 'turbo' || which === 'pelea' ? null : 'chatarra';
+  frame.src = which === 'guerra' ? 'guerra/index.html' : which === 'turbo' ? 'turbo/index.html' : which === 'pelea' ? 'pelea/index.html' : which === 'siete' ? 'siete/index.html' + (sala ? '?sala=' + encodeURIComponent(sala) : '') : 'game/index.html';
+  playingId = which === 'turbo' || which === 'pelea' || which === 'siete' ? null : 'chatarra';
   $('#trailerVid').pause();
   history.pushState({ play: 1 }, '', location.hash || '#juegos');
   setTimeout(() => { try { frame.focus(); } catch (e) { /* nada */ } }, 300);
@@ -430,7 +430,10 @@ window.CGhooks = { onclose: () => { beat(true); if (current === 'perfil') render
 const invite = (() => { const q = new URLSearchParams(location.search); return q.get('juego') && q.get('sala') ? { juego: q.get('juego'), sala: q.get('sala') } : null; })();
 renderIdentity(); renderChatarra();
 goTo((location.hash.slice(1) || 'juegos').split('&')[0], false);
-if (invite) {                                   // enlace de invitación: directo a la partida, sin pedir cuenta
+if (invite && invite.juego === 'siete') {        // invitación a una cena: entra directo a la sala
+  history.replaceState(null, '', location.pathname + '#juegos');
+  openGame('siete', invite.sala);
+} else if (invite) {                            // enlace de invitación: directo a la partida, sin pedir cuenta
   goTo('clasicos', false);
   history.replaceState(null, '', location.pathname + '#clasicos');
   CG.join(invite.juego, invite.sala);
