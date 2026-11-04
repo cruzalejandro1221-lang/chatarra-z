@@ -2,7 +2,7 @@
 // Código (páginas, scripts, estilos): primero la red, así siempre ves la última versión; si no hay red, la copia guardada.
 // Imágenes y video: primero la copia guardada y se refresca en segundo plano.
 // Las llamadas a Supabase (otro dominio) nunca pasan por aquí: los datos de la cuenta no se guardan en caché.
-const CACHE = 'gg-v17';
+const CACHE = 'gg-v18';
 const CORE = ['./', 'index.html', 'app.css', 'app.js', 'config.js', 'account.js', 'vendor/supabase.min.js', 'manifest.webmanifest', 'icons/icon-192.png',
   'media/giorgio/cara.webp', 'media/giorgio/principal.webp', 'media/giorgio/feliz.webp', 'media/giorgio/triste.webp', 'media/giorgio/pensando.webp', 'media/giorgio/guino.webp', 'media/giorgio/asoma.webp',
   'game/index.html', 'game/style.css', 'game/js/util.js', 'game/js/data.js', 'game/js/save.js', 'game/js/audio.js',
@@ -10,7 +10,7 @@ const CORE = ['./', 'index.html', 'app.css', 'app.js', 'config.js', 'account.js'
   'clasicos/clasicos.css', 'clasicos/core.js', 'clasicos/vendor/peerjs.min.js',
   'clasicos/chess-engine.js', 'clasicos/chess-worker.js', 'clasicos/ajedrez.js',
   'clasicos/poker-engine.js', 'clasicos/poker.js', 'clasicos/batalla-engine.js', 'clasicos/batalla.js',
-  'clasicos/ludo-engine.js', 'clasicos/ludo.js', 'clasicos/clasicos-nuevos.css', 'clasicos/tresenraya.js', 'clasicos/sudoku.js', 'clasicos/pupiletras.js', 'clasicos/tetris.js', 'fiesta/fiesta.css', 'fiesta/data.js', 'fiesta/fiesta.js', 'pelea/index.html', 'pelea/pelea.css', 'pelea/js/core.js', 'pelea/js/game.js', 'turbo/index.html', 'turbo/turbo.css', 'turbo/js/levels.js', 'turbo/js/game.js', 'vendor/three-0.160.0.module.min.js', 'guerra/index.html', 'guerra/guerra.css', 'guerra/js/data.js', 'guerra/js/art.js', 'guerra/js/store.js', 'guerra/js/world.js', 'guerra/js/ui.js', 'guerra/js/main.js', 'vendor/phaser-3.80.1.min.js', 'fiesta/reverse.js',
+  'clasicos/ludo-engine.js', 'clasicos/ludo.js', 'clasicos/clasicos-nuevos.css', 'clasicos/tresenraya.js', 'clasicos/sudoku.js', 'clasicos/pupiletras.js', 'clasicos/tetris.js', 'clasicos/suma.js', 'turbo/js/music.js', 'fiesta/fiesta.css', 'fiesta/data.js', 'fiesta/fiesta.js', 'pelea/index.html', 'pelea/pelea.css', 'pelea/js/core.js', 'pelea/js/game.js', 'turbo/index.html', 'turbo/turbo.css', 'turbo/js/levels.js', 'turbo/js/game.js', 'vendor/three-0.160.0.module.min.js', 'guerra/index.html', 'guerra/guerra.css', 'guerra/js/data.js', 'guerra/js/art.js', 'guerra/js/store.js', 'guerra/js/world.js', 'guerra/js/ui.js', 'guerra/js/main.js', 'vendor/phaser-3.80.1.min.js', 'fiesta/reverse.js',
   'media/chatarra-thumb.jpg'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {

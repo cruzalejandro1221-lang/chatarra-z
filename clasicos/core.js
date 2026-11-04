@@ -13,6 +13,7 @@ const CG = (() => {
     tresenraya: { name: 'Tres en raya', file: 'clasicos/tresenraya.js', deps: [] },
     sudoku: { name: 'Sudoku', file: 'clasicos/sudoku.js', deps: [], solo: true, levels: [['Fácil', 'Muchas pistas'], ['Medio', 'Un reto tranquilo'], ['Difícil', 'Pocas pistas']] },
     pupiletras: { name: 'Pupiletras', file: 'clasicos/pupiletras.js', deps: [], solo: true, levels: [['Fácil', 'Tablero chico'], ['Medio', 'Con diagonales'], ['Difícil', 'Palabras al revés']] },
+    suma: { name: 'Suma Giorgio', file: 'clasicos/suma.js', deps: [], solo: true, levels: [['Fácil', 'Meta 512, sin cajas'], ['Medio', 'Meta 1024, con cajas'], ['Difícil', 'Meta 2048, muchas cajas']] },
     tetris: { name: 'Tetris', file: 'clasicos/tetris.js', deps: [], solo: true, levels: [['Fácil', 'Piezas lentas'], ['Medio', 'Ritmo normal'], ['Difícil', 'Piezas rápidas']] },
   };
   const TRACKED = ['ajedrez', 'poker', 'batalla', 'ludo'];          // los que cuentan en el perfil de la cuenta
@@ -474,10 +475,11 @@ const CG = (() => {
     tresenraya: 'Tres en línea gana. Fácil de aprender, difícil de ganarle al bot en Difícil.',
     sudoku: 'Completa la cuadrícula: del 1 al 9 sin repetir en filas, columnas ni cuadros.',
     pupiletras: 'Encuentra todas las palabras escondidas arrastrando el dedo sobre las letras.',
+    suma: 'Desliza los bloques, suma los iguales y rompe las cajas para llegar a la meta.',
     tetris: 'Encaja las piezas, completa líneas y aguanta cada vez más rápido.',
   };
   const ICONS = {};
-  const TILE = { ajedrez: 't-chess', poker: 't-poker', batalla: 't-sea', ludo: 't-ludo', tresenraya: 't-ttt', sudoku: 't-sudoku', pupiletras: 't-words', tetris: 't-tetris' };
+  const TILE = { ajedrez: 't-chess', poker: 't-poker', batalla: 't-sea', ludo: 't-ludo', tresenraya: 't-ttt', sudoku: 't-sudoku', pupiletras: 't-words', tetris: 't-tetris', suma: 't-suma' };
 
   // Sonidos cortos sintetizados (sin archivos) y vibración leve. Se apagan desde Perfil > Sonidos.
   let actx = null;

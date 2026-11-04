@@ -14,7 +14,11 @@ const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(72, 1, 0.1
 scene.fog = new THREE.Fog(0xffffff, 26, 92);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x8899bb, 2.1));
 const sun = new THREE.DirectionalLight(0xffffff, 1.5); sun.position.set(2, 3, 6); scene.add(sun);
-const tube = new THREE.Group(); scene.add(tube);
+const SPACE = new THREE.Color(0x000000), tube = new THREE.Group(); scene.add(tube);
+// fuera del tubo solo hay espacio: negro con estrellas
+const starP = new Float32Array(900 * 3);
+for (let i = 0; i < 900; i++) { const a = Math.random() * 6.283, r = 14 + Math.random() * 70; starP[i * 3] = Math.cos(a) * r; starP[i * 3 + 1] = Math.sin(a) * r; starP[i * 3 + 2] = -Math.random() * 130 + 4; }
+const stars = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(starP, 3)), new THREE.PointsMaterial({ size: 0.34, color: 0xffffff, fog: false, sizeAttenuation: true })); scene.add(stars);
 const MAXI = (AHEAD + BEHIND + 1) * M;
 const tileW = 2 * RT * Math.tan(Math.PI / M) * 0.95;
 const tiles = new THREE.InstancedMesh(new THREE.BoxGeometry(tileW, 0.26, RING * 0.94), new THREE.MeshLambertMaterial(), MAXI);
@@ -90,11 +94,12 @@ addEventListener('resize', resize); resize();
 // ------------------------------------------------------------ partida
 let S = null, state = 'menu', wantJump = false, keyL = false, keyR = false, shake = 0, lastT = 0, deadT = 0, spin = 0;
 function setBiome(B) {
-  const c = new THREE.Color(B.sky); scene.background = c; scene.fog.color = c;
+  scene.background = SPACE; scene.fog.color = SPACE;
   boxes.material.color.set(B.box); $('#hudLvl').textContent = 'Nivel ' + S.L.n;
 }
 function startLevel(n) {
   S = T.newRun(T.make(n)); baseK = -999; state = 'play'; deadT = 0; shake = 0;
+  TurboMusic.start(n); $('#hudMusic').textContent = TurboMusic.on ? '🎵' : '🔇';
   setBiome(S.L.biome); gate.position.set(0, 0, -S.L.length * RING); buildWindow(0);
   cat.rotation.set(0, 0, 0); cat.scale.setScalar(CAT);
   show('hud'); $('#hudFish').textContent = '0/' + S.L.fish; $('#hudBar').style.width = '0';
@@ -113,7 +118,7 @@ function finish(win) {
   $('#endAgain').hidden = !win; $('#tip').hidden = true; show('end');
 }
 function menu() {
-  state = 'menu'; S = null; show('menu');
+  state = 'menu'; S = null; show('menu'); TurboMusic.stop();
   const total = Object.values(P.stars).reduce((a, b) => a + b, 0);
   $('#stars').textContent = '★ ' + total + ' / ' + LEVELS * 3;
   $('#grid').innerHTML = Array.from({ length: LEVELS }, (_, i) => {
@@ -124,6 +129,7 @@ function menu() {
 }
 $('#grid').onclick = e => { const b = e.target.closest('button'); if (b && !b.disabled) startLevel(+b.dataset.n); };
 $('#hudBack').onclick = () => menu();
+$('#hudMusic').onclick = () => { $('#hudMusic').textContent = TurboMusic.toggle(S && S.L.n) ? '🎵' : '🔇'; };
 $('#endMenu').onclick = () => menu();
 $('#endAgain').onclick = () => startLevel(S.L.n);
 $('#exit').onclick = () => window.parent.postMessage({ gg: 'exit' }, location.origin);
@@ -183,7 +189,7 @@ function tick(dt) {
     if (deadT > 0.55) finish(false);
   }
   const k = T.ringOf(S); if (k !== baseK) buildWindow(k);
-  tube.position.z = S.dist; tube.rotation.z = S.theta;
+  tube.position.z = S.dist; tube.rotation.z = S.theta; stars.rotation.z = S.theta * 0.25;
   fishes.rotation.z = 0;
   // el gato: siempre abajo; solo cambia la altura, el trote y una leve inclinación al girar
   const run = S.dist * 2.1, inAir = !S.ground;
