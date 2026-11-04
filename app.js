@@ -35,7 +35,7 @@ document.addEventListener('click', e => {
   const au = e.target.closest('[data-auth]'); if (au) { openSheet(au.dataset.auth); return; }
   const pf = e.target.closest('[data-profile]'); if (pf) { showProfile(pf.dataset.profile); return; }
   const p = e.target.closest('[data-play]'); if (p) openGame(p.dataset.play);
-  const c = e.target.closest('[data-classic]'); if (c) CG.open(c.dataset.classic);
+  const c = e.target.closest('[data-classic]'); if (c) { if (CG.INFO[c.dataset.classic]) CG.open(c.dataset.classic); else location.reload(); }
   const pa = e.target.closest('[data-party]'); if (pa) openParty(pa.dataset.party);
 });
 $('#topAcct').addEventListener('click', () => goTo('perfil'));
@@ -418,7 +418,12 @@ $('#installBtn').addEventListener('click', () => installApp($('#installHelp')));
 if (!isStandalone()) $('#topInstall').hidden = false;
 $('#topInstall').addEventListener('click', () => { const h = $('#topInstHelp'); if (!h.hidden && !installEvt) { h.hidden = true; return; } installApp(h); });
 addEventListener('appinstalled', () => { $('#topInstall').hidden = true; $('#topInstHelp').hidden = true; });
-if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  const hadSW = !!navigator.serviceWorker.controller; let reloaded = false;
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(r => r.update()).catch(() => {});
+  // cuando llega una versión nueva, recarga para no mezclar archivos viejos y nuevos (nunca en medio de una partida)
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadSW && !reloaded && !nowPlaying() && play.hidden) { reloaded = true; location.reload(); } });
+}
 
 // ---------------------------------------------------------------- arranque
 window.CGhooks = { onclose: () => { beat(true); if (current === 'perfil') renderProfile(); } };

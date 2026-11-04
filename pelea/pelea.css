@@ -40,3 +40,10 @@ button { font: inherit; font-weight: 900; color: inherit; border: 0; background:
 .box h2 { font-family: var(--display); font-weight: 400; font-size: 28px; margin: 0; } .box p { margin: 0; font-size: 14px; }
 .box .go { margin-top: 4px; }
 .alt { min-height: 38px; border-radius: 12px; background: #fff; border: 2px solid #ecdcb0; color: var(--ink); font-size: 13.5px; }
+
+/* joystick flotante: la zona ocupa la mitad izquierda de la pantalla */
+#zone { pointer-events: auto; position: fixed; left: 0; top: 56px; bottom: 0; width: 52%; touch-action: none; }
+#zone p { position: absolute; left: 22px; bottom: calc(26px + env(safe-area-inset-bottom, 0px)); margin: 0; font-size: 12px; color: rgba(29, 42, 91, .55); }
+#stick { position: fixed; left: 76px; bottom: auto; top: auto; width: 112px; height: 112px; margin: -56px 0 0 -56px; display: none; pointer-events: none; }
+#stick.on { display: grid; }
+#ctl { justify-content: flex-end; }
