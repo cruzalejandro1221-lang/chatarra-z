@@ -1,0 +1,42 @@
+/* Giorgio Brawl: menús y controles sobre la arena. */
+:root { --ink: #1d2a5b; --yellow: #ffc629; --yd: #d99a00; --display: 'Lilita One', 'Arial Rounded MT Bold', system-ui, sans-serif; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); color: #fff; font-family: 'Nunito', system-ui, sans-serif; font-weight: 800; touch-action: none; -webkit-user-select: none; user-select: none; overscroll-behavior: none; }
+button { font: inherit; font-weight: 900; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; }
+[hidden] { display: none !important; }
+#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#hud { position: fixed; left: 0; right: 0; top: 0; display: flex; align-items: center; gap: 8px; padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 0; pointer-events: none; }
+#hudBack { pointer-events: auto; width: 32px; height: 32px; border-radius: 10px; background: rgba(255, 255, 255, .9); color: var(--ink); font-size: 18px; flex: none; }
+.pl { flex: 1; max-width: 170px; background: rgba(255, 255, 255, .9); color: var(--ink); border-radius: 11px; padding: 2px 9px; display: flex; flex-direction: column; line-height: 1.05; }
+.pl b { font-family: var(--display); font-weight: 400; font-size: 20px; } .pl small { font-size: 10.5px; }
+#p1 { margin-left: auto; text-align: right; }
+#ctl { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 14px calc(14px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+#stick { pointer-events: auto; width: 116px; height: 116px; border-radius: 50%; background: rgba(255, 255, 255, .16); border: 2px solid rgba(255, 255, 255, .45); display: grid; place-items: center; touch-action: none; }
+#knob { width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, .88); box-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
+#btns { pointer-events: auto; display: grid; grid-template-columns: repeat(3, 58px); grid-auto-rows: 52px; gap: 7px; touch-action: none; }
+#btns button { border-radius: 15px; background: rgba(255, 255, 255, .86); color: var(--ink); font-size: 11.5px; box-shadow: 0 3px 0 rgba(0, 0, 0, .25); touch-action: none; }
+#btns button:active { transform: translateY(2px); box-shadow: none; }
+#btns .s { background: rgba(29, 42, 91, .78); color: #fff; font-size: 10.5px; }
+#btns .j { background: var(--yellow); grid-column: 3; grid-row: 1 / span 2; }
+#btns [data-b=dodge] { grid-column: 1; grid-row: 1; } #btns [data-b=special] { grid-column: 2; grid-row: 1; } #btns [data-b=heavy] { grid-column: 1; grid-row: 2; } #btns [data-b=light] { grid-column: 2; grid-row: 2; }
+#menu { position: fixed; inset: 0; overflow-y: auto; touch-action: pan-y; background: radial-gradient(circle at 50% 0, #34428a 0, #1d2a5b 60%, #101838 100%); padding: calc(12px + env(safe-area-inset-top, 0px)) 14px calc(18px + env(safe-area-inset-bottom, 0px)); }
+#menu > * { max-width: 520px; margin-left: auto; margin-right: auto; }
+#menu header { display: flex; align-items: center; gap: 10px; }
+#menu h1 { font-family: var(--display); font-weight: 400; font-size: 27px; margin: 0; } #menu h1 span { color: var(--yellow); }
+#menu h2 { font-family: var(--display); font-weight: 400; font-size: 15px; margin: 12px auto 5px; color: #c9d2f2; }
+#exit { width: 38px; height: 38px; border-radius: 12px; background: #fff; color: var(--ink); font-size: 22px; flex: none; }
+.pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.pick button { background: #fff; color: var(--ink); border-radius: 12px; padding: 7px 3px; border-bottom: 5px solid var(--c); display: flex; flex-direction: column; opacity: .72; }
+.pick b { font-size: 13px; } .pick small { font-size: 9.5px; line-height: 1.15; }
+.pick button.on, .stg button.on, .seg button.on { opacity: 1; outline: 3px solid var(--yellow); }
+.stg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.stg button { border-radius: 12px; min-height: 54px; font-size: 11.5px; color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, .8); opacity: .8; padding: 4px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.seg button { background: #2c3871; border-radius: 11px; min-height: 38px; font-size: 13px; }
+.go { display: block; width: 100%; min-height: 50px; border-radius: 15px; background: var(--yellow); color: var(--ink); box-shadow: 0 4px 0 var(--yd); font-size: 17px; margin-top: 14px; }
+.how { font-size: 12px; color: #c9d2f2; line-height: 1.4; text-align: center; }
+#end { position: fixed; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(16, 24, 56, .5); }
+.box { width: min(100%, 300px); background: #fffaf0; color: var(--ink); border-radius: 22px; padding: 16px; text-align: center; display: flex; flex-direction: column; gap: 8px; }
+.box h2 { font-family: var(--display); font-weight: 400; font-size: 28px; margin: 0; } .box p { margin: 0; font-size: 14px; }
+.box .go { margin-top: 4px; }
+.alt { min-height: 38px; border-radius: 12px; background: #fff; border: 2px solid #ecdcb0; color: var(--ink); font-size: 13.5px; }

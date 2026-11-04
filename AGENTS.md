@@ -21,6 +21,7 @@ guerra/                       Guerra Zombie (juego principal): aldea isométrica
                               Solo con cuenta; guarda en el celular y en la nube (funciones gz_load/gz_save). Balance en guerra/js/data.js.
                               La propuesta completa (eras, recursos, zombies) está en Guerra-Zombie-propuesta.pdf (fuera del repo). Fase 1: eras 0 y 1.
 turbo/                        Giorgio Turbo: corredor 3D en tubo (Three.js en vendor/), 25 niveles generados en turbo/js/levels.js; tools/turbo-check.cjs comprueba que todos se pueden terminar.
+pelea/                        Giorgio Brawl: peleas de plataformas 1 contra bot (canvas). Reglas en pelea/js/core.js; tools/pelea-balance.cjs mide el balance con bots.
 clasicos/                     Ajedrez, Póker, Batalla Naval, Ludo y Tres en raya (bot de 3 niveles y partida online por enlace) + Sudoku, Pupiletras y Tetris (un jugador)
 fiesta/                       juegos de fiesta de la pestaña Trend (un solo celular)
 icons/, media/                iconos de la app; miniatura, clip y tráiler ligero (720p) sacados del render real

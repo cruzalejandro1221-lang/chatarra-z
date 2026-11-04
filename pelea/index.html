@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1d2a5b">
+<title>Giorgio Brawl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pelea.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+<section id="hud" hidden>
+  <button id="hudBack" aria-label="Salir">‹</button>
+  <div class="pl" id="p0"><b>0%</b><small></small></div>
+  <div class="pl" id="p1"><b>0%</b><small></small></div>
+</section>
+<section id="ctl" hidden>
+  <div id="stick"><div id="knob"></div></div>
+  <div id="btns">
+    <button data-b="dodge" class="s">Esquiva</button>
+    <button data-b="special" class="s">Especial</button>
+    <button data-b="heavy">Fuerte</button>
+    <button data-b="light">Golpe</button>
+    <button data-b="jump" class="j">Salto</button>
+  </div>
+</section>
+<section id="menu" hidden>
+  <header><button id="exit" aria-label="Volver">‹</button><h1>GIORGIO <span>BRAWL</span></h1></header>
+  <h2>Tu luchador</h2><div class="pick" id="pick"></div>
+  <h2>Rival</h2><div class="pick" id="pickR"></div>
+  <h2>Arena</h2><div class="stg" id="stages"></div>
+  <h2>Dificultad</h2><div class="seg" id="skill"></div>
+  <button class="go" id="go">¡A pelear!</button>
+  <p class="how">Golpea para subir el % del rival: con más %, vuela más lejos. Sácalo de la arena 3 veces. Joystick arriba + Especial te rescata en el aire.</p>
+</section>
+<section id="end" hidden>
+  <div class="box"><h2 id="endT"></h2><p id="endS"></p><button class="go" id="endGo">Revancha</button><button class="alt" id="endMenu">Cambiar luchador</button></div>
+</section>
+<script src="js/core.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
