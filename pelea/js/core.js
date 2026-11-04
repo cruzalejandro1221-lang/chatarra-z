@@ -14,11 +14,15 @@
     giorgio: { name: 'Giorgio', role: 'Equilibrado', weapon: 'Garras', color: '#f3e6d2', accent: '#ff7a1a', speed: 372, air: 332, jump: 802, weight: 100, jumps: 2,
       moves: { light: { f: [4, 4, 10], d: 5, b: 260, g: 7.0, a: 40, r: [66, 46] }, heavy: { f: [13, 5, 20], d: 14, b: 435, g: 16.7, a: 42, r: [80, 57] }, air: { f: [6, 6, 12], d: 8, b: 300, g: 11.0, a: 45, r: [70, 60] }, special: { f: [12, 2, 18], d: 7, b: 250, g: 8, a: 35, proj: { v: 620, life: 55, r: 15, color: '#d9c2a3' } } } },
     rosa: { name: 'Rosa', role: 'Alcance', weapon: 'Lanza', color: '#7b3fe4', accent: '#c5c9d4', speed: 348, air: 315, jump: 780, weight: 97, jumps: 2,
-      moves: { light: { f: [6, 4, 13], d: 6, b: 270, g: 7.5, a: 30, r: [104, 30] }, heavy: { f: [15, 5, 22], d: 13, b: 430, g: 16.5, a: 36, r: [128, 34] }, air: { f: [8, 6, 14], d: 8, b: 300, g: 11.0, a: 40, r: [104, 40] }, special: { f: [16, 2, 20], d: 9, b: 300, g: 9, a: 60, proj: { v: 430, life: 70, r: 18, color: '#e5383b', arc: true } } } },
-    tomas: { name: 'Tomás', role: 'Pesado', weapon: 'Hacha', color: '#22a35a', accent: '#8c8f99', speed: 305, air: 285, jump: 745, weight: 119, jumps: 2,
+      moves: { light: { f: [6, 4, 11], d: 6, b: 272, g: 7.9, a: 30, r: [106, 31] }, heavy: { f: [15, 5, 22], d: 13, b: 430, g: 16.5, a: 36, r: [128, 34] }, air: { f: [8, 6, 14], d: 8, b: 300, g: 11.0, a: 40, r: [104, 40] }, special: { f: [16, 2, 20], d: 9, b: 300, g: 9, a: 60, proj: { v: 430, life: 70, r: 18, color: '#e5383b', arc: true } } } },
+    tomas: { name: 'Tomás', role: 'Pesado', weapon: 'Hacha', color: '#22a35a', accent: '#8c8f99', speed: 305, air: 285, jump: 745, weight: 118, jumps: 2,
       moves: { light: { f: [7, 4, 14], d: 8, b: 300, g: 8.5, a: 42, r: [76, 56] }, heavy: { f: [20, 6, 26], d: 19, b: 470, g: 19, a: 44, r: [92, 70] }, air: { f: [9, 6, 16], d: 11, b: 340, g: 12.5, a: -50, r: [80, 66] }, special: { f: [16, 8, 22], d: 12, b: 340, g: 11, a: 38, r: [84, 60], lunge: 620 } } },
-    chispa: { name: 'Chispa', role: 'Rápida', weapon: 'Dagas', color: '#ff5a5f', accent: '#ffe27d', speed: 440, air: 390, jump: 850, weight: 82, jumps: 3,
+    chispa: { name: 'Chispa', role: 'Rápida', weapon: 'Dagas', color: '#ff5a5f', accent: '#ffe27d', speed: 430, air: 380, jump: 840, weight: 78, jumps: 3,
       moves: { light: { f: [3, 3, 7], d: 4, b: 240, g: 5.8, a: 45, r: [56, 42] }, heavy: { f: [10, 4, 17], d: 11, b: 400, g: 14.5, a: 48, r: [66, 50] }, air: { f: [4, 5, 9], d: 6, b: 270, g: 9, a: 50, r: [60, 52] }, special: { f: [8, 8, 16], d: 8, b: 280, g: 8.5, a: 30, r: [58, 44], lunge: 820 } } },
+    pepe: { name: 'Pepe', role: 'Resistente', weapon: 'Pala', color: '#8fc46a', accent: '#c5c9d4', speed: 330, air: 305, jump: 765, weight: 115, jumps: 2,
+      moves: { light: { f: [6, 5, 12], d: 7, b: 280, g: 7.8, a: 50, r: [84, 50] }, heavy: { f: [17, 6, 23], d: 16, b: 450, g: 17.5, a: 65, r: [96, 66] }, air: { f: [8, 6, 14], d: 9, b: 310, g: 11.5, a: 55, r: [84, 62] }, special: { f: [14, 2, 20], d: 8, b: 280, g: 9, a: 70, proj: { v: 380, life: 60, r: 20, color: '#8a5a2b', arc: true } } } },
+    sofia: { name: 'Sofía', role: 'A distancia', weapon: 'Arco', color: '#1fb5a3', accent: '#b77c3e', speed: 365, air: 335, jump: 810, weight: 94, jumps: 2, zoner: true,
+      moves: { light: { f: [4, 4, 10], d: 6, b: 265, g: 7.4, a: 42, r: [64, 44] }, heavy: { f: [14, 5, 20], d: 12, b: 410, g: 15, a: 40, r: [72, 52] }, air: { f: [6, 6, 12], d: 7, b: 285, g: 10, a: 45, r: [64, 54] }, special: { f: [10, 2, 16], d: 8, b: 270, g: 9, a: 25, proj: { v: 860, life: 48, r: 11, color: '#ffc629' } } } },
   };
   const IDS = Object.keys(CHARS);
 
@@ -144,6 +148,14 @@
       return pad;
     }
     const stay = ad < 62;
+    if (p.c.zoner && !p.atk) {                                                   // pelea a distancia: se aleja y dispara
+      pad.mx = ad < 230 ? -Math.sign(dx) : ad > 460 ? Math.sign(dx) : 0;
+      if (p.x < main.x + 70 || p.x > main.x + main.w - 70) pad.mx = Math.sign(640 - p.x);
+      if (ad < 90 && R() < think && !p.lastPad.dodge) pad.dodge = true;
+      if (Math.abs(dy) < 60 && R() < think * 1.3 && !p.lastPad.special) { p.face = Math.sign(dx) || p.face; pad.special = true; }
+      if (ad < 80 && Math.abs(dy) < 70 && R() < think && !p.lastPad.light) { p.face = Math.sign(dx) || p.face; pad.light = true; }
+      return pad;
+    }
     pad.mx = stay ? 0 : Math.sign(dx);
     if (p.ground && dy < -90 && R() < 0.05 && !p.lastPad.jump) pad.jump = true;
     if (!p.ground && dy > 90) pad.down = R() < 0.5;

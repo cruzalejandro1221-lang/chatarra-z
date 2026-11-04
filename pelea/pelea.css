@@ -25,7 +25,7 @@ button { font: inherit; font-weight: 900; color: inherit; border: 0; background:
 #menu h1 { font-family: var(--display); font-weight: 400; font-size: 27px; margin: 0; } #menu h1 span { color: var(--yellow); }
 #menu h2 { font-family: var(--display); font-weight: 400; font-size: 15px; margin: 12px auto 5px; color: #c9d2f2; }
 #exit { width: 38px; height: 38px; border-radius: 12px; background: #fff; color: var(--ink); font-size: 22px; flex: none; }
-.pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .pick button { background: #fff; color: var(--ink); border-radius: 12px; padding: 7px 3px; border-bottom: 5px solid var(--c); display: flex; flex-direction: column; opacity: .72; }
 .pick b { font-size: 13px; } .pick small { font-size: 9.5px; line-height: 1.15; }
 .pick button.on, .stg button.on, .seg button.on { opacity: 1; outline: 3px solid var(--yellow); }

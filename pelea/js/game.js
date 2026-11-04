@@ -113,12 +113,16 @@
     g.fillStyle = '#1d2a5b'; g.beginPath(); g.arc(9, -72, 3, 0, 7); g.fill();
     if (p.id === 'rosa') { g.fillStyle = '#3a2412'; g.beginPath(); g.moveTo(-22, -62); g.quadraticCurveTo(-24, -94, 2, -92); g.quadraticCurveTo(18, -92, 20, -80); g.lineTo(-8, -80); g.lineTo(-14, -52); g.closePath(); g.fill(); g.stroke(); }
     if (p.id === 'tomas') { g.fillStyle = '#5a3510'; g.beginPath(); g.arc(4, -60, 16, 0.2, 2.9); g.fill(); g.stroke(); g.fillStyle = '#e5383b'; rr(-20, -92, 40, 11, 5); g.fill(); g.stroke(); }
+    if (p.id === 'pepe') { g.fillStyle = '#8fc46a'; g.beginPath(); g.arc(0, -70, 20, 0, 7); g.fill(); g.stroke(); g.fillStyle = '#fff'; g.beginPath(); g.arc(10, -73, 5, 0, 7); g.fill(); g.stroke(); g.fillStyle = '#e5383b'; g.beginPath(); g.arc(11, -73, 2, 0, 7); g.fill(); g.fillStyle = '#5a6b3a'; rr(-16, -94, 30, 8, 4); g.fill(); }
+    if (p.id === 'sofia') { g.fillStyle = '#d9a865'; g.beginPath(); g.moveTo(-21, -56); g.quadraticCurveTo(-24, -94, 2, -92); g.quadraticCurveTo(18, -92, 20, -80); g.lineTo(-6, -80); g.lineTo(-12, -48); g.closePath(); g.fill(); g.stroke(); g.fillStyle = '#1d2a5b'; g.beginPath(); g.arc(9, -72, 3, 0, 7); g.fill(); }
     if (p.id === 'chispa') { g.fillStyle = '#1d2a5b'; g.beginPath(); g.moveTo(-20, -74); g.lineTo(-12, -100); g.lineTo(-2, -88); g.lineTo(8, -102); g.lineTo(20, -76); g.closePath(); g.fill(); g.fillStyle = c.accent; rr(-22, -76, 44, 7, 3); g.fill(); }
   }
   function weapon(id, c) {
     g.lineWidth = 3;
     if (id === 'rosa') { g.fillStyle = '#9b6a35'; rr(-6, -4, 92, 7, 3); g.fill(); g.stroke(); g.fillStyle = c.accent; g.beginPath(); g.moveTo(86, -8); g.lineTo(110, 0); g.lineTo(86, 8); g.closePath(); g.fill(); g.stroke(); }
     else if (id === 'tomas') { g.fillStyle = '#8a5a2b'; rr(-4, -4, 62, 8, 3); g.fill(); g.stroke(); g.fillStyle = c.accent; g.beginPath(); g.moveTo(44, -24); g.quadraticCurveTo(76, -14, 62, 18); g.lineTo(44, 6); g.closePath(); g.fill(); g.stroke(); }
+    else if (id === 'pepe') { g.fillStyle = '#8a5a2b'; rr(-4, -4, 70, 8, 3); g.fill(); g.stroke(); g.fillStyle = c.accent; g.beginPath(); g.moveTo(62, -15); g.lineTo(92, -9); g.quadraticCurveTo(100, 0, 92, 9); g.lineTo(62, 15); g.closePath(); g.fill(); g.stroke(); }
+    else if (id === 'sofia') { g.strokeStyle = c.accent; g.lineWidth = 6; g.beginPath(); g.arc(4, 0, 34, -1.2, 1.2); g.stroke(); g.strokeStyle = '#1d2a5b'; g.lineWidth = 2; g.beginPath(); g.moveTo(16, -32); g.lineTo(16, 32); g.stroke(); }
     else if (id === 'chispa') { g.fillStyle = c.accent; g.beginPath(); g.moveTo(0, -5); g.lineTo(38, 0); g.lineTo(0, 5); g.closePath(); g.fill(); g.stroke(); }
     else { g.fillStyle = c.accent; for (const k of [-6, 0, 6]) { g.beginPath(); g.moveTo(4, k - 3); g.lineTo(28, k); g.lineTo(4, k + 3); g.closePath(); g.fill(); } }
   }
