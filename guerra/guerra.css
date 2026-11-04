@@ -138,3 +138,43 @@ button { font-family: inherit; font-weight: 900; color: inherit; border: 0; back
 .skip { position: absolute; top: calc(14px + env(safe-area-inset-top, 0px)); right: 16px; color: #d6e8c8; font-size: 14px; padding: 8px; }
 #toast { position: absolute; left: 50%; bottom: calc(100px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: 88%; background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 14px; font-size: 14px; text-align: center; z-index: 9; box-shadow: 0 4px 12px rgba(0, 0, 0, .3); }
 @media (prefers-reduced-motion: reduce) { #narr.pop, .card, #bar .night.ready { animation: none; } }
+
+/* ---------- Interfaz compacta: botones pequeños en las esquinas, el mapa manda ---------- */
+#hud { align-items: flex-start; flex-wrap: wrap; gap: 5px 6px; padding: calc(6px + env(safe-area-inset-top, 0px)) 8px 0; background: none; color: var(--ink); }
+#menuBtn { width: 32px; height: 32px; border-radius: 10px; font-size: 15px; box-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
+.day { background: rgba(16, 24, 18, .62); color: #fff; border-radius: 10px; padding: 3px 8px; }
+.day b { font-size: 14px; } .day small { font-size: 9px; }
+.stat { display: flex; gap: 6px; background: rgba(16, 24, 18, .62); color: #fff; border-radius: 10px; padding: 7px 8px; font-size: 11px; line-height: 1; }
+.res { flex-direction: column; align-items: flex-end; gap: 3px; flex-wrap: nowrap; }
+.res span { min-width: 62px; justify-content: space-between; padding: 2px 8px 2px 3px; font-size: 12px; background: rgba(16, 24, 18, .72); color: #fff; box-shadow: none; }
+.res i { font-style: normal; font-size: 12px; }
+#questBar { left: 8px; right: auto; top: calc(46px + env(safe-area-inset-top, 0px)); margin: 0; max-width: min(62%, 300px); padding: 4px 8px; font-size: 11px; border-width: 1.5px; border-radius: 10px; background: rgba(255, 250, 240, .92); box-shadow: none; }
+#questBar b { font-size: 9px; display: block; }
+#narr { left: 8px; right: 8px; bottom: calc(66px + env(safe-area-inset-bottom, 0px)); max-width: 380px; gap: 6px; padding: 4px 26px 4px 4px; border-width: 2px; border-radius: 12px; box-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
+#narr img { width: 30px; height: 30px; } #narr p { font-size: 12px; } #narrOk { right: 3px; top: 2px; width: 22px; height: 22px; font-size: 11px; }
+#bar { align-items: flex-end; gap: 6px; padding: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px)); background: none; pointer-events: none; justify-content: flex-start; }
+#bar button { pointer-events: auto; flex: none; max-width: none; min-height: 0; width: 46px; height: 46px; border-radius: 14px; box-shadow: 0 3px 0 #b7a77a; font-size: 10px; position: relative; }
+#bar button .ic { font-size: 20px; }
+#bar .grow { flex: 1; }
+#bar .main { width: 54px; height: 54px; background: var(--yellow); box-shadow: 0 3px 0 var(--yd); }
+#bar .night { width: 54px; height: 54px; box-shadow: 0 3px 0 #101838; }
+#bCollect b { position: absolute; right: -4px; top: -4px; background: var(--red); color: #fff; font-size: 10px; min-width: 17px; height: 17px; border-radius: 9px; line-height: 17px; }
+#sel { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: 3px; max-width: calc(100% - 140px); }
+.s-name { background: rgba(16, 24, 18, .75); color: #fff; border-radius: 9px; padding: 2px 8px; text-align: center; line-height: 1.1; white-space: nowrap; }
+.s-name b { font-size: 11.5px; display: block; } .s-name small { font-size: 9.5px; color: #d6e8c8; }
+.s-acts { display: flex; gap: 4px; }
+.s-acts button { background: #fff; border-radius: 11px; min-width: 44px; height: 44px; padding: 0 5px; font-size: 9.5px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 0 #b7a77a; line-height: 1.1; white-space: nowrap; }
+.s-acts i { font-style: normal; font-size: 15px; } .s-acts .no { color: var(--red); }
+#place { padding: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px)); }
+.pl-txt { font-size: 11px; } .pl-txt b { font-size: 13px; }
+.pbtn { min-height: 40px; padding: 0 12px; border-radius: 12px; font-size: 13px; }
+.nh-top { padding: 4px 10px; gap: 8px; border-radius: 12px; } .nh-top b { font-size: 14px; }
+.hpbar { height: 14px; } .hpbar span { font-size: 9.5px; line-height: 14px; }
+.nh-hint { font-size: 17px; }
+.nh-w button { padding: 6px 10px; font-size: 12px; border-radius: 11px; }
+.card { max-width: 440px; padding: 12px 12px calc(14px + env(safe-area-inset-bottom, 0px)); }
+.card h3 { font-size: 19px; } .card p { font-size: 13px; }
+.bgrid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+.bcard { min-height: 88px; padding: 6px 4px; border-radius: 12px; }
+.bcard .bi { font-size: 21px; } .bcard b { font-size: 11px; } .bcard small { font-size: 10px; } .bcard em { font-size: 9.5px; }
+.btn { min-height: 44px; font-size: 14px; border-radius: 13px; }

@@ -156,6 +156,8 @@ function renderChatarra() {
   else $('#heroProg').textContent = `Nivel ${Math.min(s.maxLevel, OPEN_LEVELS)} · ${stars}★`;
   const gz = logged() ? readJSON('gz_save_' + A.user.id) : null;
   $('#heroProg').textContent = gz && !gz.wiped ? 'Día ' + gz.day + ' · Era ' + gz.era : 'Nuevo';
+  const tb = readJSON('gg_turbo');
+  if (tb && tb.open > 1) $('#turboProg').textContent = 'Nivel ' + tb.open + '/25';
 }
 $('#soundToggle').addEventListener('change', e => {
   writeJSON('gg_sound', e.target.checked);
@@ -350,7 +352,8 @@ $('#logoutBtn').addEventListener('click', async () => { await A.signOut(); goTo(
 $('#deleteBtn').addEventListener('click', () => openSheet('delete'));
 
 // ---------------------------------------------------------------- presencia: "en línea" y horas por juego
-function nowPlaying() { return !$('#play').hidden ? 'chatarra' : (window.CG && CG.playing && CG.playing()) || null; }
+let playingId = 'chatarra';                     // Giorgio Turbo aún no cuenta en el perfil
+function nowPlaying() { return !$('#play').hidden ? playingId : (window.CG && CG.playing && CG.playing()) || null; }
 let lastBeat = { at: 0, game: undefined };
 function beat(force) {
   if (!logged() || document.hidden) return;
@@ -368,7 +371,8 @@ function openGame(which) {
   // Guerra Zombie se juega con cuenta (la partida se guarda en ella); el modo clásico Chatarra Z, no.
   if (which === 'guerra' && !logged()) { openSheet('welcome'); return; }
   play.hidden = false;
-  frame.src = which === 'guerra' ? 'guerra/index.html' : 'game/index.html';
+  frame.src = which === 'guerra' ? 'guerra/index.html' : which === 'turbo' ? 'turbo/index.html' : 'game/index.html';
+  playingId = which === 'turbo' ? null : 'chatarra';
   $('#trailerVid').pause();
   history.pushState({ play: 1 }, '', location.hash || '#juegos');
   setTimeout(() => { try { frame.focus(); } catch (e) { /* nada */ } }, 300);

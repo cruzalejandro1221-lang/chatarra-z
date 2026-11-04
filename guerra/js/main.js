@@ -10,12 +10,12 @@
   function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
   function genNature(seed) {
-    const r = rng(seed), out = [], fixed = { '5,6': 'arbol', '9,8': 'arbol', '6,9': 'roca', '8,5': 'roca', '9,6': 'arbusto', '5,8': 'arbol', '8,9': 'roca' };
+    const r = rng(seed), out = [], fixed = {}; [[-2, -1, 'arbol'], [2, 1, 'arbol'], [-1, 2, 'roca'], [1, -2, 'roca'], [2, -1, 'arbusto'], [-2, 1, 'arbol'], [1, 2, 'roca'], [3, 2, 'arbol'], [-3, -2, 'arbol'], [-2, 3, 'roca']].forEach(([a, b, t]) => { fixed[(D.C + a) + ',' + (D.C + b)] = t; });
     for (let y = 2; y < D.N; y++) for (let x = 0; x < D.N; x++) {
       const d = cheb(x, y); if (d <= 1) continue;
       const f = fixed[x + ',' + y]; if (f) { out.push({ x, y, t: f, rg: 0 }); continue; }
       const p = r(), inner = d <= D.RADIUS[0];
-      if (p > (inner ? 0.14 : 0.48)) continue;
+      if (p > (inner ? 0.09 : 0.3)) continue;
       const q = r(), t = inner ? (q < 0.45 ? 'arbol' : q < 0.8 ? 'roca' : 'arbusto') : (q < 0.6 ? 'arbol' : q < 0.85 ? 'roca' : 'arbusto');
       out.push({ x, y, t, rg: 0 });
     }
@@ -29,7 +29,7 @@
       weapon: 'piedra', hasLanza: false, best: 0, streak: 0, kills: 0, nightsWon: 0, story: {}, nextId: 2,
     };
   }
-  const beds = S => S.b.reduce((a, b) => a + (!b.build && !b.broken && D.B[b.t].beds ? D.B[b.t].beds : 0), 0);
+  const beds = S => S.b.reduce((a, b) => a + (!b.build && !b.broken && D.B[b.t].beds ? D.B[b.t].beds + b.lvl - 1 : 0), 0);
   const freeBeds = S => beds(S) - 1 - S.allies.length;
   const countOf = (S, t) => S.b.filter(b => b.t === t).length;
   function buildable(S, t) {
@@ -70,12 +70,32 @@
       if (tx < 0 || ty < 0 || tx >= D.N || ty >= D.N) return;
       if (this.placing) return this.placeTap(tx, ty);
       const b = S.b.find(q => q.x === tx && q.y === ty);
-      if (b) { GZ.world.showSel(tx, ty); GZ.ui.buildingSheet(b); return; }
+      if (b) {
+        if (b.store && !b.build) return this.collect(b);
+        GZ.world.showSel(tx, ty); GZ.ui.selBar(b); return;
+      }
+      GZ.ui.selBar(null);
       const n = S.nature.find(q => q.x === tx && q.y === ty);
       if (n && n.rg === 0) return this.gather(n.t, tx, ty, n);
       if (ty === 1) return this.gather('rio', tx, ty, null);
       GZ.world.showSel(tx, ty); setTimeout(() => GZ.world.showSel(null), 300);
     },
+    collect(b) {
+      const give = b.store; add(this.S.res, give); b.store = null; GZ.world.popBubble(b);
+      GZ.world.pop(b.x, b.y, Object.entries(give).map(([k, v]) => '+' + v + ' ' + D.RES[k].icon).join(' '));
+      GZ.sfx('gather'); this.changed();
+    },
+    collectAll() { this.S.b.filter(b => b.store && !b.build).forEach(b => this.collect(b)); },
+    upgrade(b) {
+      const S = this.S, c = D.upCost(b);
+      if (b.lvl >= D.MAX_LVL) return;
+      if (!canPay(S, c)) { GZ.ui.toast('Mejorar cuesta ' + fmtCost(c)); return; }
+      pay(S, c); b.up = true; b.build = Math.max(1, D.B[b.t].days || 0);
+      GZ.ui.selBar(null); GZ.ui.closeSheet(); GZ.world.build(S); GZ.sfx('build');
+      GZ.ui.toast(D.B[b.t].name + ' sube a nivel ' + (b.lvl + 1) + ' en ' + b.build + (b.build === 1 ? ' día' : ' días') + '.');
+      this.changed();
+    },
+    startMove(b) { GZ.ui.selBar(null); this.placing = b.t; this.moving = b; this.target = null; GZ.ui.placingBar(b.t, null); },
     gather(t, tx, ty, n) {
       const S = this.S, R = D.RADIUS[S.era];
       if (cheb(tx, ty) > R + 1) { GZ.ui.toast('Está muy lejos. Mejora la fogata para llegar más allá.'); return; }
@@ -94,7 +114,7 @@
     validTile(tx, ty) {
       const S = this.S;
       if (ty < 2 || cheb(tx, ty) > D.RADIUS[S.era]) return 'Fuera de tu terreno';
-      if (S.b.some(b => b.x === tx && b.y === ty)) return 'Ya hay algo construido';
+      if (S.b.some(b => b !== this.moving && b.x === tx && b.y === ty)) return 'Ya hay algo construido';
       const n = S.nature.find(q => q.x === tx && q.y === ty);
       if (n && n.rg === 0) return 'Primero recoge lo que hay ahí';
       return '';
@@ -106,6 +126,10 @@
     },
     confirmPlace() {
       const S = this.S, t = this.placing, d = D.B[t], tg = this.target;
+      if (tg && tg.ok && this.moving) {
+        this.moving.x = tg.tx; this.moving.y = tg.ty; S.nature = S.nature.filter(q => !(q.x === tg.tx && q.y === tg.ty));
+        this.cancelPlace(); GZ.world.build(S); GZ.sfx('build'); this.changed(); return;
+      }
       if (!tg || !tg.ok || !canPay(S, d.cost)) return;
       pay(S, d.cost);
       S.nature = S.nature.filter(q => !(q.x === tg.tx && q.y === tg.ty));
@@ -119,7 +143,7 @@
       if (keep) GZ.ui.placingBar(t, null); else this.cancelPlace();
       this.changed();
     },
-    cancelPlace() { this.placing = null; this.target = null; GZ.world.showSel(null); GZ.ui.placingBar(null); },
+    cancelPlace() { this.placing = null; this.moving = null; this.target = null; GZ.world.showSel(null); GZ.ui.placingBar(null); },
     // ------------------------------------------------------------ acciones sobre edificios
     lightFire() {
       const S = this.S; if (S.lit) return;
@@ -148,9 +172,9 @@
     repair(b) {
       const cost = {}; Object.entries(D.B[b.t].cost).forEach(([k, v]) => { cost[k] = Math.ceil(v / 2); });
       if (!canPay(this.S, cost)) { GZ.ui.toast('Reparar cuesta ' + fmtCost(cost)); return; }
-      pay(this.S, cost); b.broken = false; b.hp = D.B[b.t].hp; GZ.ui.closeSheet(); GZ.world.build(this.S); this.changed();
+      pay(this.S, cost); b.broken = false; b.hp = D.hpOf(b); GZ.ui.selBar(null); GZ.ui.closeSheet(); GZ.world.build(this.S); this.changed();
     },
-    remove(b) { this.S.b = this.S.b.filter(q => q !== b); GZ.ui.closeSheet(); GZ.world.build(this.S); this.changed(); },
+    remove(b) { this.S.b = this.S.b.filter(q => q !== b); GZ.ui.selBar(null); GZ.ui.closeSheet(); GZ.world.build(this.S); this.changed(); },
     repairCost(b) { const c = {}; Object.entries(D.B[b.t].cost).forEach(([k, v]) => { c[k] = Math.ceil(v / 2); }); return c; },
 
     // ------------------------------------------------------------ noche y amanecer
@@ -178,13 +202,13 @@
       this.save(true);
     },
     dawn(win) {
-      const S = this.S, sum = { prod: {}, done: [], ally: null, left: null, short: 0 };
+      const S = this.S, sum = { prod: {}, ready: {}, done: [], ally: null, left: null, short: 0 };
       S.b.forEach(b => {
         const d = D.B[b.t];
-        if (b.build > 0) { b.build--; if (!b.build) sum.done.push(d.name); return; }
+        if (b.build > 0) { b.build--; if (!b.build) { if (b.up) { b.lvl++; b.up = false; } b.hp = D.hpOf(b); sum.done.push(d.name); } return; }
         if (b.broken) return;
-        b.hp = b.t === 'fogata' ? d.hp[S.era] : d.hp;
-        if (d.prod) add(sum.prod, d.prod);
+        b.hp = D.hpOf(b);
+        if (d.prod) { b.store = b.store || {}; add(b.store, d.prod, b.lvl); add(sum.ready, d.prod, b.lvl); }
       });
       S.allies.forEach(a => add(sum.prod, D.JOBS[a.job].bonus));
       add(S.res, sum.prod);

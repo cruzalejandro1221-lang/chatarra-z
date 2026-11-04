@@ -38,7 +38,7 @@
         if (!inside && ty > 1) im.setTint(0xb8c8b0);
         this.ground.add(im);
       }
-      this.sprites = new Map();
+      this.sprites = new Map(); this.bubbles = new Map();
       S.nature.forEach(n => { if (n.t === 'rio') return; this.addObj(n.rg > 0 ? 'n_toco' : 'n_' + n.t, n.x, n.y, n); });
       S.b.forEach(b => this.addBuilding(b));
       const fp = wpos(GZ.C, GZ.C);
@@ -61,9 +61,17 @@
     addBuilding(b) {
       const key = b.build > 0 ? 'b_obra' : 'b_' + b.t, im = this.addObj(key, b.x, b.y, b);
       if (b.broken) im.setTint(0x777777).setAlpha(0.8);
+      if (b.store && !b.build) this.bubble(b);
       return im;
     }
-    person(key, x, y) { const s = this.add.image(x, y, key).setOrigin(0.5, 90 / 96).setScale(0.62 / K()).setDepth(y + 3); this.objs.add(s); return s; }
+    bubble(b) {
+      const k = Object.keys(b.store)[0]; if (!k) return;
+      const p = wpos(b.x, b.y), t = this.add.text(p.x, p.y - 58, GZ.RES[k].icon, { fontFamily: 'sans-serif', fontSize: '22px', backgroundColor: '#ffffff', padding: { x: 5, y: 3 } }).setOrigin(0.5).setDepth(8e5).setResolution(this.dpr * 2);
+      this.objs.add(t); this.bubbles.set(b.id, t);
+      this.tweens.add({ targets: t, y: p.y - 66, duration: 620, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+    }
+    popBubble(b) { const t = this.bubbles.get(b.id); if (t) { this.tweens.killTweensOf(t); t.setVisible(false); this.bubbles.delete(b.id); } }
+    person(key, x, y) { const s = this.add.image(x, y, key).setOrigin(0.5, 90 / 96).setScale(0.74 / K()).setDepth(y + 3); this.objs.add(s); return s; }
     freeSpot(i) { const a = (i * 2.4) + 0.6, r = 70 + (i % 3) * 18, c = wpos(GZ.C, GZ.C); return { x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r * 0.5 + 10 }; }
     wander(s, base) {
       const c = wpos(GZ.C, GZ.C), lim = (this.R + 0.5) * 24;
@@ -86,7 +94,7 @@
       const w = this.scale.width, h = this.scale.height;
       this.dark.setSize(w, h);
       if (!this.S) return;
-      const area = (2 * Math.min(this.R, 4) + 2.6) * TW, z = Phaser.Math.Clamp(Math.min(w / area, h / (area * 0.62)), 0.35 * this.dpr, 1.6 * this.dpr);
+      const area = (2 * this.R + 3) * TW, z = Phaser.Math.Clamp(Math.min(w / area * 1.25, h / (area * 0.6)), 0.26 * this.dpr, 1.6 * this.dpr);
       const cam = this.cameras.main;
       if (first || !this.userZoom) cam.setZoom(z);
       const c = wpos(GZ.C, GZ.C);
@@ -107,7 +115,7 @@
         if (pinch) {
           const ps = this.input.manager.pointers.filter(q => q.isDown); if (ps.length < 2) return;
           const d = Phaser.Math.Distance.Between(ps[0].x, ps[0].y, ps[1].x, ps[1].y);
-          cam.setZoom(Phaser.Math.Clamp(pinch.z * d / pinch.d, 0.3 * this.dpr, 2 * this.dpr)); this.userZoom = true; return;
+          cam.setZoom(Phaser.Math.Clamp(pinch.z * d / pinch.d, 0.22 * this.dpr, 2 * this.dpr)); this.userZoom = true; return;
         }
         if (!down || !p.isDown || this.night) return;
         const dx = p.x - down.x, dy = p.y - down.y;
@@ -119,7 +127,7 @@
         if (down && !down.moved && !this.night) { const t = tileAt(p.worldX, p.worldY); GZ.game.tap(t.tx, t.ty); }
         down = null;
       });
-      this.input.on('wheel', (p, o, dx, dy) => { const cam = this.cameras.main; cam.setZoom(Phaser.Math.Clamp(cam.zoom * (dy > 0 ? 0.9 : 1.1), 0.3 * this.dpr, 2 * this.dpr)); this.userZoom = true; });
+      this.input.on('wheel', (p, o, dx, dy) => { const cam = this.cameras.main; cam.setZoom(Phaser.Math.Clamp(cam.zoom * (dy > 0 ? 0.9 : 1.1), 0.22 * this.dpr, 2 * this.dpr)); this.userZoom = true; });
     }
     showSel(tx, ty, kind) {
       if (tx === null) { this.sel.setVisible(false); if (this.ghost) { this.ghost.destroy(); this.ghost = null; } return; }
@@ -145,7 +153,7 @@
       const spawns = [];
       for (let i = 0; i < total; i++) spawns.push({ at: 2 + (total > 1 ? i * len / (total - 1) : 0) + rnd(-0.6, 0.6), kind: Math.random() < share ? 'corredor' : 'errante' });
       spawns.sort((a, b) => a.at - b.at);
-      this.night = { n, t: 0, sc, spawns, zs: [], shots: [], cd: 0, kills: 0, total, fogHp: GZ.B.fogata.hp[lvl], fogMax: GZ.B.fogata.hp[lvl], onEnd, over: false, allyCd: [] };
+      this.night = { n, t: 0, sc, spawns, zs: [], shots: [], cd: 0, kills: 0, total, fogHp: GZ.B.fogata.hp[lvl], fogMax: GZ.B.fogata.hp[lvl], onEnd, over: false, allyCd: [], towerCd: {} };
       // posiciones de defensa: tú junto a la fogata y los aliados en círculo
       const me = { x: c.x - 6, y: c.y + 26 };
       this.tweens.add({ targets: this.player, x: me.x, y: me.y, duration: 500, onUpdate: () => this.player.setDepth(this.player.y + 3) });
@@ -155,7 +163,7 @@
       GZ.ui.nightHud(this.night);
     }
     spawnZombie(kind) {
-      const { N, C } = GZ, d = Math.min(this.R + 2, 7); let tx, ty;
+      const { N, C } = GZ, d = Math.min(this.R + 2, C - 1); let tx, ty;
       for (let k = 0; k < 30; k++) {
         const side = Math.floor(Math.random() * 4), o = Math.floor(rnd(-d, d + 1));
         [tx, ty] = side === 0 ? [C - d, C + o] : side === 1 ? [C + d, C + o] : side === 2 ? [C + o, C - d] : [C + o, C + d];
@@ -163,7 +171,7 @@
         if (Math.max(Math.abs(tx - C), Math.abs(ty - C)) > this.R) break;
       }
       const p = wpos(tx, ty), def = GZ.Z[kind], sc = this.night.sc;
-      const s = this.add.image(p.x + rnd(-10, 10), p.y + rnd(-5, 5), 'z_' + kind).setOrigin(0.5, 90 / 96).setScale(0.62 / K()).setDepth(p.y).setAlpha(0);
+      const s = this.add.image(p.x + rnd(-10, 10), p.y + rnd(-5, 5), 'z_' + kind).setOrigin(0.5, 90 / 96).setScale(0.74 / K()).setDepth(p.y).setAlpha(0);
       this.tweens.add({ targets: s, alpha: 1, duration: 400 });
       this.objs.add(s);
       const z = { s, kind, hp: def.hp * sc.hp, max: def.hp * sc.hp, speed: def.speed * sc.speed * rnd(0.9, 1.1), dmg: def.dmg * sc.dmg, wob: rnd(0, 6) };
@@ -252,6 +260,18 @@
         a.setFlipX(best.s.x < a.x);
         this.lob(from, { x: best.s.x + v.x * dur, y: best.s.y + v.y * dur }, GZ.ALLY_ATTACK.dmg * GZ.JOBS[allies[i].job].dmg, 16);
       });
+      // torres: disparan solas
+      for (const b of this.S.b) {
+        const T = GZ.B[b.t].tower; if (!T || b.build || b.broken || b.hp <= 0) continue;
+        N.towerCd[b.id] = (N.towerCd[b.id] === undefined ? rnd(0, T.cd) : N.towerCd[b.id]) - dt;
+        if (N.towerCd[b.id] > 0) continue;
+        const p = wpos(b.x, b.y); let best = null, bd = T.range;
+        for (const z of N.zs) { if (z.dead) continue; const d = dist(p, z.s); if (d < bd) { bd = d; best = z; } }
+        if (!best) { N.towerCd[b.id] = 0.25; continue; }
+        N.towerCd[b.id] = T.cd;
+        const from = { x: p.x, y: p.y - 46 }, dur = dist(from, best.s) / 430, v = this.zvel(best);
+        this.lob(from, { x: best.s.x + v.x * dur, y: best.s.y + v.y * dur }, T.dmg * (1 + 0.5 * (b.lvl - 1)), T.radius);
+      }
       // proyectiles
       N.shots = N.shots.filter(p => {
         if (p.kind === 'stone') {

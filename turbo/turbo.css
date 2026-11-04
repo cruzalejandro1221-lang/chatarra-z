@@ -1,0 +1,37 @@
+/* Giorgio Turbo: menús sobre la escena 3D. Colores de la marca Giorgio. */
+:root { --ink: #1d2a5b; --yellow: #ffc629; --yd: #d99a00; --display: 'Lilita One', 'Arial Rounded MT Bold', system-ui, sans-serif; --body: 'Nunito', system-ui, sans-serif; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); color: #fff; font-family: var(--body); font-weight: 800; touch-action: none; -webkit-user-select: none; user-select: none; overscroll-behavior: none; }
+button { font: inherit; font-weight: 900; color: inherit; border: 0; background: none; cursor: pointer; padding: 0; }
+[hidden] { display: none !important; }
+#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#menu { position: fixed; inset: 0; overflow-y: auto; touch-action: pan-y; background: radial-gradient(circle at 50% 0, #34428a 0, #1d2a5b 60%, #101838 100%); padding: calc(12px + env(safe-area-inset-top, 0px)) 14px calc(16px + env(safe-area-inset-bottom, 0px)); }
+#menu header { display: flex; align-items: center; gap: 10px; max-width: 520px; margin: 0 auto; }
+#menu header div { flex: 1; min-width: 0; }
+#menu h1 { font-family: var(--display); font-weight: 400; font-size: 28px; line-height: 1; margin: 0; } #menu h1 span { color: var(--yellow); }
+#stars { margin: 3px 0 0; color: var(--yellow); font-size: 14px; }
+#menu header img { width: 64px; }
+#exit { width: 38px; height: 38px; border-radius: 12px; background: #fff; color: var(--ink); font-size: 22px; flex: none; }
+.how { text-align: center; color: #c9d2f2; font-size: 13px; margin: 8px 0 12px; }
+#grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; max-width: 520px; margin: 0 auto; }
+#grid button { aspect-ratio: 1; border-radius: 14px; background: var(--c); box-shadow: 0 4px 0 rgba(0, 0, 0, .3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+#grid button:active { transform: translateY(3px); box-shadow: none; }
+#grid b { font-family: var(--display); font-weight: 400; font-size: 22px; text-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
+#grid span { font-size: 10px; color: var(--yellow); letter-spacing: 1px; text-shadow: 0 1px 0 rgba(0, 0, 0, .4); } #grid u { text-decoration: none; color: rgba(0, 0, 0, .28); text-shadow: none; }
+#grid button[disabled] { background: #2c3871; box-shadow: none; opacity: .75; } #grid button[disabled] b { font-size: 16px; } #grid button[disabled] span { visibility: hidden; }
+#hud { position: fixed; left: 0; right: 0; top: 0; display: flex; align-items: center; gap: 8px; padding: calc(8px + env(safe-area-inset-top, 0px)) 10px 0; pointer-events: none; color: var(--ink); }
+#hudBack { pointer-events: auto; width: 32px; height: 32px; border-radius: 10px; background: rgba(255, 255, 255, .9); font-size: 18px; flex: none; }
+#hud b { font-family: var(--display); font-weight: 400; font-size: 15px; background: rgba(255, 255, 255, .9); border-radius: 9px; padding: 3px 8px; white-space: nowrap; }
+.bar { flex: 1; height: 10px; border-radius: 9px; background: rgba(255, 255, 255, .55); overflow: hidden; } .bar i { display: block; height: 100%; width: 0; background: var(--ink); }
+#hudFish { background: rgba(255, 255, 255, .9); border-radius: 9px; padding: 3px 8px; font-size: 13px; white-space: nowrap; } #hudFish::before { content: "🐟 "; }
+#tip { position: fixed; left: 0; right: 0; bottom: 18%; text-align: center; margin: 0; font-family: var(--display); font-size: 19px; color: #fff; text-shadow: 0 2px 0 rgba(29, 42, 91, .8); }
+#end { position: fixed; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(16, 24, 56, .45); }
+.box { width: min(100%, 320px); background: #fffaf0; color: var(--ink); border-radius: 22px; padding: 16px; text-align: center; display: flex; flex-direction: column; gap: 8px; animation: pop .22s cubic-bezier(.2, 1.5, .4, 1); }
+@keyframes pop { from { transform: scale(.85); opacity: 0; } }
+.box h2 { font-family: var(--display); font-weight: 400; font-size: 24px; margin: 0; line-height: 1.1; }
+#endS { font-size: 36px; line-height: 1; } #endS i { font-style: normal; color: #e6dcc0; } #endS i.on { color: var(--yellow); text-shadow: 0 2px 0 var(--yd); } #endS small { font-size: 15px; color: #69708f; }
+#endF { margin: 0; font-size: 14px; }
+.go { min-height: 48px; border-radius: 14px; background: var(--yellow); box-shadow: 0 4px 0 var(--yd); font-size: 16px; }
+.alt { min-height: 38px; border-radius: 12px; background: #fff; border: 2px solid #ecdcb0; font-size: 13.5px; }
+.go:active, .alt:active { transform: translateY(2px); box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .box { animation: none; } }

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1d2a5b">
+<title>Giorgio Turbo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="turbo.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+<section id="menu">
+  <header><button id="exit" aria-label="Volver">‹</button><div><h1>GIORGIO <span>TURBO</span></h1><p id="stars"></p></div><img src="../media/giorgio/feliz.webp" alt=""></header>
+  <p class="how">Arrastra para girar por el tubo · Toca para saltar</p>
+  <div id="grid"></div>
+</section>
+<section id="hud" hidden>
+  <button id="hudBack" aria-label="Volver a niveles">‹</button>
+  <b id="hudLvl"></b><div class="bar"><i id="hudBar"></i></div><span id="hudFish"></span>
+  <p id="tip">Arrastra ← → para girar · Toca para saltar</p>
+</section>
+<section id="end" hidden>
+  <div class="box"><h2 id="endT"></h2><div id="endS"></div><p id="endF"></p>
+    <button class="go" id="endGo"></button><button class="alt" id="endAgain">Repetir nivel</button><button class="alt" id="endMenu">Niveles</button></div>
+</section>
+<script src="js/levels.js"></script>
+<script type="module" src="js/game.js"></script>
+</body>
+</html>

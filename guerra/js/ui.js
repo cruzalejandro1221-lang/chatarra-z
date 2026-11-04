@@ -3,7 +3,7 @@
 (() => {
   const $ = s => document.querySelector(s);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-  const ICON = { fogata: '🔥', tienda: '⛺', pila: '🪵', bayas: '🫐', cubetas: '🪣', taller: '🔨', muro: '🧱', estacas: '🔱', cabana: '🛖', huerto: '🌱', pedrera: '⛏️' };
+  const ICON = { fogata: '🔥', tienda: '⛺', pila: '🪵', bayas: '🫐', cubetas: '🪣', taller: '🔨', muro: '🧱', estacas: '🔱', atalaya: '🗼', lanzador: '🎯', cabana: '🛖', huerto: '🌱', pedrera: '⛏️' };
   const D = () => GZ, G = () => GZ.game;
   const resTxt = cost => Object.entries(cost).map(([k, v]) => '<span class="' + (G().S && (G().S.res[k] || 0) < v ? 'no' : '') + '">' + v + ' ' + D().RES[k].icon + '</span>').join(' ');
   let narrTimer = 0, sheetOpen = false;
@@ -13,6 +13,7 @@
       $('#bBuild').onclick = () => UI.buildMenu();
       $('#bAllies').onclick = () => UI.allies();
       $('#bNight').onclick = () => G().night();
+      $('#bCollect').onclick = () => G().collectAll();
       $('#menuBtn').onclick = () => UI.menu();
       $('#narrOk').onclick = () => { $('#narr').hidden = true; };
       $('#sheet').onclick = e => { if (e.target.id === 'sheet') UI.closeSheet(); };
@@ -27,8 +28,9 @@
       $('#hDay').textContent = 'Día ' + S.day;
       $('#hEra').textContent = 'Era ' + S.era + ' · ' + D().ERAS[S.era];
       const beds = G().beds(S);
-      $('#hRes').innerHTML = Object.keys(D().RES).map(k => '<span title="' + D().RES[k].name + '">' + D().RES[k].icon + '<b>' + S.res[k] + '</b></span>').join('') +
-        '<span title="Energía para recolectar hoy">⚡<b>' + S.energy + '</b></span><span title="Moral">' + (S.moral >= 60 ? '😊' : S.moral >= 30 ? '😐' : '😟') + '<b>' + S.moral + '</b></span><span title="Aliados / camas">👥<b>' + S.allies.length + '/' + Math.max(0, beds - 1) + '</b></span>';
+      $('#hRes').innerHTML = Object.keys(D().RES).map(k => '<span title="' + D().RES[k].name + '"><i>' + D().RES[k].icon + '</i><b>' + S.res[k] + '</b></span>').join('');
+      $('#hStat').innerHTML = '<span title="Energía para recolectar hoy">⚡' + S.energy + '</span><span title="Moral">' + (S.moral >= 60 ? '😊' : S.moral >= 30 ? '😐' : '😟') + S.moral + '</span><span title="Aliados / camas">👥' + S.allies.length + '/' + Math.max(0, beds - 1) + '</span>';
+      const ready = S.b.filter(b => b.store && !b.build).length; $('#bCollect').hidden = !ready; $('#bCollect').querySelector('b').textContent = ready;
       $('#bNight').classList.toggle('ready', S.lit);
     },
     quest(S) { const q = D().QUESTS[S.quest]; $('#questBar').hidden = !q; if (q) $('#questBar').innerHTML = '<b>Objetivo</b> ' + esc(q.text); },
@@ -37,11 +39,22 @@
       el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
       clearTimeout(narrTimer); narrTimer = setTimeout(() => { el.hidden = true; }, Math.max(6000, text.length * 75));
     },
-    dayMode(day) { $('#hud').hidden = !day; $('#bar').hidden = !day; $('#questBar').hidden = !day; $('#nhud').hidden = day; if (!day) $('#narr').hidden = true; },
+    dayMode(day) { $('#hud').hidden = !day; $('#bar').hidden = !day; $('#sel').hidden = true; $('#questBar').hidden = !day; $('#nhud').hidden = day; if (!day) $('#narr').hidden = true; },
 
     // ------------------------------------------------------------ hojas (paneles)
     sheet(html, bind) { const c = $('#sheetCard'); c.innerHTML = html; $('#sheet').hidden = false; sheetOpen = true; c.scrollTop = 0; if (bind) bind(c); c.querySelectorAll('[data-close]').forEach(b => { b.onclick = () => UI.closeSheet(); }); },
     closeSheet() { $('#sheet').hidden = true; sheetOpen = false; GZ.world && GZ.world.showSel(null); },
+    selBar(b) {
+      const el = $('#sel');
+      if (!b) { el.hidden = true; if (GZ.world) GZ.world.showSel(null); return; }
+      const d = D().B[b.t], fog = b.t === 'fogata', lvl = fog ? G().S.era + 1 : b.lvl;
+      const canUp = !fog && !b.build && !b.broken && b.lvl < D().MAX_LVL;
+      el.hidden = false;
+      el.innerHTML = '<div class="s-name"><b>' + d.name + '</b><small>Nivel ' + lvl + (b.build ? ' · 🚧 ' + b.build + 'd' : b.broken ? ' · 💥 dañado' : '') + '</small></div><div class="s-acts"><button id="sInfo"><i>ℹ️</i>Info</button>' +
+        (canUp ? '<button id="sUp"><i>⬆️</i>' + resTxt(D().upCost(b)) + '</button>' : '') + (!fog ? '<button id="sMove"><i>✥</i>Mover</button>' : '') + '</div>';
+      const on = (id, f) => { const x = el.querySelector(id); if (x) x.onclick = f; };
+      on('#sInfo', () => UI.buildingSheet(b)); on('#sUp', () => G().upgrade(b)); on('#sMove', () => G().startMove(b));
+    },
     buildMenu() {
       const S = G().S;
       const cards = D().BUILD_ORDER.map(t => {
@@ -68,9 +81,10 @@
       if (b.build > 0) status = '<p class="tag">🚧 En obra: lista en ' + b.build + (b.build === 1 ? ' día' : ' días') + '</p>';
       else if (b.broken) status = '<p class="tag bad">💥 Dañado: no funciona hasta repararlo</p>';
       const info = [];
-      if (d.prod && !b.build) info.push('Produce cada día: ' + Object.entries(d.prod).map(([k, v]) => v + ' ' + D().RES[k].icon).join(' '));
-      if (d.beds) info.push('Camas: ' + d.beds);
-      if (b.t !== 'fogata') info.push('Resistencia: ' + Math.ceil(b.hp) + '/' + d.hp);
+      if (d.prod && !b.build) info.push('Produce cada día: ' + Object.entries(d.prod).map(([k, v]) => v * b.lvl + ' ' + D().RES[k].icon).join(' ') + ' (tócalo para recoger)');
+      if (d.tower) info.push('Dispara solo · daño ' + Math.round(d.tower.dmg * (1 + 0.5 * (b.lvl - 1))) + ' · alcance ' + Math.round(d.tower.range / 32) + ' casillas');
+      if (d.beds) info.push('Camas: ' + (d.beds + b.lvl - 1));
+      if (b.t !== 'fogata') info.push('Resistencia: ' + Math.ceil(b.hp) + '/' + D().hpOf(b));
       if (b.t === 'fogata') {
         info.push('Resistencia de noche: ' + d.hp[S.era]);
         if (!S.lit) acts += '<button class="btn primary" id="aLight">Encender la fogata · ' + resTxt(D().FOGATA_LIGHT) + '</button>';
@@ -131,7 +145,8 @@
       const lost = Object.entries(sum.lost || {}).filter(([, v]) => v).map(([k, v]) => '−' + v + ' ' + D().RES[k].icon).join('  ');
       const rows = [
         ['🧟 Zombies derrotados', r.kills + ' de ' + r.total],
-        ['📦 Producción del día', prod],
+        ['📦 Listo para recoger', Object.entries(sum.ready).filter(([, v]) => v).map(([k, v]) => v + ' ' + D().RES[k].icon).join('  ') || 'Nada todavía'],
+        ['🧑‍🌾 Trajeron tus aliados', prod],
         ['🍽️ Comieron y bebieron', sum.eat + ' 🫐  ' + sum.eat + ' 💧' + (sum.short ? ' · ⚠️ faltaron ' + sum.short : '')],
       ];
       if (sum.done.length) rows.push(['🏗️ Obras terminadas', sum.done.join(', ')]);
@@ -160,7 +175,7 @@
       });
     },
     help() {
-      UI.sheet('<div class="sh-head"><h3>¿Cómo se juega?</h3><button class="x" data-close>✕</button></div><ul class="info"><li><b>De día</b> recolectas tocando árboles, rocas, arbustos y el río (gasta ⚡), y construyes con el botón 🔨.</li><li>Los edificios de obra se terminan al amanecer: cada noche es un día.</li><li><b>De noche</b> llegan los zombies: toca para lanzar. Muros y estacas los frenan; tus aliados disparan solos.</li><li>Cada persona come y bebe 1 al día. Ten camas libres para que llegue gente.</li><li>Mejora la fogata para avanzar de era y agrandar tu terreno.</li><li>Arrastra para mover el mapa y pellizca para acercar.</li></ul>');
+      UI.sheet('<div class="sh-head"><h3>¿Cómo se juega?</h3><button class="x" data-close>✕</button></div><ul class="info"><li><b>De día</b> recolectas tocando árboles, rocas, arbustos y el río (gasta ⚡), y construyes con el botón 🔨.</li><li>Las obras y mejoras terminan al amanecer: cada noche es un día. Al amanecer, toca las burbujas sobre los edificios para recoger lo producido.</li><li>Toca un edificio para mejorarlo o moverlo.</li><li><b>De noche</b> llegan los zombies: toca para lanzar. Muros y estacas los frenan; atalayas, lanzapiedras y aliados disparan solos.</li><li>Cada persona come y bebe 1 al día. Ten camas libres para que llegue gente.</li><li>Mejora la fogata para avanzar de era y agrandar tu terreno.</li><li>Arrastra para mover el mapa y pellizca para acercar.</li></ul>');
     },
     exit() { try { G().save(true); } catch (e) { /* nada */ } window.parent.postMessage({ gg: 'exit' }, location.origin); },
 

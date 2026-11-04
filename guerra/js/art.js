@@ -146,6 +146,21 @@
     p.line(1.8).fill(0x9aa0ad).circ(54, 98, 12).circ(74, 100, 10).circ(64, 88, 11).fill(0xc5c9d4).circ(62, 84, 4, false);
     p.line(2.6, 0x6e4420).seg(84, 104, 96, 80).line(1.8).fill(0x8c8f99).poly([[90, 78], [104, 82], [98, 86]]);
     p.done('b_pedrera');
+    // atalaya de palos
+    p = pen(scene, 128, 128); shadow(p, 46, 20);
+    p.line(2.6, 0x6e4420).seg(46, 104, 54, 50).seg(82, 104, 74, 50).seg(64, 112, 64, 54).seg(48, 88, 80, 74).seg(80, 88, 48, 74);
+    p.line(1.8).fill(0xb77c3e).poly([[42, 50], [64, 38], [86, 50], [64, 62]]).fill(0x9b6a35).poly([[42, 50], [64, 62], [64, 68], [42, 56]]).fill(0x7f5124).poly([[64, 62], [86, 50], [86, 56], [64, 68]]);
+    p.line(2, 0x6e4420).seg(48, 48, 48, 24).seg(80, 48, 80, 24);
+    p.line(1.6).fill(0xe5383b).poly([[42, 26], [64, 10], [86, 26], [64, 36]]);
+    p.done('b_atalaya');
+    // lanzapiedras
+    p = pen(scene, 128, 128); shadow(p, 62, 26);
+    p.line(1.8).fill(0x9b6a35).poly([[36, 98], [64, 84], [92, 98], [64, 112]]);
+    p.line(3, 0x6e4420).seg(52, 96, 60, 66).seg(78, 96, 68, 66);
+    p.line(3.4, 0x8a5a2b).seg(40, 88, 92, 46);
+    p.line(1.6).fill(0x9aa0ad).circ(92, 42, 8);
+    p.line(1.6).fill(0xc5c9d4).circ(64, 66, 4);
+    p.done('b_lanzador');
     // obra en construcción (andamio)
     p = pen(scene, 128, 128); shadow(p, 56, 24);
     p.line(2, 0x8a5a2b).seg(40, 104, 40, 66).seg(88, 104, 88, 66).seg(64, 114, 64, 76).seg(40, 76, 88, 76).seg(40, 90, 64, 104).seg(64, 90, 88, 104);

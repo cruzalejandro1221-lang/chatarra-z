@@ -2,7 +2,7 @@
 // Guerra Zombie: cuenta y guardado. Se juega solo con cuenta Giorgio Games (la del marco de la app).
 // La partida se guarda en el celular siempre y, si hay conexión, también en la nube (Supabase, función gz_save).
 (() => {
-  const VERSION = 1;
+  const VERSION = 2;
   const acct = () => { try { return window.parent !== window && window.parent.GGAccount ? window.parent.GGAccount : null; } catch (e) { return null; } };
   const user = () => { const A = acct(); return A && A.user && A.profile ? A : null; };
   const localKey = () => { const A = user(); return 'gz_save_' + (A ? A.user.id : 'x'); };

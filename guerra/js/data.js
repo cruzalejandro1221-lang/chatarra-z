@@ -2,8 +2,8 @@
 // Guerra Zombie: datos del juego (balance). Cambiar números aquí no requiere tocar la lógica.
 window.GZ = window.GZ || {};
 (() => {
-  const N = 15, C = 7;                                   // mapa de 15×15 casillas; la fogata va en el centro (7,7)
-  const RADIUS = [3, 5];                                 // terreno despejado según el nivel de la fogata (era 0 y era 1)
+  const N = 25, C = 12;                                  // mapa de 25×25 casillas; la fogata va en el centro (12,12)
+  const RADIUS = [6, 9];                                 // terreno despejado según el nivel de la fogata (era 0 y era 1)
   const RES = {
     palos: { name: 'Palos', icon: '🪵' }, piedras: { name: 'Piedras', icon: '🪨' },
     comida: { name: 'Comida', icon: '🫐' }, agua: { name: 'Agua', icon: '💧' },
@@ -25,11 +25,17 @@ window.GZ = window.GZ || {};
     taller: { name: 'Taller de palos', desc: 'Permite hacer muros, estacas y, en la era 1, la lanza.', cost: { palos: 10, piedras: 6 }, days: 2, hp: 60, era: 0, max: 1 },
     muro: { name: 'Muro de palos', desc: 'Bloquea a los zombies: tienen que romperlo para pasar.', cost: { palos: 3 }, days: 0, hp: 60, era: 0, max: 40, need: 'taller', wall: true },
     estacas: { name: 'Estacas', desc: 'Frenan y lastiman a los zombies que pasan encima.', cost: { palos: 2, piedras: 1 }, days: 0, hp: 30, era: 0, max: 20, need: 'taller', trap: true },
+    atalaya: { name: 'Atalaya de palos', desc: 'Torre con un vigía que dispara solo a los zombies cercanos.', cost: { palos: 12, piedras: 4 }, days: 1, hp: 70, era: 0, max: 4, need: 'taller', tower: { range: 230, dmg: 6, cd: 1.1, radius: 14 } },
     cabana: { name: 'Cabaña', desc: 'Cuatro camas: más supervivientes pueden quedarse.', cost: { palos: 14, piedras: 10 }, days: 2, beds: 4, hp: 80, era: 1, max: 4 },
     huerto: { name: 'Huerto', desc: 'Más comida cada día. Necesita agua para empezar.', cost: { palos: 8, piedras: 4, agua: 4 }, days: 2, prod: { comida: 5 }, hp: 40, era: 1, max: 3 },
+    lanzador: { name: 'Lanzapiedras', desc: 'Catapulta de palos: tiro lento que golpea a varios zombies a la vez.', cost: { palos: 16, piedras: 12 }, days: 2, hp: 90, era: 1, max: 3, tower: { range: 310, dmg: 12, cd: 2.4, radius: 34 } },
     pedrera: { name: 'Pedrera', desc: 'Un aliado parte rocas: piedras cada día.', cost: { palos: 10 }, days: 1, prod: { piedras: 3 }, hp: 50, era: 1, max: 2 },
   };
-  const BUILD_ORDER = ['tienda', 'pila', 'bayas', 'cubetas', 'taller', 'muro', 'estacas', 'cabana', 'huerto', 'pedrera'];
+  const BUILD_ORDER = ['tienda', 'pila', 'bayas', 'cubetas', 'taller', 'muro', 'estacas', 'atalaya', 'cabana', 'huerto', 'pedrera', 'lanzador'];
+  const MAX_LVL = 3;
+  // cada nivel: +60 % de resistencia, más producción y más daño; mejorar cuesta el doble por nivel y toma al menos 1 día
+  const hpOf = b => (b.t === 'fogata' ? B.fogata.hp[b.lvl - 1] : Math.round(B[b.t].hp * (1 + 0.6 * (b.lvl - 1))));
+  const upCost = b => Object.fromEntries(Object.entries(B[b.t].cost).map(([k, v]) => [k, v * 2 * b.lvl]));
   const FOGATA_LIGHT = { palos: 3, piedras: 2 };
   const FOGATA_UP = { cost: { palos: 20, piedras: 15, comida: 6 }, allies: 2, need: 'taller' };
   const LANZA = { cost: { palos: 6, piedras: 2 } };
@@ -46,8 +52,8 @@ window.GZ = window.GZ || {};
 
   // Zombies. Crecen por noche como en la propuesta: vida +4,5 %, daño +3 %, velocidad +0,4 % (tope +25 %).
   const Z = {
-    errante: { name: 'Errante', hp: 20, speed: 17, dmg: 5 },
-    corredor: { name: 'Corredor', hp: 12, speed: 40, dmg: 4, from: 4 },
+    errante: { name: 'Errante', hp: 20, speed: 24, dmg: 5 },
+    corredor: { name: 'Corredor', hp: 12, speed: 52, dmg: 4, from: 4 },
   };
   const scale = n => ({ hp: 1 + 0.045 * (n - 1), dmg: 1 + 0.03 * (n - 1), speed: Math.min(1.25, 1 + 0.004 * (n - 1)) });
   const count = n => Math.round(3 + 1.4 * Math.pow(n - 1, 0.92));
@@ -72,10 +78,10 @@ window.GZ = window.GZ || {};
     { text: 'Construye una Pila de palos para tener madera cada día.', check: S => has(S, 'pila') },
     { text: 'Construye el Recolector de bayas y las Cubetas del río: cada persona come y bebe 1 al día.', check: S => has(S, 'bayas') && has(S, 'cubetas') },
     { text: 'Construye el Taller de palos y espera a que esté listo (2 días): con él harás defensas.', check: S => has(S, 'taller', true) },
-    { text: 'Pon 3 muros o estacas entre el bosque y la fogata.', check: S => S.b.filter(b => b.t === 'muro' || b.t === 'estacas').length >= 3 },
+    { text: 'Defiéndete solo: pon una Atalaya y 3 muros o estacas cerca de la fogata.', check: S => has(S, 'atalaya') && S.b.filter(b => b.t === 'muro' || b.t === 'estacas').length >= 3 },
     { text: 'Consigue 2 aliados (construye otra tienda: sin camas libres no llega nadie) y mejora la fogata a nivel 2.', check: S => S.era >= 1 },
     { text: '¡Era de Piedra y palos! Toca el taller para hacer tu lanza, construye cabaña, huerto y pedrera… y sobrevive.', check: () => false },
   ];
 
-  Object.assign(GZ, { N, C, RADIUS, RES, NATURE, B, BUILD_ORDER, FOGATA_LIGHT, FOGATA_UP, LANZA, ERAS, JOBS, NAMES, Z, scale, count, runnerShare, nightLength, WEAPONS, ALLY_ATTACK, ENERGY, START, QUESTS, has });
+  Object.assign(GZ, { MAX_LVL, hpOf, upCost, N, C, RADIUS, RES, NATURE, B, BUILD_ORDER, FOGATA_LIGHT, FOGATA_UP, LANZA, ERAS, JOBS, NAMES, Z, scale, count, runnerShare, nightLength, WEAPONS, ALLY_ATTACK, ENERGY, START, QUESTS, has });
 })();

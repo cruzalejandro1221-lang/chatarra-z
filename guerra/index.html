@@ -15,15 +15,19 @@
   <header id="hud" hidden>
     <button id="menuBtn" aria-label="Menú">☰</button>
     <div class="day"><b id="hDay">Día 1</b><small id="hEra"></small></div>
+    <div class="stat" id="hStat"></div>
     <div class="res" id="hRes"></div>
   </header>
   <div id="questBar" hidden></div>
   <div id="narr" hidden role="status"><img src="../media/giorgio/cara.webp" alt="Giorgio"><p id="narrText"></p><button id="narrOk" aria-label="Cerrar">✕</button></div>
   <nav id="bar" hidden>
-    <button id="bBuild"><span class="ic">🔨</span><span>Construir</span></button>
-    <button id="bAllies"><span class="ic">👥</span><span>Comunidad</span></button>
-    <button id="bNight" class="night"><span class="ic">🌙</span><span>Pasar la noche</span></button>
+    <button id="bNight" class="night"><span class="ic">🌙</span><span>Noche</span></button>
+    <button id="bCollect" hidden><span class="ic">🧺</span><b>0</b></button>
+    <span class="grow"></span>
+    <button id="bAllies"><span class="ic">👥</span></button>
+    <button id="bBuild" class="main"><span class="ic">🔨</span></button>
   </nav>
+  <div id="sel" hidden></div>
   <div id="place" hidden></div>
   <div id="nhud" hidden></div>
   <div id="sheet" hidden><div class="card" id="sheetCard" role="dialog" aria-modal="true"></div></div>
