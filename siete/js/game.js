@@ -12,7 +12,7 @@
   let ac = null, drone = null;
   function tone(f, d, type, v, at) { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume(); const o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime + (at || 0); o.type = type || 'sine'; o.frequency.setValueAtTime(f, t); g.gain.setValueAtTime(v || 0.06, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g).connect(ac.destination); o.start(t); o.stop(t + d + 0.02); } catch (e) { /* sin audio */ } }
   function ambient() { try { tone(1, 0.01); if (drone || !ac) return; drone = ac.createGain(); drone.gain.value = 0.022; for (const f of [55, 82.4, 110.7]) { const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = f; o.connect(drone); o.start(); } drone.connect(ac.destination); } catch (e) { /* nada */ } }
-  const sting = bad => { if (bad) { tone(70, 0.7, 'sawtooth', 0.11); tone(233, 0.5, 'square', 0.05, 0.03); } else { tone(523, 0.16, 'triangle'); tone(784, 0.22, 'triangle', 0.06, 0.12); } };
+  const sting = bad => { if (bad) { try { tone(1, 0.01); const n = ac.sampleRate * 0.6, b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n); const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = b; f.type = 'bandpass'; f.frequency.value = 1800; g.gain.value = 0.5; s.connect(f).connect(g).connect(ac.destination); s.start(); } catch (e) { /* sin audio */ } tone(90, 0.4, 'sine', 0.1); } else { tone(1400, 0.03, 'square', 0.09); tone(900, 0.04, 'square', 0.06, 0.05); } };
   const buzz = p => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) { /* nada */ } };
 
   // ------------------------------------------------------------ pantallas de inicio
@@ -21,7 +21,7 @@
   function home(msg) {
     leave(); if (window.Siete3D) window.Siete3D.hide();
     app.className = 'scr';
-    app.innerHTML = '<button class="back" id="out">‹</button><div class="logo"><div class="moon"></div>' + cat(0) + '<h1>SIETE<br><span>VIDAS</span></h1><p>Una cena embrujada. Hasta 4 gatos. Unos platos están malditos… y tus amigos mienten.</p></div>' + (msg ? '<p class="err">' + esc(msg) + '</p>' : '') +
+    app.innerHTML = '<button class="back" id="out">‹</button><div class="logo"><div class="moon"></div>' + cat(0) + '<h1>SIETE<br><span>VIDAS</span></h1><p>Una mesa, una pistola de agua y hasta 4 gatos que odian mojarse… y tus amigos mienten.</p></div>' + (msg ? '<p class="err">' + esc(msg) + '</p>' : '') +
       '<label class="lb">Tu nombre<input id="nm" maxlength="14" value="' + esc(myName) + '" autocomplete="off"></label><button class="b gold" id="make">Crear sala</button><div class="row"><input id="code" maxlength="5" placeholder="CÓDIGO" autocomplete="off"><button class="b" id="join">Unirme</button></div><button class="b" id="solo">Practicar contra bots</button><button class="lnk" id="how">¿Cómo se juega?</button>';
     const nm = () => { myName = NET.clean($('#nm').value); try { localStorage.setItem('siete_name', myName); } catch (e) { /* nada */ } ambient(); };
     $('#out').onclick = exit; $('#how').onclick = () => howTo();
@@ -30,7 +30,7 @@
     $('#join').onclick = () => { nm(); const c = $('#code').value.trim(); if (c.length < 5) { $('#code').focus(); return; } joinRoom(c); };
   }
   function howTo(after) {
-    const cards = [['🍽️', 'Hay una fila de platos. Sabes <b>cuántos</b> están malditos, pero no cuáles. Cada ronda hueles uno en secreto.'], ['😋', 'En tu turno, <b>cómelo</b> o <b>sírveselo</b> a otro. Si comes uno bueno, ganas un objeto y sigues jugando.'], ['🤥', 'Al servir puedes mentir. Quien lo recibe lo come o lo <b>devuelve</b>: devuelto y maldito, te quita <b>el doble</b>. Pero si era bueno, el desconfiado pierde 1 vida.'], ['🏆', 'Cada gato tiene 4 vidas. Cada ronda hay más platos malditos. <b>Gana el último gato en pie.</b>']];
+    const cards = [['💦', 'La pistola tiene varias cargas. Sabes <b>cuántas</b> traen agua, pero no el orden. Cada ronda ves una en secreto.'], ['🔫', 'En tu turno, <b>dispárate</b> o <b>pásale</b> la pistola a otro. Si te disparas y está vacía, ganas un objeto y sigues jugando.'], ['🤥', 'Al pasarla puedes mentir. Quien la recibe dispara o la <b>devuelve</b>: devuelta y con agua, te moja <b>el doble</b>. Pero si estaba vacía, el desconfiado pierde 1 vida.'], ['🏆', 'Cada gato tiene 4 vidas y cada chorro quita una. Cada ronda hay más agua. <b>Gana el último gato seco.</b>']];
     let i = 0;
     const show = () => { const m = $('#modal'); m.hidden = false; m.innerHTML = '<div class="how" id="hw"><div class="big">' + cards[i][0] + '</div><p>' + cards[i][1] + '</p><div class="dots">' + cards.map((_, k) => '<i class="' + (k === i ? 'on' : '') + '"></i>').join('') + '</div><button class="b gold">' + (i < cards.length - 1 ? 'Seguir' : 'Entendido') + '</button></div>'; m.querySelector('button').onclick = () => { if (++i < cards.length) show(); else { m.hidden = true; if (after) after(); } }; };
     show();
@@ -54,10 +54,10 @@
     app.className = 'scr';
     app.innerHTML = '<button class="back" id="out">‹</button><h2>Sala</h2><div class="codebox"><small>Código</small><b>' + esc(c) + '</b></div>' + (isHost ? '<button class="b gold" id="inv">Invitar amigos</button>' : '') +
       '<ul class="seats">' + list.map((s, i) => '<li><span class="cat">' + cat(i) + '</span><b>' + esc(s.name) + '</b><small>' + (i === 0 ? 'Anfitrión' : s.bot ? 'Bot' : 'Listo') + '</small>' + (isHost && i ? '<button data-k="' + i + '">✕</button>' : '') + '</li>').join('') + Array.from({ length: NET.MAX - list.length }, () => '<li class="free">Silla libre</li>').join('') + '</ul>' +
-      (isHost ? (list.length < NET.MAX ? '<button class="b" id="bot">Agregar bot</button>' : '') + '<button class="b gold" id="go"' + (list.length < 2 ? ' disabled' : '') + '>Empezar la cena</button>' : '<p class="muted">Esperando a que el anfitrión empiece…</p>');
+      (isHost ? (list.length < NET.MAX ? '<button class="b" id="bot">Agregar bot</button>' : '') + '<button class="b gold" id="go"' + (list.length < 2 ? ' disabled' : '') + '>Empezar la partida</button>' : '<p class="muted">Esperando a que el anfitrión empiece…</p>');
     $('#out').onclick = () => home();
     if (!isHost) return;
-    $('#inv').onclick = async () => { const u = link(c); try { if (navigator.share) { await navigator.share({ title: 'Siete Vidas', text: 'Únete a mi cena embrujada', url: u }); return; } } catch (e) { if (e.name === 'AbortError') return; } try { await navigator.clipboard.writeText(u); toast('Enlace copiado'); } catch (e) { prompt('Copia este enlace:', u); } };
+    $('#inv').onclick = async () => { const u = link(c); try { if (navigator.share) { await navigator.share({ title: 'Siete Vidas', text: 'Únete a mi mesa', url: u }); return; } } catch (e) { if (e.name === 'AbortError') return; } try { await navigator.clipboard.writeText(u); toast('Enlace copiado'); } catch (e) { prompt('Copia este enlace:', u); } };
     const b = $('#bot'); if (b) b.onclick = () => host.addBot();
     $('#go').onclick = () => once(startGame);
     app.querySelectorAll('[data-k]').forEach(x => { x.onclick = () => host.kick(+x.dataset.k); });
@@ -114,7 +114,7 @@
     table(v);
     if (isNew) { lastSeq = v.last.seq; reveal(v); }
     if (newRound && v.event) setTimeout(() => banner(C.EVENTS[v.event]), isNew ? 2300 : 300);
-    else if (newRound && v.round > 1) setTimeout(() => banner({ icon: '🍽️', name: 'Ronda ' + v.round, desc: 'Nueva fila de platos.' }), isNew ? 2300 : 300);
+    else if (newRound && v.round > 1) setTimeout(() => banner({ icon: '💦', name: 'Ronda ' + v.round, desc: 'La pistola se recarga.' }), isNew ? 2300 : 300);
   }
   const seatPos = (i, v) => { const n = v.players.length, r = (i - v.me + n) % n; return n === 2 ? ['me', 'top'][r] : n === 3 ? ['me', 'left', 'right'][r] : ['me', 'left', 'top', 'right'][r]; };
   function table(v) {
@@ -122,12 +122,12 @@
     app.className = 'table' + (v.bonus ? ' red' : '') + (window.Siete3D ? ' d3' : '');
     const dishes = Array.from({ length: v.left }, (_, i) => { const s = v.seen.find(x => x.i === i); return '<i class="dish' + (i === 0 ? ' next' : '') + (s ? (s.bad ? ' kbad' : ' kgood') : '') + '" title="Plato ' + (i + 1) + '">' + (s ? (s.bad ? '☠' : '✓') : '') + '</i>'; }).join('');
     const seats = v.players.map((p, i) => '<button class="seat ' + seatPos(i, v) + (i === actorNow ? ' turn' : '') + (p.out ? ' out' : '') + '" data-p="' + i + '"><span class="cat">' + cat(p.cat, p.out) + '</span><b>' + esc(p.name) + '</b><span class="lv">' + '♥'.repeat(p.lives) + '<u>' + '♥'.repeat(Math.max(0, C.LIVES - p.lives)) + '</u>' + (p.shield ? ' 🧻' : '') + '</span>' + (i !== v.me ? '<small>🎒 ' + p.n + '</small>' : '') + '<em class="bub" id="bub' + i + '"></em></button>').join('');
-    const info = v.left + ' platos · ' + (v.bad === null ? '¿? malditos' : v.bad + ' maldito' + (v.bad === 1 ? '' : 's'));
+    const info = v.left + ' cargas · ' + (v.bad === null ? '¿? con agua' : v.bad + ' con agua');
     let bar = '';
-    if (mine.out) bar = '<p class="say">Quedaste fuera. Mira cómo termina la cena 👻</p>';
-    else if (v.phase === 'respond' && v.offer.to === v.me) bar = '<p class="say">' + esc(v.players[v.offer.from].name) + ' te sirve el plato y dice: <b>“' + (v.offer.claim === 'malo' ? 'Está maldito' : 'Está rico') + '”</b></p><div class="acts"><button class="b gold" data-a="accept">Comer</button><button class="b" data-a="return">Devolver</button></div>';
-    else if (v.phase === 'respond') bar = '<p class="say">' + esc(v.players[v.offer.from].name) + ' sirvió a ' + esc(v.players[v.offer.to].name) + ': “' + (v.offer.claim === 'malo' ? 'Está maldito' : 'Está rico') + '”…</p>';
-    else if (myTurn) bar = '<p class="say">Tu turno</p><div class="acts"><button class="b gold" data-a="eat">Comer</button><button class="b" data-a="serve">Servir a…</button></div>';
+    if (mine.out) bar = '<p class="say">Quedaste fuera. Mira cómo termina la partida 👻</p>';
+    else if (v.phase === 'respond' && v.offer.to === v.me) bar = '<p class="say">' + esc(v.players[v.offer.from].name) + ' te pasa la pistola y dice: <b>“' + (v.offer.claim === 'malo' ? 'Está cargada' : 'Está vacía') + '”</b></p><div class="acts"><button class="b gold" data-a="accept">Disparar</button><button class="b" data-a="return">Devolver</button></div>';
+    else if (v.phase === 'respond') bar = '<p class="say">' + esc(v.players[v.offer.from].name) + ' le pasó la pistola a ' + esc(v.players[v.offer.to].name) + ': “' + (v.offer.claim === 'malo' ? 'Está cargada' : 'Está vacía') + '”…</p>';
+    else if (myTurn) bar = '<p class="say">Tu turno</p><div class="acts"><button class="b gold" data-a="eat">Dispararme</button><button class="b" data-a="serve">Pasar a…</button></div>';
     else bar = '<p class="say">Turno de ' + esc(v.players[v.turn].name) + '…</p>';
     const tools = (mine.tools || []).map((k, i) => { const T = C.TOOLS[k]; return '<button class="tool" data-t="' + k + '" aria-label="' + T.name + '"' + (myTurn && v.phase === 'choose' && !T.passive ? '' : ' disabled') + '>' + T.icon + '</button>'; }).join('');
     app.innerHTML = '<div class="top"><button class="back sm" id="out">‹</button><b>Ronda ' + v.round + '</b><span>' + info + '</span><button class="back sm" id="chat">💬</button></div><div class="board"><div class="candle"></div><div class="plate"><div class="dishes">' + dishes + '</div><div class="cloche" id="cloche"></div>' + (v.event ? '<p class="evt">' + C.EVENTS[v.event].icon + ' ' + C.EVENTS[v.event].name + '</p>' : '') + '</div>' + seats + '</div><div class="bot"><div class="tools">' + tools + '</div>' + bar + '</div><div class="chatbox" id="cbox" hidden>' + C.CHAT.map((c, i) => '<button data-c="' + i + '">' + esc(c) + '</button>').join('') + '</div>';
@@ -139,10 +139,10 @@
     app.querySelectorAll('.tool').forEach(b => { b.onclick = () => toolInfo(b.dataset.t); });
     app.querySelectorAll('.seat').forEach(b => { b.onclick = () => { if (serving === 'pick') { const p = +b.dataset.p; if (p !== V.me && !V.players[p].out) claim(p); } }; });
   }
-  function pickServe() { serving = 'pick'; app.querySelector('.bot .say').textContent = 'Toca al gato que recibirá el plato'; app.querySelectorAll('.seat').forEach(s => { const p = +s.dataset.p; if (p !== V.me && !V.players[p].out) s.classList.add('pick'); }); }
+  function pickServe() { serving = 'pick'; app.querySelector('.bot .say').textContent = 'Toca al gato que recibirá la pistola'; app.querySelectorAll('.seat').forEach(s => { const p = +s.dataset.p; if (p !== V.me && !V.players[p].out) s.classList.add('pick'); }); }
   function claim(to) {
     const m = $('#modal'); m.hidden = false;
-    m.innerHTML = '<div class="how"><h3>¿Qué le dices a ' + esc(V.players[to].name) + '?</h3><button class="b gold" data-l="rico">“Está rico”</button><button class="b" data-l="malo">“Está maldito”</button><button class="lnk" data-l="">Cancelar</button></div>';
+    m.innerHTML = '<div class="how"><h3>¿Qué le dices a ' + esc(V.players[to].name) + '?</h3><button class="b gold" data-l="rico">“Está vacía”</button><button class="b" data-l="malo">“Está cargada”</button><button class="lnk" data-l="">Cancelar</button></div>';
     m.querySelectorAll('[data-l]').forEach(b => { b.onclick = () => { m.hidden = true; if (b.dataset.l) send({ t: 'serve', to, claim: b.dataset.l }); else table(V); }; });
   }
   function toolInfo(k) {
@@ -153,22 +153,22 @@
   }
   function confirmOut() {
     const m = $('#modal'); m.hidden = false;
-    m.innerHTML = '<div class="how"><h3>¿Salir de la cena?</h3><p>' + (host ? 'Eres el anfitrión: la sala se cerrará para todos.' : 'Un bot jugará por ti.') + '</p><button class="b gold" id="yes">Salir</button><button class="lnk" id="no">Seguir jugando</button></div>';
+    m.innerHTML = '<div class="how"><h3>¿Salir de la mesa?</h3><p>' + (host ? 'Eres el anfitrión: la sala se cerrará para todos.' : 'Un bot jugará por ti.') + '</p><button class="b gold" id="yes">Salir</button><button class="lnk" id="no">Seguir jugando</button></div>';
     m.querySelector('#no').onclick = () => { m.hidden = true; }; m.querySelector('#yes').onclick = () => { m.hidden = true; home(); };
   }
   function reveal(v, done) {
     const L = v.last, P = i => esc(v.players[i].name);
     const end = () => { if (done) setTimeout(done, 300); };
     if (L.type === 'serve') { tone(330, 0.1); return end(); }
-    if (L.type === 'tool') { const T = C.TOOLS[L.k]; toast(P(L.who) + ' usó ' + T.icon + ' ' + T.name + (L.k === 'tirar' ? ': ' + (L.bad ? 'estaba maldito' : 'estaba bueno') : '')); tone(620, 0.1); return end(); }
-    if (window.Siete3D) window.Siete3D.reveal(L.bad);
+    if (L.type === 'tool') { const T = C.TOOLS[L.k]; toast(P(L.who) + ' usó ' + T.icon + ' ' + T.name + (L.k === 'tirar' ? ': ' + (L.bad ? 'traía agua' : 'estaba vacía') : '')); tone(620, 0.1); return end(); }
+    if (window.Siete3D) window.Siete3D.reveal(L.bad, L.who);
     const cl = window.Siete3D ? null : $('#cloche');
     if (cl) { cl.innerHTML = '<div class="dome"></div><div class="food ' + (L.bad ? 'bad' : 'good') + '">' + (L.bad ? '☠️' : '🐟') + '</div>'; cl.classList.add('show'); }
     tone(180, 0.4, 'sine', 0.05);
     setTimeout(() => {
       if (cl) cl.classList.add('open'); sting(L.bad); if (L.bad || L.distrust) { app.classList.add('hit'); buzz(L.who === v.me ? 90 : 20); setTimeout(() => app.classList.remove('hit'), 500); }
-      let t = P(L.who) + (L.bad ? (L.blocked ? ' comió un plato maldito, ¡la servilleta lo salvó!' : ' comió un plato maldito: −' + L.dmg + (L.dmg > 1 ? ' vidas' : ' vida')) : ' comió un plato bueno');
-      if (L.returned) t = 'Devuelto. ' + t; if (L.saved) t += '. ¡Séptima vida!'; if (L.out) t += '. Queda fuera.';
+      let t = P(L.who) + (L.bad ? (L.blocked ? ' recibió el chorro, ¡el paraguas lo cubrió!' : ' quedó empapado: −' + L.dmg + (L.dmg > 1 ? ' vidas' : ' vida')) : ': clic, estaba vacía');
+      if (L.returned) t = 'Devuelta. ' + t; if (L.saved) t += '. ¡Séptima vida!'; if (L.out) t += '. Queda fuera.';
       if (L.distrust) t += '. ' + P(L.liar) + ' desconfió y pierde 1 vida' + (L.distrust.blocked ? ' (bloqueado)' : '');
       toast(t, 2000);
     }, 750);
@@ -180,7 +180,7 @@
   function finish(v) {
     const win = v.players[v.winner], me = v.winner === v.me; clearInterval(timer); if (window.Siete3D) window.Siete3D.hide();
     app.className = 'scr';
-    app.innerHTML = '<div class="logo end"><span class="cat big">' + cat(win.cat) + '</span><h1>' + (me ? '¡Ganaste!' : esc(win.name) + '<br>ganó') + '</h1><p>' + (me ? 'Fuiste el último gato en pie.' : 'Fue el último gato en pie.') + ' Duraron ' + v.round + (v.round === 1 ? ' ronda' : ' rondas') + '.</p></div>' + (host ? '<button class="b gold" id="again">Otra cena</button>' : '<p class="muted">El anfitrión puede empezar otra cena.</p>') + '<button class="b" id="home">Salir</button>';
+    app.innerHTML = '<div class="logo end"><span class="cat big">' + cat(win.cat) + '</span><h1>' + (me ? '¡Ganaste!' : esc(win.name) + '<br>ganó') + '</h1><p>' + (me ? 'Fuiste el último gato seco.' : 'Fue el último gato seco.') + ' Duraron ' + v.round + (v.round === 1 ? ' ronda' : ' rondas') + '.</p></div>' + (host ? '<button class="b gold" id="again">Otra partida</button>' : '<p class="muted">El anfitrión puede empezar otra partida.</p>') + '<button class="b" id="home">Salir</button>';
     tone(me ? 660 : 200, 0.5, 'triangle', 0.08);
     if (host) $('#again').onclick = () => { G = null; V = null; lastSeq = 0; host.started = false; host.seats = host.seats.filter(s => !s.away); if (host.seats.length < 2) return home(); startGame(); };
     $('#home').onclick = () => home();

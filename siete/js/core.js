@@ -1,30 +1,30 @@
 'use strict';
 // Siete Vidas: reglas (sin dibujo ni red, para poder simular partidas). Solo el anfitrión tiene el estado completo;
 // cada jugador recibe view(G, p), que oculta los platos que no conoce.
-// Cena embrujada: hay una fila de platos, algunos malditos. En tu turno comes el siguiente o se lo sirves a otro.
-// Quien lo recibe puede comerlo o devolverlo: devuelto, el que sirvió debe comerlo y si está maldito duele el doble;
-// pero si era bueno, el desconfiado pierde 1 vida y un objeto.
+// Mesa de gatos con una pistola de agua: cada carga trae agua o está vacía. En tu turno te disparas o le pasas la pistola a otro.
+// Quien la recibe dispara o la devuelve: devuelta, dispara quien la pasó y si traía agua moja el doble;
+// pero si estaba vacía, el desconfiado pierde 1 vida y un objeto.
 (function (root) {
   const LIVES = 4, MAX_TOOLS = 3;
   const TOOLS = {
-    olfato: { name: 'Olfato', icon: '👃', desc: 'Huele en secreto el siguiente plato.', w: 5 },
-    servilleta: { name: 'Servilleta', icon: '🧻', desc: 'Bloquea el próximo daño que recibas.', w: 3 },
-    cambio: { name: 'Cambiazo', icon: '🔀', desc: 'Cambia el siguiente plato por otro de la fila, al azar.', w: 4 },
-    salsa: { name: 'Salsa ardiente', icon: '🌶️', desc: 'El próximo plato maldito quita 1 vida más.', w: 3 },
+    olfato: { name: 'Mirilla', icon: '🔎', desc: 'Mira en secreto la siguiente carga.', w: 5 },
+    servilleta: { name: 'Paraguas', icon: '☂️', desc: 'Te cubre del próximo chorro.', w: 3 },
+    cambio: { name: 'Girar tambor', icon: '🔀', desc: 'Cambia la siguiente carga por otra, al azar.', w: 4 },
+    salsa: { name: 'Agua helada', icon: '🧊', desc: 'El próximo chorro quita 1 vida más.', w: 3 },
     robo: { name: 'Zarpazo', icon: '🐾', desc: 'Roba un objeto al azar a otro gato.', w: 3 },
-    tirar: { name: 'A la basura', icon: '🗑️', desc: 'Tira el siguiente plato y todos ven qué era.', w: 3 },
-    sopa: { name: 'Sopa de la abuela', icon: '🍲', desc: 'Recupera 1 vida.', w: 2 },
+    tirar: { name: 'Tiro al aire', icon: '💨', desc: 'Dispara la siguiente carga al aire y todos ven qué era.', w: 3 },
+    sopa: { name: 'Toalla seca', icon: '🧺', desc: 'Te secas y recuperas 1 vida.', w: 2 },
     amuleto: { name: 'Séptima vida', icon: '🔔', desc: 'Si caes, vuelves con 1 vida. Funciona sola.', w: 1, passive: true },
   };
   const EVENTS = {
-    apagon: { name: 'Apagón', icon: '🕯️', desc: 'Esta ronda nadie sabe cuántos platos malditos hay.' },
-    doble: { name: 'Banquete maldito', icon: '💀', desc: 'Esta ronda los platos malditos quitan 1 vida más.' },
-    hambre: { name: 'Sobremesa', icon: '🎁', desc: 'Todos reciben un objeto extra.' },
-    fantasma: { name: 'El fantasma habla', icon: '👻', desc: 'Un plato de la fila se revela a todos.' },
-    inversion: { name: 'Menú al revés', icon: '🙃', desc: 'Hay más platos malditos que buenos.' },
+    apagon: { name: 'Apagón', icon: '🕯️', desc: 'Esta ronda nadie sabe cuántas cargas traen agua.' },
+    doble: { name: 'Agua fría', icon: '🥶', desc: 'Esta ronda cada chorro quita 1 vida más.' },
+    hambre: { name: 'Reparto', icon: '🎁', desc: 'Todos reciben un objeto extra.' },
+    fantasma: { name: 'El fantasma habla', icon: '👻', desc: 'Una carga se revela a todos.' },
+    inversion: { name: 'Manguera', icon: '🚿', desc: 'Hay más cargas con agua que vacías.' },
     corriente: { name: 'Corriente de aire', icon: '🌬️', desc: 'Cada gato pasa un objeto al de su izquierda.' },
   };
-  const CHAT = ['Está rico, confía 😺', 'Yo no comería eso…', 'Te lo juro', 'Mentiroso 👀', '¡Buena jugada!', 'Jajaja 😹', 'Uy…', 'Te voy a vengar'];
+  const CHAT = ['Está vacía, confía 😺', 'Yo no dispararía…', 'Te lo juro', 'Mentiroso 👀', '¡Buena jugada!', 'Jajaja 😹', 'Uy…', 'Te voy a vengar'];
 
   function pickTool(R) {
     const k = Object.keys(TOOLS), tot = k.reduce((a, x) => a + TOOLS[x].w, 0); let v = R() * tot;

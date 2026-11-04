@@ -33,7 +33,7 @@ input { font: inherit; font-size: 16px; color: var(--txt); background: rgba(255,
 .table { display: flex; flex-direction: column; background: radial-gradient(circle at 50% 44%, #4a2c3e 0, #231632 45%, var(--bg) 78%); }
 .table.red { background: radial-gradient(circle at 50% 44%, #6e1f2e 0, #2c1022 48%, var(--bg) 80%); }
 .table.hit { animation: hit .45s; } @keyframes hit { 0%, 100% { transform: none; } 20% { transform: translate(-7px, 3px); box-shadow: inset 0 0 90px var(--red); } 50% { transform: translate(6px, -3px); box-shadow: inset 0 0 90px var(--red); } 75% { transform: translate(-3px, 2px); } }
-.top { display: flex; align-items: center; gap: 8px; padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 4px; font-size: 12.5px; color: var(--mut); } .top b { color: var(--txt); font-family: var(--display); font-weight: 400; font-size: 16px; } .top span { flex: 1; text-align: center; color: var(--gold); }
+.table > .top { display: flex; align-items: center; gap: 8px; padding: calc(6px + env(safe-area-inset-top, 0px)) 10px 4px; font-size: 12.5px; color: var(--mut); } .table > .top b { color: var(--txt); font-family: var(--display); font-weight: 400; font-size: 16px; } .table > .top span { flex: 1; text-align: center; color: var(--gold); }
 .board { position: relative; flex: 1; min-height: 0; }
 .candle { position: absolute; left: 50%; top: 50%; width: 320px; height: 320px; margin: -160px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 190, 90, .17), transparent 66%); animation: fl 2.6s ease-in-out infinite; pointer-events: none; } @keyframes fl { 50% { opacity: .68; transform: scale(1.05); } }
 .plate { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(58%, 250px); text-align: center; }
@@ -83,6 +83,13 @@ input { font: inherit; font-size: 16px; color: var(--txt); background: rgba(255,
 .table.d3 .seat.me { position: static; transform: none; min-height: 0; width: auto; flex-direction: row; gap: 8px; justify-content: center; pointer-events: none; margin: 0 auto; }
 .table.d3 .seat.pick { background: rgba(255, 255, 255, .16); }
 .table.d3 .board { display: flex; align-items: flex-end; justify-content: center; }
-.table.d3 .top { background: linear-gradient(180deg, rgba(7, 4, 14, .75), transparent); }
+.table.d3 > .top { background: linear-gradient(180deg, rgba(7, 4, 14, .75), transparent); }
 .table.d3 .bot { background: linear-gradient(0deg, rgba(7, 4, 14, .85), transparent); max-width: none; }
 #app { z-index: 1; }
+/* gotas en la cámara cuando te mojan a ti */
+body.wet::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(circle at 30% 30%, rgba(127, 212, 255, .5) 0 7%, transparent 8%), radial-gradient(circle at 70% 55%, rgba(127, 212, 255, .45) 0 10%, transparent 11%), radial-gradient(circle at 45% 80%, rgba(127, 212, 255, .4) 0 6%, transparent 7%), rgba(47, 143, 228, .28); animation: wetf 1.3s forwards; }
+@keyframes wetf { to { opacity: 0; transform: translateY(40px); } }
+
+/* gotas en la cámara cuando te mojan a ti */
+body.wet::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(circle at 30% 30%, rgba(127, 212, 255, .5) 0 7%, transparent 8%), radial-gradient(circle at 70% 55%, rgba(127, 212, 255, .45) 0 10%, transparent 11%), radial-gradient(circle at 45% 80%, rgba(127, 212, 255, .4) 0 6%, transparent 7%), rgba(47, 143, 228, .28); animation: wetf 1.3s forwards; }
+@keyframes wetf { to { opacity: 0; transform: translateY(40px); } }
