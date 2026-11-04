@@ -1,12 +1,12 @@
 // Simula partidas de Siete Vidas para ver si alguna estrategia domina. Meta: ninguna pasa de 55 % en duelo contra la bot lista.
 const C = require('../siete/js/core.js');
-const N = Number(process.argv[2] || 1000), styles = ['lista', 'comelona', 'sirve', 'devuelve', 'azar'];
+const N = Number(process.argv[2] || 1000), styles = ['lista', 'dispara', 'caja', 'azar'];
 let seed = 7; const R = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
 function play(st) {
   const G = C.create(st.map((s, i) => ({ name: 'p' + i })), R); let acts = 0;
   while (G.phase !== 'over' && acts < 3000) {
-    const p = G.phase === 'respond' ? G.offer.to : G.turn;
-    if (!C.act(G, p, C.bot(G, p, R, st[p]), R)) { if (!C.act(G, p, { t: 'eat' }, R)) C.act(G, p, { t: 'accept' }, R); }
+    const p = G.turn;
+    if (!C.act(G, p, C.bot(G, p, R, st[p]), R)) { const to = C.alive(G).find(i => i !== p); C.act(G, p, { t: 'shoot', to }, R); }
     acts++;
   }
   if (G.phase !== 'over') throw new Error('partida sin fin');

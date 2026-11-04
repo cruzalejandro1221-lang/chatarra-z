@@ -5,7 +5,7 @@
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   const FUR = [['#f3e6d2', '#5a4032'], ['#8d93a3', '#4d5263'], ['#ff9f43', '#c96a12'], ['#3a3a46', '#1c1c24']];
   const cat = (i, sad) => { const [a, b] = FUR[i % 4]; return '<svg viewBox="0 0 64 60" aria-hidden="true"><path d="M10 28 L12 4 L28 16 Q32 15 36 16 L52 4 L54 28 Q58 52 32 54 Q6 52 10 28Z" fill="' + a + '" stroke="#0f0b1a" stroke-width="2.5" stroke-linejoin="round"/><path d="M15 12 L16 22 L23 17Z M49 12 L48 22 L41 17Z" fill="' + b + '"/>' + (sad ? '<path d="M18 30l8 6M26 30l-8 6M38 30l8 6M46 30l-8 6" stroke="#0f0b1a" stroke-width="3" stroke-linecap="round"/>' : '<circle cx="23" cy="32" r="5.500" fill="#ffe27d" stroke="#0f0b1a" stroke-width="2"/><circle cx="41" cy="32" r="5.500" fill="#ffe27d" stroke="#0f0b1a" stroke-width="2"/><ellipse cx="23" cy="32" rx="1.800" ry="4" fill="#0f0b1a"/><ellipse cx="41" cy="32" rx="1.800" ry="4" fill="#0f0b1a"/>') + '<path d="M29 41l3 3 3-3z" fill="#e5788f"/><path d="M6 40l12 1M6 46l12-2M58 40l-12 1M58 46l-12-2" stroke="#0f0b1a" stroke-width="1.400"/></svg>'; };
-  let myName = 'Gato', host = null, guest = null, G = null, V = null, seatNames = [], lastSeq = 0, serving = null, chatOpen = false, timer = 0, timeLeft = 0, busyUntil = 0, botT = 0, round = 0, prevTools = null;
+  let myName = 'Gato', host = null, guest = null, G = null, V = null, seatNames = [], lastSeq = 0, serving = null, chatOpen = false, timer = 0, timeLeft = 0, busyUntil = 0, botT = 0, round = 0, prevTools = null, queued = 0, holdT = 0;
   try { const A = window.parent !== window && window.parent.GGAccount; if (A && A.profile) myName = A.profile.username; else myName = localStorage.getItem('siete_name') || myName; } catch (e) { /* nada */ }
 
   // ------------------------------------------------------------ sonido
@@ -17,7 +17,7 @@
 
   // ------------------------------------------------------------ pantallas de inicio
   const exit = () => { leave(); window.parent.postMessage({ gg: 'exit' }, location.origin); };
-  function leave() { clearInterval(timer); clearTimeout(botT); if (host) host.close(); if (guest) guest.close(); host = guest = null; G = V = null; lastSeq = 0; }
+  function leave() { clearInterval(timer); clearTimeout(botT); clearTimeout(queued); if (host) host.close(); if (guest) guest.close(); host = guest = null; G = V = null; lastSeq = 0; }
   function home(msg) {
     leave(); if (window.Siete3D) window.Siete3D.hide();
     app.className = 'scr';
@@ -30,7 +30,7 @@
     $('#join').onclick = () => { nm(); const c = $('#code').value.trim(); if (c.length < 5) { $('#code').focus(); return; } joinRoom(c); };
   }
   function howTo(after) {
-    const cards = [['💦', 'La pistola tiene varias cargas. Sabes <b>cuántas</b> traen agua, pero no el orden. Cada ronda ves una en secreto.'], ['🔫', 'En tu turno, <b>dispárate</b> o <b>pásale</b> la pistola a otro. Si te disparas y está vacía, ganas un objeto y sigues jugando.'], ['🤥', 'Al pasarla puedes mentir. Quien la recibe dispara o la <b>devuelve</b>: devuelta y con agua, te moja <b>el doble</b>. Pero si estaba vacía, el desconfiado pierde 1 vida.'], ['🏆', 'Cada gato tiene 4 vidas y cada chorro quita una. Cada ronda hay más agua. <b>Gana el último gato seco.</b>']];
+    const cards = [['💦', 'La pistola tiene varias cargas. Sabes <b>cuántas</b> traen agua, no el orden.'], ['🔫', 'En tu turno eliges a un gato y <b>disparas</b>. Si trae agua, lo mojas.'], ['💥', 'Si está <b>vacía</b>, te revienta a ti. Mira la probabilidad antes de apretar.'], ['🎁', 'O abre la <b>caja sorpresa</b> en vez de disparar. Gana el último gato seco.']];
     let i = 0;
     const show = () => { const m = $('#modal'); m.hidden = false; m.innerHTML = '<div class="how" id="hw"><div class="big">' + cards[i][0] + '</div><p>' + cards[i][1] + '</p><div class="dots">' + cards.map((_, k) => '<i class="' + (k === i ? 'on' : '') + '"></i>').join('') + '</div><button class="b gold">' + (i < cards.length - 1 ? 'Seguir' : 'Entendido') + '</button></div>'; m.querySelector('button').onclick = () => { if (++i < cards.length) show(); else { m.hidden = true; if (after) after(); } }; };
     show();
@@ -72,17 +72,20 @@
   // ------------------------------------------------------------ anfitrión: árbitro de la partida
   function startGame() {
     host.started = true; round = 0; prevTools = null; G = C.create(host.seats.map(s => ({ name: s.name })));
-    busyUntil = Date.now() + INTRO;
+    busyUntil = Date.now() + introMs(C.view(G, 0));
     broadcast(); step();
   }
   function broadcast() {
     if (!G) return;
     host.seats.forEach((s, i) => { const v = C.view(G, i); if (s.me) show(v); else if (s.conn) host.send(i, { t: 'view', v }); });
   }
-  const actor = () => (G.phase === 'respond' ? G.offer.to : G.turn);
-  const pace = r0 => { busyUntil = Date.now() + (G.last && G.last.type === 'eat' ? 2300 : 500) + (G.round !== r0 && G.phase !== 'over' ? INTRO : 0); };
+  const actor = () => G.turn;
+  const fallback = p => ({ t: 'shoot', to: C.alive(G).find(i => i !== p) });
+  const pace = r0 => { busyUntil = Date.now() + ((G.last && ACT[G.last.type]) || 600) + (G.round !== r0 && G.phase !== 'over' ? introMs(C.view(G, 0)) : 0); };
   function tryAct(i, a) {
-    if (!G || G.phase === 'over' || Date.now() < busyUntil || i !== actor()) return;
+    if (!G || G.phase === 'over' || i !== actor()) return;
+    const wait = busyUntil - Date.now();
+    if (wait > 0) { clearTimeout(queued); queued = setTimeout(() => tryAct(i, a), wait + 30); return; }   // no se pierde: se juega al terminar la animación
     const r0 = G.round;
     if (!C.act(G, i, a)) return;
     pace(r0);
@@ -91,9 +94,9 @@
   function step() {
     clearInterval(timer); clearTimeout(botT); if (!G || G.phase === 'over') return;
     const p = actor(), s = host.seats[p], delay = Math.max(0, busyUntil - Date.now());
-    if (s.bot || s.away) { botT = setTimeout(() => { if (!G || actor() !== p) return step(); busyUntil = 0; const r0 = G.round, a = C.bot(G, p); if (!C.act(G, p, a)) C.act(G, p, G.phase === 'respond' ? { t: 'accept' } : { t: 'eat' }); pace(r0); broadcast(); step(); }, delay + 900 + Math.random() * 900); return; }
+    if (s.bot || s.away) { botT = setTimeout(() => { if (!G || actor() !== p) return step(); busyUntil = 0; const r0 = G.round, a = C.bot(G, p); if (!C.act(G, p, a)) C.act(G, p, fallback(p)); pace(r0); broadcast(); step(); }, delay + 2000 + Math.random() * 1200); return; }
     timeLeft = 30;
-    timer = setInterval(() => { if (Date.now() < busyUntil) return; if (--timeLeft <= 0) { clearInterval(timer); busyUntil = 0; tryAct(p, G.phase === 'respond' ? { t: 'accept' } : { t: 'eat' }); } }, 1000);
+    timer = setInterval(() => { if (Date.now() < busyUntil) return; if (--timeLeft <= 0) { clearInterval(timer); busyUntil = 0; tryAct(p, fallback(p)); } }, 1000);
   }
   function sendChat(i, k) { if (!C.CHAT[k]) return; const m = { t: 'chat', p: i, i: k }; host.all(m); bubble(i, k); }
 
@@ -112,73 +115,66 @@
   // ------------------------------------------------------------ mesa
   function show(v) {
     const isNew = v.last && v.last.seq !== lastSeq, newRound = v.round !== round; V = v; round = v.round; serving = null;
-    if (v.phase === 'over') { if (isNew) { lastSeq = v.last.seq; reveal(v, () => finish(v)); } else finish(v); return; }
-    table(v);
-    const isNewEat = isNew && v.last.type === 'eat';
+    if (v.phase === 'over') { if (isNew) { lastSeq = v.last.seq; reveal(v); setTimeout(() => finish(v), ACT[v.last.type] || 400); } else finish(v); return; }
+    table(v, newRound);
+    const waitAct = isNew ? (ACT[v.last.type] || 400) : 150;
     if (isNew) { lastSeq = v.last.seq; reveal(v); }
-    const delay = isNewEat ? 2300 : 150, mine = v.players[v.me].tools || [];
-    if (newRound) setTimeout(() => roundIntro(v), delay);
-    else if (prevTools && mine.length > prevTools.length && v.last && v.last.type === 'eat') { const t = C.TOOLS[mine[mine.length - 1]]; setTimeout(() => toast('🎁 Caja sorpresa: ' + t.icon + ' ' + t.name, 2600), delay); }
-    prevTools = mine.slice();
+    if (newRound) setTimeout(() => roundIntro(v), waitAct);
+    holdBar(waitAct + (newRound ? introMs(v) : 0));
   }
-  // Inicio de ronda: se muestran las cargas, se revuelven, entran en la pistola y cada gato abre la caja sorpresa.
-  const INTRO = 6800;
+  // Inicio de ronda: se muestran las cargas y entran en la pistola; luego cada gato abre su caja y deja el objeto en la mesa.
+  const CAPS_MS = 3800, BOX_MS = 2500, ACT = { shot: 4400, box: 2600, tool: 2800 };
+  const introMs = v => CAPS_MS + v.players.filter((p, i) => !p.out && v.gain[i] && v.gain[i].length).length * BOX_MS + 300;
   function roundIntro(v) {
-    const el = $('#intro'), n = v.left, bad = v.bad, dark = bad === null;
-    const caps = Array.from({ length: n }, (_, i) => '<i class="cap ' + (dark ? 'q' : i < bad ? 'w' : 'e') + '" style="animation-delay:' + (i * 0.11) + 's">' + (dark ? '?' : i < bad ? '💧' : '') + '</i>').join('');
-    const pct = dark ? null : Math.round(bad / n * 100), ev = v.event ? C.EVENTS[v.event] : null;
-    el.innerHTML = '<div class="in-card"><h2>Ronda ' + v.round + '</h2>' + (ev ? '<p class="in-ev">' + ev.icon + ' <b>' + esc(ev.name) + '</b> · ' + esc(ev.desc) + '</p>' : '') + '<div class="caps" id="caps">' + caps + '</div><p class="in-cnt" id="cnt">&nbsp;</p><div class="gift" id="gift" hidden><div class="g-lid"></div><div class="g-box"></div><div class="g-item" id="gitem"></div></div><p class="in-sub" id="gname">&nbsp;</p></div>';
+    const el = $('#intro'), n = v.left, bad = v.bad, dark = bad === null, ev = v.event ? C.EVENTS[v.event] : null;
+    const caps = Array.from({ length: n }, (_, i) => '<i class="cap ' + (dark ? 'q' : i < bad ? 'w' : 'e') + '" style="animation-delay:' + (i * 0.13) + 's">' + (dark ? '?' : i < bad ? '💧' : '') + '</i>').join('');
+    el.innerHTML = '<div class="in-card"><h2>Ronda ' + v.round + '</h2>' + (ev ? '<p class="in-ev">' + ev.icon + ' ' + esc(ev.name) + '</p>' : '') + '<div class="caps" id="caps">' + caps + '</div><p class="in-cnt" id="cnt">&nbsp;</p></div>';
     el.hidden = false;
-    const at = (ms, fn) => setTimeout(() => { if (!el.hidden) fn(); }, ms);
-    for (let i = 0; i < n; i++) at(i * 110, () => tone(520 + i * 40, 0.05, 'triangle', 0.05));
-    at(1150, () => { $('#cnt').innerHTML = dark ? 'Apagón: nadie sabe cuántas traen agua' : '<b class="w">' + bad + ' con agua</b> · <b class="e">' + (n - bad) + ' vacía' + (n - bad === 1 ? '' : 's') + '</b>'; $('#gname').textContent = dark ? '' : pct + ' % de probabilidad de mojarte'; tone(330, 0.2, 'triangle', 0.07); });
-    at(2700, () => { $('#caps').classList.add('mix'); $('#gname').textContent = 'Se revuelven…'; for (let i = 0; i < 6; i++) tone(240 + (i % 2) * 80, 0.05, 'square', 0.03, i * 0.09); });
-    at(3500, () => { $('#caps').classList.add('load'); $('#gname').textContent = 'A la pistola'; for (let i = 0; i < n; i++) tone(1200, 0.03, 'square', 0.05, i * 0.07); });
-    at(4200, () => {
-      $('#caps').hidden = true; $('#cnt').innerHTML = '<b>Caja sorpresa</b>'; $('#gname').textContent = '¿Qué te tocará?'; const g = $('#gift'); g.hidden = false; g.classList.add('shake');
-      for (let i = 0; i < 5; i++) tone(180, 0.06, 'square', 0.05, i * 0.13);
-    });
-    at(5050, () => {
-      const g = $('#gift'), t = v.gain[0] ? C.TOOLS[v.gain[0]] : null; g.classList.remove('shake'); g.classList.add('open'); $('#gitem').textContent = t ? t.icon : '🎒';
-      $('#gname').innerHTML = t ? '<b>' + esc(t.name) + '</b><br>' + esc(t.desc) + (v.gain[1] ? '<br>Y también: ' + C.TOOLS[v.gain[1]].icon + ' ' + esc(C.TOOLS[v.gain[1]].name) : '') : 'Tu mochila está llena';
-      tone(523, 0.14, 'triangle', 0.08); tone(784, 0.2, 'triangle', 0.08, 0.1); tone(1046, 0.26, 'triangle', 0.07, 0.2); buzz(20);
-    });
-    at(INTRO - 150, () => { el.hidden = true; el.innerHTML = ''; });
+    const at = (ms, fn) => setTimeout(() => { if (V) fn(); }, ms);
+    for (let i = 0; i < n; i++) at(i * 130, () => tone(520 + i * 40, 0.05, 'triangle', 0.05));
+    at(1300, () => { const c = $('#cnt'); if (c) c.innerHTML = dark ? '¿ ?' : '<b class="w">' + bad + ' 💧</b> &nbsp; <b class="e">' + (n - bad) + ' vacías</b>'; tone(330, 0.2, 'triangle', 0.07); });
+    at(2500, () => { const c = $('#caps'); if (c) c.classList.add('mix'); for (let i = 0; i < 6; i++) tone(240 + (i % 2) * 80, 0.05, 'square', 0.03, i * 0.09); });
+    at(3200, () => { const c = $('#caps'); if (c) c.classList.add('load'); for (let i = 0; i < n; i++) tone(1200, 0.03, 'square', 0.05, i * 0.07); });
+    at(CAPS_MS, () => { el.hidden = true; el.innerHTML = ''; });
+    let t = CAPS_MS + 100;
+    v.players.forEach((p, i) => { const g = v.gain[i] || []; if (p.out || !g.length) return; at(t, () => boxShow(i, g[g.length - 1])); t += BOX_MS; });
   }
+  function boxShow(i, k) {
+    const T = C.TOOLS[k]; if (window.Siete3D) window.Siete3D.box(i, T.icon);
+    for (let n = 0; n < 5; n++) tone(180, 0.06, 'square', 0.05, n * 0.14);
+    setTimeout(() => { tone(523, 0.14, 'triangle', 0.08); tone(784, 0.2, 'triangle', 0.08, 0.1); caption(T.icon, T.name, T.desc); }, 850);
+  }
+  function caption(icon, name, desc) { const c = $('#cap'); c.innerHTML = '<span>' + icon + '</span><div><b>' + esc(name) + '</b>' + (desc ? '<small>' + esc(desc) + '</small>' : '') + '</div>'; c.hidden = false; clearTimeout(c._t); c._t = setTimeout(() => { c.hidden = true; }, 1500); }
   const seatPos = (i, v) => { const n = v.players.length, r = (i - v.me + n) % n; return n === 2 ? ['me', 'top'][r] : n === 3 ? ['me', 'left', 'right'][r] : ['me', 'left', 'top', 'right'][r]; };
-  function table(v) {
-    const mine = v.players[v.me], actorNow = v.phase === 'respond' ? v.offer.to : v.turn, myTurn = actorNow === v.me && !mine.out;
+  function table(v, fresh) {
+    const mine = v.players[v.me], actorNow = v.turn, myTurn = actorNow === v.me && !mine.out;
     app.className = 'table' + (v.bonus ? ' red' : '') + (window.Siete3D ? ' d3' : '');
     const dishes = Array.from({ length: v.left }, (_, i) => { const s = v.seen.find(x => x.i === i); return '<i class="dish' + (i === 0 ? ' next' : '') + (s ? (s.bad ? ' kbad' : ' kgood') : '') + '" title="Plato ' + (i + 1) + '">' + (s ? (s.bad ? '☠' : '✓') : '') + '</i>'; }).join('');
-    const seats = v.players.map((p, i) => '<button class="seat ' + seatPos(i, v) + (i === actorNow ? ' turn' : '') + (p.out ? ' out' : '') + '" data-p="' + i + '"><span class="cat">' + cat(p.cat, p.out) + '</span><b>' + esc(p.name) + '</b><span class="lv">' + '♥'.repeat(p.lives) + '<u>' + '♥'.repeat(Math.max(0, C.LIVES - p.lives)) + '</u>' + (p.shield ? ' 🧻' : '') + '</span>' + (i !== v.me ? '<small>🎒 ' + p.n + '</small>' : '') + '<em class="bub" id="bub' + i + '"></em></button>').join('');
+    const seats = v.players.map((p, i) => '<button class="seat ' + seatPos(i, v) + (i === actorNow ? ' turn' : '') + (p.out ? ' out' : '') + '" data-p="' + i + '"><span class="cat">' + cat(p.cat, p.out) + '</span><b>' + esc(p.name) + '</b><span class="lv">' + '♥'.repeat(p.lives) + '<u>' + '♥'.repeat(Math.max(0, C.LIVES - p.lives)) + '</u>' + (p.shield ? ' 🧻' : '') + '</span>' + '<em class="bub" id="bub' + i + '"></em></button>').join('');
     const info = v.left + ' cargas · ' + (v.bad === null ? '¿? con agua' : v.bad + ' con agua');
+    const canBox = v.boxes > 0 && mine.tools.length < C.MAX_TOOLS;
     const known = v.seen.find(x => x.i === 0), kBad = v.seen.filter(x => x.bad).length, unk = v.left - v.seen.length;
     const pNext = v.bad === null ? null : unk > 0 ? Math.round(Math.max(0, v.bad - kBad) / unk * 100) : 0;
-    const prob = known ? '<p class="prob ' + (known.bad ? 'w' : 'e') + '">' + (known.bad ? '💧 Sabes que esta carga trae agua' : '✓ Sabes que esta carga está vacía') + '</p>' : pNext === null ? '<p class="prob">Probabilidad de agua: ¿?</p>' : '<p class="prob">Probabilidad de agua: <b>' + pNext + ' %</b><i class="meter"><u style="width:' + pNext + '%"></u></i></p>';
+    const prob = known ? '<p class="prob ' + (known.bad ? 'w' : 'e') + '">' + (known.bad ? '💧 Trae agua' : '💥 Está vacía') + '</p>' : pNext === null ? '<p class="prob">💧 ¿?</p>' : '<p class="prob">💧 <b>' + pNext + ' %</b><i class="meter"><u style="width:' + pNext + '%"></u></i></p>';
     let bar = '';
-    if (mine.out) bar = '<p class="say">Quedaste fuera. Mira cómo termina la partida 👻</p>';
-    else if (v.phase === 'respond' && v.offer.to === v.me) bar = '<p class="say">' + esc(v.players[v.offer.from].name) + ' te pasa la pistola y dice: <b>“' + (v.offer.claim === 'malo' ? 'Está cargada' : 'Está vacía') + '”</b></p><div class="acts"><button class="b gold" data-a="accept">Disparar</button><button class="b" data-a="return">Devolver</button></div>';
-    else if (v.phase === 'respond') bar = '<p class="say">' + esc(v.players[v.offer.from].name) + ' le pasó la pistola a ' + esc(v.players[v.offer.to].name) + ': “' + (v.offer.claim === 'malo' ? 'Está cargada' : 'Está vacía') + '”…</p>';
-    else if (myTurn) bar = '<p class="say">Tu turno</p><div class="acts"><button class="b gold" data-a="eat">Dispararme</button><button class="b" data-a="serve">Pasar a…</button></div>';
-    else bar = '<p class="say">Turno de ' + esc(v.players[v.turn].name) + '…</p>';
-    const tools = (mine.tools || []).map((k, i) => { const T = C.TOOLS[k]; return '<button class="tool" data-t="' + k + '" aria-label="' + T.name + '"' + (myTurn && v.phase === 'choose' && !T.passive ? '' : ' disabled') + '>' + T.icon + '</button>'; }).join('');
+    if (mine.out) bar = '<p class="say">👻</p>';
+    else if (myTurn) bar = '<div class="acts"><button class="b gold" data-a="pick">🔫 Disparar</button><button class="b" data-a="box"' + (canBox ? '' : ' disabled') + '>🎁 Caja ×' + v.boxes + '</button></div>';
+    else bar = '<p class="say">' + esc(v.players[v.turn].name) + '…</p>';
+    const tools = (mine.tools || []).map((k, i) => { const T = C.TOOLS[k]; return '<button class="tool" data-t="' + k + '" aria-label="' + T.name + '"' + (myTurn && !T.passive ? '' : ' disabled') + '>' + T.icon + '</button>'; }).join('');
     app.innerHTML = '<div class="top"><button class="back sm" id="out">‹</button><b>Ronda ' + v.round + '</b><span>' + info + '</span><button class="back sm" id="chat">💬</button></div><div class="board"><div class="candle"></div><div class="plate"><div class="dishes">' + dishes + '</div><div class="cloche" id="cloche"></div>' + (v.event ? '<p class="evt">' + C.EVENTS[v.event].icon + ' ' + C.EVENTS[v.event].name + '</p>' : '') + '</div>' + seats + '</div><div class="bot">' + prob + '<div class="tools">' + tools + '</div>' + bar + '</div><div class="chatbox" id="cbox" hidden>' + C.CHAT.map((c, i) => '<button data-c="' + i + '">' + esc(c) + '</button>').join('') + '</div>';
-    if (window.Siete3D) window.Siete3D.update(v, i => seatPos(i, v));
+    if (window.Siete3D) { const hide = {}; if (fresh) v.gain.forEach((g, i) => { if (g.length) hide[i] = 1 + (g.length > 1 ? 1 : 0); }); else if (v.last && v.last.type === 'box' && v.last.seq !== lastSeq) hide[v.last.who] = 1; window.Siete3D.update(v, i => seatPos(i, v), hide); }
     $('#out').onclick = () => confirmOut();
     $('#chat').onclick = () => { $('#cbox').hidden = !$('#cbox').hidden; };
     app.querySelectorAll('[data-c]').forEach(b => { b.onclick = () => { const k = +b.dataset.c; $('#cbox').hidden = true; if (host) sendChat(V.me, k); else guest.send({ t: 'chat', i: k }); }; });
-    app.querySelectorAll('[data-a]').forEach(b => { b.onclick = () => { const a = b.dataset.a; if (a === 'serve') pickServe(); else send({ t: a }); }; });
+    app.querySelectorAll('[data-a]').forEach(b => { b.onclick = () => { const a = b.dataset.a; if (a === 'pick') pickTarget(); else send({ t: a }); }; });
     app.querySelectorAll('.tool').forEach(b => { b.onclick = () => toolInfo(b.dataset.t); });
-    app.querySelectorAll('.seat').forEach(b => { b.onclick = () => { if (serving === 'pick') { const p = +b.dataset.p; if (p !== V.me && !V.players[p].out) claim(p); } }; });
+    app.querySelectorAll('.seat').forEach(b => { b.onclick = () => { if (serving === 'pick') { const p = +b.dataset.p; if (p !== V.me && !V.players[p].out) { serving = null; send({ t: 'shoot', to: p }); } } }; });
   }
-  function pickServe() { serving = 'pick'; app.querySelector('.bot .say').textContent = 'Toca al gato que recibirá la pistola'; app.querySelectorAll('.seat').forEach(s => { const p = +s.dataset.p; if (p !== V.me && !V.players[p].out) s.classList.add('pick'); }); }
-  function claim(to) {
-    const m = $('#modal'); m.hidden = false;
-    m.innerHTML = '<div class="how"><h3>¿Qué le dices a ' + esc(V.players[to].name) + '?</h3><button class="b gold" data-l="rico">“Está vacía”</button><button class="b" data-l="malo">“Está cargada”</button><button class="lnk" data-l="">Cancelar</button></div>';
-    m.querySelectorAll('[data-l]').forEach(b => { b.onclick = () => { m.hidden = true; if (b.dataset.l) send({ t: 'serve', to, claim: b.dataset.l }); else table(V); }; });
-  }
+  // los botones aparecen cuando termina la animación en curso
+  function holdBar(ms) { const b = app.querySelector('.bot'); if (!b) return; b.classList.add('wait'); clearTimeout(holdT); holdT = setTimeout(() => { const x = app.querySelector('.bot'); if (x) x.classList.remove('wait'); }, ms); }
+  function pickTarget() { serving = 'pick'; const a = app.querySelector('.bot .acts'); if (a) a.outerHTML = '<p class="say">🎯 Toca a un gato</p>'; app.querySelectorAll('.seat').forEach(s => { const p = +s.dataset.p; if (p !== V.me && !V.players[p].out) s.classList.add('pick'); }); }
   function toolInfo(k) {
-    const T = C.TOOLS[k], m = $('#modal'), rivals = V.players.map((p, i) => i).filter(i => i !== V.me && !V.players[i].out); m.hidden = false;
+    const T = C.TOOLS[k], m = $('#modal'), rivals = V.players.map((p, i) => i).filter(i => i !== V.me && !V.players[i].out && V.players[i].tools.length); m.hidden = false;
     m.innerHTML = '<div class="how"><div class="big">' + T.icon + '</div><h3>' + T.name + '</h3><p>' + T.desc + '</p>' + (k === 'robo' ? rivals.map(i => '<button class="b gold" data-to="' + i + '">Robar a ' + esc(V.players[i].name) + '</button>').join('') : '<button class="b gold" data-to="">Usar</button>') + '<button class="lnk" id="no">Cerrar</button></div>';
     m.querySelector('#no').onclick = () => { m.hidden = true; };
     m.querySelectorAll('[data-to]').forEach(b => { b.onclick = () => { m.hidden = true; const a = { t: 'tool', k }; if (b.dataset.to !== '') a.to = +b.dataset.to; send(a); }; });
@@ -188,23 +184,21 @@
     m.innerHTML = '<div class="how"><h3>¿Salir de la mesa?</h3><p>' + (host ? 'Eres el anfitrión: la sala se cerrará para todos.' : 'Un bot jugará por ti.') + '</p><button class="b gold" id="yes">Salir</button><button class="lnk" id="no">Seguir jugando</button></div>';
     m.querySelector('#no').onclick = () => { m.hidden = true; }; m.querySelector('#yes').onclick = () => { m.hidden = true; home(); };
   }
-  function reveal(v, done) {
-    const L = v.last, P = i => esc(v.players[i].name);
-    const end = () => { if (done) setTimeout(done, 300); };
-    if (L.type === 'serve') { tone(330, 0.1); return end(); }
-    if (L.type === 'tool') { const T = C.TOOLS[L.k]; toast(P(L.who) + ' usó ' + T.icon + ' ' + T.name + (L.k === 'tirar' ? ': ' + (L.bad ? 'traía agua' : 'estaba vacía') : '')); tone(620, 0.1); return end(); }
-    if (window.Siete3D) window.Siete3D.reveal(L.bad, L.who);
-    const cl = window.Siete3D ? null : $('#cloche');
-    if (cl) { cl.innerHTML = '<div class="dome"></div><div class="food ' + (L.bad ? 'bad' : 'good') + '">' + (L.bad ? '☠️' : '🐟') + '</div>'; cl.classList.add('show'); }
-    tone(180, 0.4, 'sine', 0.05);
+  function reveal(v) {
+    const L = v.last, S = window.Siete3D;
+    if (L.type === 'box') { if (L.k) boxShow(L.who, L.k); return; }
+    if (L.type === 'tool') { const T = C.TOOLS[L.k]; if (S) S.zoom(L.who, T.icon); tone(620, 0.12, 'triangle', 0.07); setTimeout(() => caption(T.icon, T.name, L.k === 'tirar' ? (L.bad ? 'Traía agua' : 'Estaba vacía') : T.desc), 500); return; }
+    if (S) S.shot(L);
+    tone(220, 0.08, 'triangle', 0.05); setTimeout(() => tone(260, 0.08, 'triangle', 0.05), 900);
     setTimeout(() => {
-      if (cl) cl.classList.add('open'); sting(L.bad); if (L.bad || L.distrust) { app.classList.add('hit'); buzz(L.who === v.me ? 90 : 20); setTimeout(() => app.classList.remove('hit'), 500); }
-      let t = P(L.who) + (L.bad ? (L.blocked ? ' recibió el chorro, ¡el paraguas lo cubrió!' : ' quedó empapado: −' + L.dmg + (L.dmg > 1 ? ' vidas' : ' vida')) : ': clic, estaba vacía');
-      if (L.returned) t = 'Devuelta. ' + t; if (L.saved) t += '. ¡Séptima vida!'; if (L.out) t += '. Queda fuera.';
-      if (L.distrust) t += '. ' + P(L.liar) + ' desconfió y pierde 1 vida' + (L.distrust.blocked ? ' (bloqueado)' : '');
-      toast(t, 2000);
-    }, 750);
-    setTimeout(() => { if (cl) { cl.classList.remove('show', 'open'); cl.innerHTML = ''; } end(); }, 2200);
+      tone(1400, 0.03, 'square', 0.09);
+      if (L.bad) sting(true);
+    }, 2150);
+    setTimeout(() => {
+      if (!L.bad) sting(true);
+      buzz(L.hit === v.me ? 90 : 20);
+      caption(L.blocked ? '☂️' : L.bad ? '💦' : '💥', L.blocked ? '¡Cubierto!' : L.bad ? '−' + L.dmg : '¡Contragolpe! −' + L.dmg, L.saved ? '🔔 Séptima vida' : L.out ? esc(v.players[L.hit].name) + ' fuera' : '');
+    }, L.bad ? 2350 : 2650);
   }
   function banner(e) { const m = $('#ban'); m.innerHTML = '<div><span>' + e.icon + '</span><b>' + esc(e.name) + '</b><small>' + esc(e.desc) + '</small></div>'; m.hidden = false; tone(110, 0.6, 'triangle', 0.08); clearTimeout(m._t); m._t = setTimeout(() => { m.hidden = true; }, 2300); }
   function bubble(i, k) { const b = $('#bub' + i); if (!b) return; b.textContent = C.CHAT[k]; b.classList.add('on'); clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove('on'), 2600); }

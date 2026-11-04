@@ -125,3 +125,12 @@ body.wet::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-ev
 .meter { display: block; width: 74px; height: 7px; border-radius: 9px; background: rgba(255, 255, 255, .16); overflow: hidden; } .meter u { display: block; height: 100%; background: linear-gradient(90deg, #8fdcff, #2f8fe4); }
 @media (prefers-reduced-motion: reduce) { .cap, .caps.mix .cap, .gift.shake, .gift.open .g-item, .in-card h2 { animation: none; } .gift.open .g-item { transform: translateY(-56px); } }
 .gift { margin-top: 58px; }
+
+/* textos mínimos: etiqueta flotante en vez de párrafos */
+#cap { position: fixed; left: 50%; top: 21%; transform: translateX(-50%); z-index: 6; display: flex; align-items: center; gap: 10px; background: rgba(8, 4, 16, .86); border: 2px solid var(--gold); border-radius: 16px; padding: 7px 14px; pointer-events: none; animation: inpop .22s cubic-bezier(.2, 1.5, .4, 1); max-width: 90%; }
+#cap span { font-size: 30px; line-height: 1; } #cap b { display: block; font-family: var(--display); font-weight: 400; font-size: 19px; } #cap small { display: block; color: var(--mut); font-size: 12.5px; }
+.bot { min-height: 96px; }
+.say { font-size: 15px; font-family: var(--display); font-weight: 400; }
+.prob { font-size: 14px; }
+.bot.wait .acts, .bot.wait .tools { opacity: 0; pointer-events: none; }
+.bot .acts, .bot .tools { transition: opacity .25s; }
