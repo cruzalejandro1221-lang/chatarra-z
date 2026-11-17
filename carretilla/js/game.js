@@ -58,7 +58,7 @@
     cancelAnimationFrame(raf); G = null; if (sizzle) sizzle.gain.value = 0;
     P = prog();
     const total = Object.values(P.stars).reduce((a, b) => a + b, 0);
-    stage.innerHTML = '<div class="bg">' + A.street(800, 220) + '</div><div class="umb">' + A.umbrella() + '</div><div class="menu"><button class="x" id="out" aria-label="Volver">‹</button><div class="logo"><img src="../media/giorgio/feliz.webp" alt=""><h1>LA CARRETILLA<br><span>DE GIORGIO</span></h1><p>★ ' + total + ' / ' + LEVELS.length * 3 + '</p></div>' +
+    stage.innerHTML = '<div class="bg full"><img src="img/calle-menu.webp" alt=""></div><div class="umb">' + A.umbrella() + '</div><div class="menu"><button class="x" id="out" aria-label="Volver">‹</button><div class="logo"><img class="cartimg" src="img/carretilla.webp" alt="La Carretilla de Giorgio"><p>★ ' + total + ' / ' + LEVELS.length * 3 + '</p></div>' +
       '<div class="lv">' + LEVELS.map((L, i) => { const n = i + 1, lock = n > P.open, st = P.stars[n] || 0; return '<button data-n="' + n + '"' + (lock ? ' disabled' : '') + '><b>' + (lock ? '🔒' : n) + '</b><span>' + '★'.repeat(st) + '<u>' + '★'.repeat(3 - st) + '</u></span>' + (NEW[n] && !lock ? '<em>' + newIcon(NEW[n][0]) + '</em>' : '') + '</button>'; }).join('') + '</div>' +
       '<button class="recipes-btn" id="rec">📖 Recetas</button></div>';
     stage.querySelectorAll('.lv button').forEach(b => { b.onclick = () => { audio(); start(+b.dataset.n); }; });
@@ -77,9 +77,9 @@
     const goalBase = G.L.n * (menuL.reduce((a, d) => a + DISH[d].price, 0) / menuL.length * (1 + (L.two || 0)) + (L.drinks ? 1 : 0));
     G.goal = Math.round(goalBase * 0.6); G.max = Math.round(goalBase * 1.15);
     const bins = ['papas', 'pollo', 'salchicha', 'carne', 'pan_hd', 'pan_hb'].filter(uses), sides = ['lechuga', 'arroz', 'ensalada'].filter(uses);
-    stage.innerHTML = '<div class="bg">' + A.street(800, 220) + '</div><div class="umb">' + A.umbrella() + '</div>' +
+    stage.innerHTML = '<div class="bg"><img src="img/calle.webp" alt=""></div><div class="umb">' + A.umbrella() + '</div>' +
       '<div class="hud"><button class="x" id="pause" aria-label="Pausa">⏸</button><span class="pill coin">S/ <b id="coins">0</b><small>/ ' + G.goal + '</small></span><span class="pill">Nivel ' + n + '</span><span class="pill">👥 <b id="left">' + L.n + '</b></span></div>' +
-      '<div class="sign"><img src="../media/giorgio/cara.webp" alt=""><span>Carretilla de Giorgio</span></div>' +
+      '<div class="sign"><img src="img/letrero.webp" alt="Carretilla de Giorgio"></div>' +
       '<div id="custs"></div><div class="counter"></div>' +
       '<div class="steel">' +
       '<div class="stations">' +
@@ -179,10 +179,12 @@
   }
   function spawn(slot) {
     const seed = Math.floor(Math.random() * 99999), pat = G.L.pat * (G.tut >= 0 && G.spawned === 0 ? 3 : 1);
-    const c = { slot, seed, order: makeOrder(), pat, left: pat, mood: 'calm', st: 'in', t: 0, pay: 0, el: null };
+    const busy = G.cust.filter(Boolean).map(x => x.who).concat(G.lastWho), free = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].filter(i => !busy.includes(i)), who = free[Math.floor(Math.random() * free.length)];
+    G.lastWho = who;
+    const c = { slot, seed, who, order: makeOrder(), pat, left: pat, mood: 'calm', st: 'in', t: 0, pay: 0, el: null };
     G.cust[slot] = c; G.spawned++;
     const el = document.createElement('div'); el.className = 'cust in'; el.style.left = (170 + slot * 180) + 'px'; el.dataset.c = slot;
-    el.innerHTML = '<div class="bubble"></div><div class="body">' + A.person(seed, 'calm') + '</div><i class="pat"><u></u></i><em class="say"></em>';
+    el.innerHTML = '<div class="bubble"></div><div class="body">' + npc(c, 'calm') + '</div><i class="pat"><u></u></i><em class="say"></em>';
     el.addEventListener('pointerdown', e => { e.preventDefault(); serve(slot); });
     $('#custs').append(el); c.el = el; drawOrder(c);
     setTimeout(() => el.classList.remove('in'), 30);
@@ -192,7 +194,9 @@
   function drawOrder(c) {
     c.el.querySelector('.bubble').innerHTML = c.order.map(o => '<span class="oi' + (o.done ? ' done' : '') + '">' + (o.drink ? A.svg(A.bottle(o.drink), '0 0 68 60', 'drink-i') : A.plate(Object.fromEntries(DISH[o.dish].need.concat(o.extras).map(k => [k, { q: 'ok' }])), o.sauces)) + (o.sauces && o.sauces.length ? '<i class="sd">' + o.sauces.map(s => '<b style="background:' + A.SAUCE[s].c + '"></b>').join('') + '</i>' : '') + '</span>').join('');
   }
-  function face(c, mood) { if (c.mood === mood) return; c.mood = mood; c.el.querySelector('.body').innerHTML = A.person(c.seed, mood); }
+  // hoja de sprites: 10 filas (personajes) × 3 columnas (neutral, feliz, enojado)
+  function npc(c, mood) { const col = mood === 'happy' ? 1 : mood === 'angry' ? 2 : 0; return '<i class="npc' + (mood === 'wait' ? ' wait' : '') + '" style="background-position:' + col * 50 + '% ' + (c.who * 100 / 9).toFixed(3) + '%"></i>'; }
+  function face(c, mood) { if (c.mood === mood) return; c.mood = mood; c.el.querySelector('.body').innerHTML = npc(c, mood); }
   function say(c, text, ok) { const s = c.el.querySelector('.say'); s.textContent = text; s.className = 'say on' + (ok ? ' ok' : ''); clearTimeout(s._t); s._t = setTimeout(() => { s.className = 'say'; }, 1500); }
   function sameSet(a, b) { return a.length === b.length && a.every(x => b.includes(x)); }
   function serve(slot) {
