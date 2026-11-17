@@ -83,20 +83,24 @@
   }
 
   // ---------------------------------------------------------------- escenario: calle de noche y la carretilla
-  function street() {
+  function street(W, H) {
+    W = W || 800; H = H || 220;
     let s = '<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16123a"/><stop offset="1" stop-color="#4a2a5c"/></linearGradient><radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd48a" stop-opacity=".8"/><stop offset="1" stop-color="#ffd48a" stop-opacity="0"/></radialGradient></defs>';
-    s += '<rect width="390" height="300" fill="url(#sky)"/>';
-    const B = [[0, 70, 70], [62, 40, 58], [116, 90, 74], [184, 52, 56], [236, 78, 70], [300, 34, 50], [344, 66, 60]];
-    B.forEach(([x, y, w], i) => { s += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + (300 - y) + '" fill="' + ['#241c4a', '#2c2256', '#211a44'][i % 3] + '"/>'; for (let wy = y + 12; wy < 230; wy += 22) for (let wx = x + 8; wx < x + w - 10; wx += 16) if ((wx * 7 + wy * 3 + i) % 5 > 1) s += '<rect x="' + wx + '" y="' + wy + '" width="8" height="11" rx="1.500" fill="' + ((wx + wy) % 3 ? '#ffd27a' : '#ffb35c') + '" opacity="' + (0.55 + ((wx + wy) % 4) * 0.1) + '"/>'; });
-    s += '<path d="M0 118 Q97 146 195 118 T390 118" fill="none" stroke="#1b1630" stroke-width="2"/>';
-    for (let i = 0; i < 13; i++) { const x = 12 + i * 31, y = 118 + Math.sin(i / 12 * Math.PI * 2) * -4 + (i % 2 ? 8 : 12); s += '<circle cx="' + x + '" cy="' + y + '" r="14" fill="url(#glow)"/><circle cx="' + x + '" cy="' + y + '" r="4" fill="' + ['#ffd23f', '#ff7a1a', '#ff5a8a', '#7fe7a8'][i % 4] + '"/>'; }
-    s += '<rect y="236" width="390" height="64" fill="#2a2433"/><path d="M0 244h390" stroke="#3b3346" stroke-width="3"/>';
-    return '<svg viewBox="0 0 390 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + s + '</svg>';
+    s += '<rect width="' + W + '" height="' + H + '" fill="url(#sky)"/>';
+    const B = [[0, 40, 70], [62, 18, 58], [116, 56, 74], [184, 26, 56], [236, 48, 70], [300, 14, 50], [344, 38, 60]], ground = H - 46;
+    for (let off = 0; off < W; off += 390) B.forEach(([x0, y, w], i) => {
+      const x = x0 + off; s += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + (H - y) + '" fill="' + ['#241c4a', '#2c2256', '#211a44'][i % 3] + '"/>';
+      for (let wy = y + 10; wy < ground - 6; wy += 20) for (let wx = x + 8; wx < x + w - 10; wx += 16) if ((wx * 7 + wy * 3 + i) % 5 > 1) s += '<rect x="' + wx + '" y="' + wy + '" width="8" height="10" rx="1.500" fill="' + ((wx + wy) % 3 ? '#ffd27a' : '#ffb35c') + '" opacity="' + (0.55 + ((wx + wy) % 4) * 0.1) + '"/>';
+    });
+    s += '<path d="M0 70 Q' + W / 4 + ' 92 ' + W / 2 + ' 70 T' + W + ' 70" fill="none" stroke="#1b1630" stroke-width="2"/>';
+    for (let x = 12, i = 0; x < W; x += 31, i++) { const y = 70 + Math.sin(x / W * Math.PI * 2) * 6 + (i % 2 ? 8 : 12); s += '<circle cx="' + x + '" cy="' + y + '" r="14" fill="url(#glow)"/><circle cx="' + x + '" cy="' + y + '" r="4" fill="' + ['#ffd23f', '#ff7a1a', '#ff5a8a', '#7fe7a8'][i % 4] + '"/>'; }
+    s += '<rect y="' + ground + '" width="' + W + '" height="46" fill="#2a2433"/><path d="M0 ' + (ground + 7) + 'h' + W + '" stroke="#3b3346" stroke-width="3"/>';
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice" aria-hidden="true">' + s + '</svg>';
   }
   function umbrella() {
-    let s = ''; const n = 10, w = 390 / n;
+    let s = ''; const n = 18, w = 800 / n;
     for (let i = 0; i < n; i++) s += '<path d="M' + i * w + ' 0h' + w + 'v40q-' + w / 2 + ' 18 -' + w + ' 0z" fill="' + (i % 2 ? '#ffc629' : '#e5383b') + '" stroke="#7a1b14" stroke-width="2"/>';
-    return '<svg viewBox="0 0 390 60" preserveAspectRatio="none" aria-hidden="true">' + s + '<path d="M0 2h390" stroke="#7a1b14" stroke-width="4"/></svg>';
+    return '<svg viewBox="0 0 800 60" preserveAspectRatio="none" aria-hidden="true">' + s + '<path d="M0 2h800" stroke="#7a1b14" stroke-width="4"/></svg>';
   }
 
   window.CART_ART = { INK, mix, COOK, cookColor, ITEM, DRINK, SAUCE, svg, bottle, squeeze, plate, person, street, umbrella };

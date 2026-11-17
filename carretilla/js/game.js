@@ -50,7 +50,7 @@
   // ---------------------------------------------------------------- estado de la partida
   let G = null, raf = 0, last = 0, P = prog();
 
-  function fit() { const s = Math.min(innerWidth / 390, innerHeight / 800); stage.style.transform = 'translate(-50%, -50%) scale(' + s + ')'; }
+  function fit() { const s = Math.min(innerWidth / 800, innerHeight / 400); stage.style.transform = 'translate(-50%, -50%) scale(' + s + ')'; }
   addEventListener('resize', fit); fit();
 
   // ---------------------------------------------------------------- menú de niveles
@@ -58,7 +58,7 @@
     cancelAnimationFrame(raf); G = null; if (sizzle) sizzle.gain.value = 0;
     P = prog();
     const total = Object.values(P.stars).reduce((a, b) => a + b, 0);
-    stage.innerHTML = '<div class="bg">' + A.street() + '</div><div class="umb">' + A.umbrella() + '</div><div class="menu"><button class="x" id="out" aria-label="Volver">‹</button><div class="logo"><img src="../media/giorgio/feliz.webp" alt=""><h1>LA CARRETILLA<br><span>DE GIORGIO</span></h1><p>★ ' + total + ' / ' + LEVELS.length * 3 + '</p></div>' +
+    stage.innerHTML = '<div class="bg">' + A.street(800, 220) + '</div><div class="umb">' + A.umbrella() + '</div><div class="menu"><button class="x" id="out" aria-label="Volver">‹</button><div class="logo"><img src="../media/giorgio/feliz.webp" alt=""><h1>LA CARRETILLA<br><span>DE GIORGIO</span></h1><p>★ ' + total + ' / ' + LEVELS.length * 3 + '</p></div>' +
       '<div class="lv">' + LEVELS.map((L, i) => { const n = i + 1, lock = n > P.open, st = P.stars[n] || 0; return '<button data-n="' + n + '"' + (lock ? ' disabled' : '') + '><b>' + (lock ? '🔒' : n) + '</b><span>' + '★'.repeat(st) + '<u>' + '★'.repeat(3 - st) + '</u></span>' + (NEW[n] && !lock ? '<em>' + newIcon(NEW[n][0]) + '</em>' : '') + '</button>'; }).join('') + '</div>' +
       '<button class="recipes-btn" id="rec">📖 Recetas</button></div>';
     stage.querySelectorAll('.lv button').forEach(b => { b.onclick = () => { audio(); start(+b.dataset.n); }; });
@@ -77,21 +77,21 @@
     const goalBase = G.L.n * (menuL.reduce((a, d) => a + DISH[d].price, 0) / menuL.length * (1 + (L.two || 0)) + (L.drinks ? 1 : 0));
     G.goal = Math.round(goalBase * 0.6); G.max = Math.round(goalBase * 1.15);
     const bins = ['papas', 'pollo', 'salchicha', 'carne', 'pan_hd', 'pan_hb'].filter(uses), sides = ['lechuga', 'arroz', 'ensalada'].filter(uses);
-    stage.innerHTML = '<div class="bg">' + A.street() + '</div><div class="umb">' + A.umbrella() + '</div>' +
+    stage.innerHTML = '<div class="bg">' + A.street(800, 220) + '</div><div class="umb">' + A.umbrella() + '</div>' +
       '<div class="hud"><button class="x" id="pause" aria-label="Pausa">⏸</button><span class="pill coin">S/ <b id="coins">0</b><small>/ ' + G.goal + '</small></span><span class="pill">Nivel ' + n + '</span><span class="pill">👥 <b id="left">' + L.n + '</b></span></div>' +
       '<div class="sign"><img src="../media/giorgio/cara.webp" alt=""><span>Carretilla de Giorgio</span></div>' +
       '<div id="custs"></div><div class="counter"></div>' +
       '<div class="steel">' +
-      '<div class="plates">' + G.plates.map((_, i) => '<button class="plate" data-plate="' + i + '"></button>').join('') + '</div>' +
       '<div class="stations">' +
       '<div class="fryer"><b class="tag">Freidora</b><div class="oil">' + G.fry.map((_, i) => '<button class="slot fry" data-slot="fry:' + i + '"><i class="basket"></i></button>').join('') + '<i class="bubbles"></i></div></div>' +
       (G.grill.length ? '<div class="grill"><b class="tag">Plancha</b><div class="iron">' + G.grill.map((_, i) => '<button class="slot gr" data-slot="grill:' + i + '"></button>').join('') + '</div></div>' : '<div class="grill off"><b class="tag">Plancha</b><p>🔒 Pronto</p></div>') +
       '</div>' +
-      '<div class="bins">' + bins.map(k => '<button class="bin" data-bin="' + k + '">' + A.svg(A.ITEM[k](k in A.COOK ? A.COOK[k][0] : null, 0)) + '<small>' + LABEL[k] + '</small></button>').join('') + '</div>' +
-      '<div class="low">' + sides.map(k => '<button class="bin side" data-bin="' + k + '">' + A.svg(A.ITEM[k]()) + '<small>' + LABEL[k] + '</small></button>').join('') +
-      (L.sauces ? '<div class="sauces">' + Object.keys(A.SAUCE).map(k => '<button class="sauce" data-sauce="' + k + '">' + A.svg(A.squeeze(k)) + '<small>' + A.SAUCE[k].name + '</small></button>').join('') + '</div>' : '') +
-      (L.drinks ? '<div class="cooler">' + ['inca', 'coca'].map(k => '<button class="drink" data-drink="' + k + '">' + A.svg(A.bottle(k)) + '</button>').join('') + '</div>' : '') +
-      '<button class="trash" id="trash" aria-label="Basura">🗑️</button><button class="book" id="book" aria-label="Recetas">📖</button></div>' +
+      '<div class="plates">' + G.plates.map((_, i) => '<button class="plate" data-plate="' + i + '"></button>').join('') + '</div>' +
+      '<div class="tools">' + (L.drinks ? '<div class="cooler">' + ['inca', 'coca'].map(k => '<button class="drink" data-drink="' + k + '">' + A.svg(A.bottle(k)) + '</button>').join('') + '</div>' : '') +
+      '<div class="tb"><button class="trash" id="trash" aria-label="Basura">🗑️</button><button class="book" id="book" aria-label="Recetas">📖</button></div></div>' +
+      '<div class="row2"><div class="bins">' + bins.map(k => '<button class="bin" data-bin="' + k + '">' + A.svg(A.ITEM[k](k in A.COOK ? A.COOK[k][0] : null, 0)) + '<small>' + LABEL[k] + '</small></button>').join('') +
+      sides.map(k => '<button class="bin side" data-bin="' + k + '">' + A.svg(A.ITEM[k]()) + '<small>' + LABEL[k] + '</small></button>').join('') + '</div>' +
+      (L.sauces ? '<div class="sauces">' + Object.keys(A.SAUCE).map(k => '<button class="sauce" data-sauce="' + k + '">' + A.svg(A.squeeze(k)) + '<small>' + A.SAUCE[k].name + '</small></button>').join('') + '</div>' : '') + '</div>' +
       '</div><div id="fx"></div><div id="hand" hidden>👆</div><div id="tip" hidden></div><div id="modal" hidden></div>';
     wire(); drawPlates(); drawSlots();
     const intro = NEW[n];
@@ -181,7 +181,7 @@
     const seed = Math.floor(Math.random() * 99999), pat = G.L.pat * (G.tut >= 0 && G.spawned === 0 ? 3 : 1);
     const c = { slot, seed, order: makeOrder(), pat, left: pat, mood: 'calm', st: 'in', t: 0, pay: 0, el: null };
     G.cust[slot] = c; G.spawned++;
-    const el = document.createElement('div'); el.className = 'cust in'; el.style.left = (14 + slot * 124) + 'px'; el.dataset.c = slot;
+    const el = document.createElement('div'); el.className = 'cust in'; el.style.left = (170 + slot * 180) + 'px'; el.dataset.c = slot;
     el.innerHTML = '<div class="bubble"></div><div class="body">' + A.person(seed, 'calm') + '</div><i class="pat"><u></u></i><em class="say"></em>';
     el.addEventListener('pointerdown', e => { e.preventDefault(); serve(slot); });
     $('#custs').append(el); c.el = el; drawOrder(c);
@@ -271,7 +271,7 @@
   }
 
   // ---------------------------------------------------------------- efectos
-  function center(el) { const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect(), k = s.width / 390; return { x: (r.left + r.width / 2 - s.left) / k, y: (r.top + r.height / 2 - s.top) / k }; }
+  function center(el) { const r = el.getBoundingClientRect(), s = stage.getBoundingClientRect(), k = s.width / 800; return { x: (r.left + r.width / 2 - s.left) / k, y: (r.top + r.height / 2 - s.top) / k }; }
   function fly(from, to, inner) {
     if (!from || !to) return; const a = center(from), b = center(to), el = document.createElement('div');
     el.className = 'flyer'; el.innerHTML = A.svg(inner); el.style.left = a.x + 'px'; el.style.top = a.y + 'px'; $('#fx').append(el);

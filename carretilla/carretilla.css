@@ -118,3 +118,45 @@ svg { display: block; width: 100%; height: 100%; overflow: visible; }
 #custs { overflow: hidden; }
 .sign { top: 46px; font-size: 12px; padding: 1px 8px 1px 2px; border-width: 2.5px; } .sign img { width: 24px; height: 24px; }
 .st { font-size: 9.5px; padding: 1px 4px; }
+
+/* ================= horizontal: escenario de 800×400 ================= */
+#stage { width: 800px; height: 400px; }
+.bg { width: 800px; height: 220px; }
+.umb { height: 40px; }
+.hud { top: 4px; left: 8px; right: 8px; } .x { width: 30px; height: 30px; font-size: 14px; } .pill { padding: 2px 9px; font-size: 12px; } .pill b { font-size: 14px; }
+.sign { left: 16px; top: 48px; transform: none; }
+#custs { width: 800px; height: 196px; }
+.cust { bottom: 0; height: 190px; width: 120px; }
+.cust .body { height: 118px; }
+.bubble { top: 0; min-height: 54px; } .oi { width: 54px; height: 42px; }
+.pat { top: 64px; height: 7px; } .say { top: 78px; }
+.counter { top: 186px; height: 16px; border-width: 2.5px; }
+.steel { top: 202px; display: grid; grid-template-columns: 318px 1fr 96px; grid-template-rows: 106px 1fr; gap: 6px 8px; padding: 6px 10px 6px; }
+.stations { grid-column: 1; grid-row: 1; height: auto; gap: 6px; }
+.plates { grid-column: 2; grid-row: 1; height: auto; }
+.plate svg { height: 70px; }
+.tools { grid-column: 3; grid-row: 1 / span 2; display: flex; flex-direction: column; gap: 6px; }
+.tools .cooler { justify-content: center; } .tools .drink svg { height: 52px; }
+.tb { display: flex; gap: 6px; margin-top: auto; justify-content: center; } .trash, .book { width: 42px; height: 42px; font-size: 20px; }
+.row2 { grid-column: 1 / span 2; grid-row: 2; display: flex; gap: 8px; align-items: stretch; }
+.bins { height: auto; flex: 1; gap: 4px; justify-content: flex-start; }
+.bin, .bin.side { max-width: none; width: auto; flex: 1; height: auto; padding: 2px; border-width: 2.5px; } .bin svg, .bin.side svg { height: 32px; } .bin small { font-size: 9px; }
+.sauces { flex: none; } .sauce { width: 36px; } .sauce svg { height: 46px; } .sauce small { font-size: 8px; }
+.fryer, .grill { padding: 9px 4px 4px; }
+.slot { width: 46px; height: 84px; } .slot.gr { width: 44px; height: 62px; }
+.food { width: 46px; height: 40px; }
+#tip { top: 46px; }
+/* menú horizontal: logo a la izquierda, niveles a la derecha */
+.menu { flex-direction: row; flex-wrap: wrap; align-content: center; justify-content: center; padding: 46px 20px 14px; gap: 6px 24px; }
+.menu .x { top: 46px; }
+.logo img { width: 92px; } .logo h1 { font-size: 30px; }
+.lv { width: 400px; grid-template-columns: repeat(6, 1fr); margin-top: 0; }
+.lv b { font-size: 22px; }
+.recipes-btn { margin-top: 0; min-height: 40px; }
+.menu > .logo { width: 260px; }
+.card { max-height: 94%; max-width: 380px; }
+/* clientes más bajos para que la nube del pedido quede bajo el toldo */
+.umb { height: 34px; }
+.cust { height: 150px; } .cust .body { height: 100px; }
+.bubble { top: 0; z-index: 2; min-height: 50px; padding: 2px; } .oi { width: 50px; height: 40px; }
+.pat { top: 56px; z-index: 2; } .say { top: 68px; z-index: 5; }
