@@ -371,8 +371,9 @@ function openGame(which, sala) {
   // Guerra Zombie se juega con cuenta (la partida se guarda en ella); el modo clásico Chatarra Z, no.
   if (which === 'guerra' && !logged()) { openSheet('welcome'); return; }
   play.hidden = false;
-  frame.src = which === 'guerra' ? 'guerra/index.html' : which === 'turbo' ? 'turbo/index.html' : which === 'pelea' ? 'pelea/index.html' : which === 'siete' ? 'siete/index.html' + (sala ? '?sala=' + encodeURIComponent(sala) : '') : 'game/index.html';
-  playingId = which === 'turbo' || which === 'pelea' || which === 'siete' ? null : 'chatarra';
+  play.classList.toggle('land', !which || which === 'chatarra');
+  frame.src = which === 'guerra' ? 'guerra/index.html' : which === 'turbo' ? 'turbo/index.html' : which === 'pelea' ? 'pelea/index.html' : which === 'siete' ? 'siete/index.html' + (sala ? '?sala=' + encodeURIComponent(sala) : '') : which === 'carretilla' ? 'carretilla/index.html' : 'game/index.html';
+  playingId = ['turbo', 'pelea', 'siete', 'carretilla'].includes(which) ? null : 'chatarra';
   $('#trailerVid').pause();
   history.pushState({ play: 1 }, '', location.hash || '#juegos');
   setTimeout(() => { try { frame.focus(); } catch (e) { /* nada */ } }, 300);

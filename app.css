@@ -246,7 +246,8 @@ h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: .3px; }
 .phone-ico { width: 54px; height: 90px; border: 5px solid var(--ink); border-radius: 12px; margin-bottom: 10px; animation: turn 1.8s ease-in-out infinite; }
 @keyframes turn { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
 @media (prefers-reduced-motion: reduce) { .phone-ico { animation: none; transform: rotate(-90deg); } }
-@media (orientation: portrait) and (max-width: 900px) { #rotate { display: flex; } #closePlay { display: block; top: calc(10px + env(safe-area-inset-top, 0px)); bottom: auto; } }
+/* solo Chatarra Z (modo clásico) es horizontal; los demás juegos se juegan en vertical */
+@media (orientation: portrait) and (max-width: 900px) { #play.land #rotate { display: flex; } #play.land #closePlay { display: block; top: calc(10px + env(safe-area-inset-top, 0px)); bottom: auto; } }
 
 /* celulares angostos (360 px o menos) */
 @media (max-width: 370px) {
@@ -333,3 +334,6 @@ h2, h3 { font-family: var(--display); font-weight: 400; letter-spacing: .3px; }
 .gs-media { background: radial-gradient(circle at 70% 80%, #6e1f2e 0, #2a1633 58%, #0d0818 100%); }
 .gs-media img { position: absolute; right: 6%; bottom: -6%; width: 34%; height: auto; object-fit: contain; filter: drop-shadow(0 0 16px rgba(255, 198, 41, .4)); }
 .gs-media .gz-logo span { color: #ffc629; }
+.gc-media { background: radial-gradient(circle at 70% 80%, #ffc629 0, #e5383b 58%, #7a1b14 100%); }
+.gc-media img { position: absolute; right: 6%; bottom: -6%; width: 34%; height: auto; object-fit: contain; filter: drop-shadow(0 6px 0 rgba(0, 0, 0, .3)); }
+.gc-media .gz-logo { font-size: clamp(24px, 8vw, 38px); } .gc-media .gz-logo span { color: #ffe27d; }
